@@ -5,20 +5,53 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
 		<link rel="stylesheet" type="text/css" href="css/master.css"/>
+		<script type="text/javascript" src="js/jquery.js"></script>
 		<title>giMMI prototype</title>
 	</head>
 <body>
 
+<script>
+	$(document).ready(
+		function(){
+			$('#sidebarToggler-left').click(
+				function(){
+    				$('#colLeft').toggleClass('show');
+				}
+			);
+		}
+	);
+	$(document).ready(
+		function(){
+			$('#sidebarToggler-bottom').click(
+				function(){
+	    			$('#colBottom').toggleClass('show');
+				}
+			);
+		}
+	);
+</script>
+
 <div id="colLeft">
-	left
+	<div id="sidebarToggler-left" class="sidebarToggler left">
+		<div class="toggler right"></div>
+	</div>
+	<div class="content">
+		left
+	</div>
 </div>
 
 <div id="colMain">
-	main
+	<iframe id="foreignContent" src="http://www.example.com">
+	</iframe>
 </div>
 
 <div id="colBottom">
-	<div class="content">footer</div>
+	<div id="sidebarToggler-bottom" class="sidebarToggler bottom">
+		<div class="toggler up"></div>
+	</div>
+	<div class="content">
+		footer
+	</div>
 </div>
 
 </body>
