@@ -1,0 +1,38 @@
+html, body {
+	height:100%;
+}
+
+#colBottom,
+#colLeft,
+#colMain {
+	overflow:auto;
+	border-width:2px;
+	border-style:solid;
+}
+
+#colLeft {
+	border-color:red;
+	background-color:rgba(255,0,0,1);
+	width:200px;
+	height:100%;
+	float:left;
+	margin:auto;
+	z-index:1;
+}
+
+#colMain {
+	border-color:blue;
+	background-color:rgba(0,0,255,1);
+	height:100%;
+}
+
+#colBottom {
+	border-color:green;
+	position:absolute;
+	bottom:0;
+	width:100%;
+	}
+	#colBottom .content {
+		margin-left:200px; /* width colLeft */
+		background-color:rgba(0,255,0,1);
+	}
