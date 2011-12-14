@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <project name="giMMI" default="war" basedir="..">
+	<!-- common properties shared by all users -->
 	<property file="ant/build.properties"/>
+	<!--
+	Local specific properties
+	The following items must be defined here (examples given):
+	
+	tomcat.root - path to the local tomcat installation
+	tomcat.root=[path to your tomcat installation]
+	
+	build.dir - the tomcat webapps publishing directory
+	build.dir=${tomcat.root}/webapps/${project.name}
+	
+	tomcat.lib.dir - path to the tomcat libraries
+	tomcat.lib.dir=${tomcat.root}/lib 
+	-->
 	<property file="ant/build_user.properties"/>
-
+	
+	<!-- libraries to include from the tomcat project -->
+	<fileset id="libs.tomcat" dir="${tomcat.lib.dir}">
+		<filename name="servlet-api.jar"/>
+	</fileset>
+	
+	<!-- general project specific libraries -->
+	<fileset id="libs.general" dir="${lib.dir}">
+		<include name="*.jar"/>
+	</fileset>
+	
 	<path id="classpath">
-		<fileset dir="${tomcat.lib.dir}"/>
-		<fileset dir="${lib.dir}" includes="servlet-api.jar"/>
+		<fileset refid="libs.tomcat"/>
+		<fileset refid="libs.general"/>
 	</path>
 	
 	<target name="clean">
@@ -34,8 +57,8 @@
 			<fileset dir="${web.content}"/>
 		</copy>
 		<copy todir="${build.dir}/WEB-INF/lib">
-			<fileset dir="${lib.dir}"/>
-			<fileset dir="${tomcat.lib.dir}"/>
+			<fileset refid="libs.general"/>
+			<fileset refid="libs.tomcat"/>
 		</copy>
 	</target>		
 
@@ -45,5 +68,4 @@
 			<fileset dir="${build.dir}"/>
 		</war>
 	</target>
-
 </project>
