@@ -54,9 +54,7 @@
 	
 	<target name="copy" depends="compile">
 		<copy todir="${build.dir}">
-			<fileset dir="${web.content}">
-				<exclude name="**/web.xml"/>
-			</fileset>
+			<fileset dir="${web.content}"/>
 		</copy>
 		<copy todir="${build.dir}/WEB-INF/lib">
 			<fileset refid="libs.general"/>
@@ -70,7 +68,9 @@
 	<target name="war" depends="copy">
 		<echo>Building the war file</echo>
 		<war destfile="${dist.dir}/${project.name}.war" webxml="${web.content}/WEB-INF/web.xml">
-			<fileset dir="${build.dir}"/>
+			<fileset dir="${build.dir}">
+			<exclude name="**/web.xml"/>
+		</fileset>
 		</war>
 	</target>
 </project>
