@@ -47,18 +47,23 @@
 
 	<target name="compile" depends="init">
 		<echo>Compile the source files</echo>
-		<javac srcdir="${src.dir}" destdir="${build.dir}/WEB-INF/classes">
+		<javac srcdir="${src.dir}" destdir="${build.dir}/WEB-INF/classes" includeantruntime="false">
 			<classpath refid="classpath"/>
 		</javac>
 	</target>	
 	
 	<target name="copy" depends="compile">
 		<copy todir="${build.dir}">
-			<fileset dir="${web.content}"/>
+			<fileset dir="${web.content}">
+				<exclude name="**/web.xml"/>
+			</fileset>
 		</copy>
 		<copy todir="${build.dir}/WEB-INF/lib">
 			<fileset refid="libs.general"/>
 			<fileset refid="libs.tomcat"/>
+		</copy>
+		<copy todir="${build.dir}/WEB-INF/classes">
+			<fileset dir="${conf.dir}"/>
 		</copy>
 	</target>		
 
