@@ -49,7 +49,8 @@
 	  });
 	  
 	  //add on click functionality to "new tab" symbol
-	  $('#add_tab').live('click', addTab);
+	  $('#add_tab').live('click', addTab)
+		       .live('mouseover', function() { $(this).css('cursor', 'pointer'); });
 	  
 	  //make tabs sortable
 	  $tabs.find( ".ui-tabs-nav" ).sortable({ axis: "x" });
@@ -59,8 +60,10 @@
 	  //$("#crawl-earliest").datepicker();
 	  //$("#crawl-latest").datepicker();
 
-	  $('#prev_tab').click(prevTab);
-	  $('#next_tab').click(nextTab);
+	  $('#prev_tab').click(prevTab)
+			.bind('mouseover', function() { $(this).css('cursor', 'pointer'); });
+	  $('#next_tab').click(nextTab)
+			.bind('mouseover', function() { $(this).css('cursor', 'pointer'); });
 	  
 	  //initialize hotkeys to switch tabs using the keyboard
 	  $(document).bind('keydown', 'alt+ctrl+left', prevTab);
