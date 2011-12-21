@@ -4,19 +4,34 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
-    <display-name>Hello, World Application</display-name>
+    <display-name>giMMI</display-name>
     <description>
-	This is a simple web application with a source code organization
-	based on the recommendations of the Application Developer's Guide.
+	Web based web-corpus backend.
     </description>
 
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
         <servlet-class>mypackage.Hello</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TestLogger</servlet-name>
+        <servlet-class>gimmi.testing.TestLogging</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestDatabase</servlet-name>
+        <servlet-class>gimmi.testing.TestDatabase</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>HelloServlet</servlet-name>
         <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestLogger</servlet-name>
+        <url-pattern>/log</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestDatabase</servlet-name>
+        <url-pattern>/db</url-pattern>
     </servlet-mapping>
 </web-app>
