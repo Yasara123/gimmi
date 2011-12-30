@@ -5,7 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface CorpusDatabase {
-	public CorpusDatabaseTable getTable(String name) throws SQLException;
+	public CorpusDatabaseTable getTable(String name) throws SQLException,
+			CorpusDatabaseException;
 
 	public Connection getConnection();
 

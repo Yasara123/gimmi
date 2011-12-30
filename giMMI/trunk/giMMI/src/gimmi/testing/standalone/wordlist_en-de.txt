@@ -1,13 +1,13 @@
 ; source: http://magic.freizeitspieler.de/MTGterms_EN-DE.txt
 ; english; german
-ability;Fähigkeit
+ability;FÃ¤higkeit
 absorb;Absorbieren
-activated ability;aktivierte Fähigkeit
+activated ability;aktivierte FÃ¤higkeit
 activation cost;Aktivierungskosten
 active player;aktiver Spieler
-additional cost;zusätzliche Kosten
-affinity;Affinität
-amplify;Verstärken
+additional cost;zusÃ¤tzliche Kosten
+affinity;AffinitÃ¤t
+amplify;VerstÃ¤rken
 annihilator;Vernichter
 ante;Einsatz
 arcane;Arkan
@@ -20,7 +20,7 @@ attached;angelegt
 attack;angreifen
 aura;Aura
 aura swap;Aurentausch
-banding;Bündnisfähigkeit
+banding;BÃ¼ndnisfÃ¤higkeit
 basic;Standard
 basic landcycling;Standardlandumwandlung
 battle cry;Schlachtruf
@@ -33,19 +33,19 @@ bloodthirst;Blutdurst
 blue;blau
 bury;begrabe
 bushido;Bushido
-buyback;Rückkauf
+buyback;RÃ¼ckkauf
 cascade;Kaskade
 cast;sprechen
 casting cost;Spruchkosten
-champion;Beschützen
-change;ändern
+champion;BeschÃ¼tzen
+change;Ã¤ndern
 changeling;Wandelwicht
 channel;Blutzoll
 chroma;Farbwert
 clash;Fehde
-cleanup;Aufräumsegement
+cleanup;AufrÃ¤umsegement
 color;Farbe
-color identity;Farbidentität
+color identity;FarbidentitÃ¤t
 color indicator;Farbanzeiger
 colorless;farblos
 combat;Kampfphase
@@ -54,16 +54,16 @@ command zone;Kommandozone
 comes into play;kommt ins Spiel
 comes into play effect;Kommt-ins-Spiel-Effekt
 concede;aufgeben
-conspire;Verschwören
+conspire;VerschwÃ¶ren
 continuous effect;bleibender Effekt
-contraption;Gerät
+contraption;GerÃ¤t
 control;beherrschen
 controller;Beherrscher
 converted mana cost;umgewandelte Manakosten
 convoke;Einberufen
 copy;kopieren
 cost;Kosten
-counter;Zählmarke
+counter;ZÃ¤hlmarke
 counter;neutralisieren
 creature;Kreatur
 cumulative upkeep;kumulative Versorgungskosten
@@ -71,22 +71,22 @@ curse;Fluch
 cycle;umwandeln
 cycling;Umwandlung
 damage;Schaden
-deal;Schaden zufügen
-deathtouch;Todesberührung
+deal;Schaden zufÃ¼gen
+deathtouch;TodesberÃ¼hrung
 deck;Deck
 declare attackers;Angreifer deklarieren
 declare blockers;Blocker deklarieren
 defender;Verteidiger
-delayed ability;verzögerte Fähigkeit
-delve;Schürfen
-destroy;zerstören
+delayed ability;verzÃ¶gerte FÃ¤higkeit
+delve;SchÃ¼rfen
+destroy;zerstÃ¶ren
 devour;Verschlingen
-dice;Würfel
+dice;WÃ¼rfel
 die;sterben
 direct damage;Direktschaden
 discard;abwerfen
 divide;verteilen
-domain;Domäne
+domain;DomÃ¤ne
 double-faced cards;Doppelseitige Karten
 double strike;Doppelschlag
 draw;unentschieden
@@ -105,8 +105,8 @@ end of combat;Ende des Kampfes
 end of turn;Ende des Zuges
 entwine;Verflechtung
 epic;episch
-equip;ausrüsten
-equipment;Ausrüstung
+equip;ausrÃ¼sten
+equipment;AusrÃ¼stung
 event;Ereignis
 evoke;Herbeirufen
 exalted;Edelmut
@@ -119,13 +119,13 @@ fading;Schwund
 fade counter;Schwundmarke
 fateseal;Schicksal besiegeln
 fear;Furcht
-fight;Kämpfen
+fight;KÃ¤mpfen
 first strike;Erstschlag
 flanking;Flankenangriff
 flash;Aufblitzen
-flashback;Rückblende
+flashback;RÃ¼ckblende
 flip;wenden
-flip a coin;Münze werfen
+flip a coin;MÃ¼nze werfen
 flying;fliegend
 forecast;Vorhersage
 forest;Wald
@@ -138,9 +138,9 @@ generic mana cost;generische Manakosten
 global enchantment;globale Verzauberung
 graft;Pfropfen
 grandeur;Erhabenheit
-gravestorm;Gräbersturm
+gravestorm;GrÃ¤bersturm
 graveyard;Friedhof
-green;grün
+green;grÃ¼n
 hand;Hand
 haste;Eile
 haunt;Spuk
@@ -148,15 +148,15 @@ hellbent;Versessenheit
 hexproof;fluchsicher
 hideaway;Refugium
 horsemanship;Reitkunst
-illegal;ungültig
-imprint;einprägen
+illegal;ungÃ¼ltig
+imprint;einprÃ¤gen
 in play;im Spiel
-indestructible;unzerstörbar
+indestructible;unzerstÃ¶rbar
 infect;Infizieren
 instant;Spontanzauber
 instead;stattdessen
 interrupt;Unterbrechungszauber
-intimidate;Einschüchtern
+intimidate;EinschÃ¼chtern
 island;Insel
 islandcycling;Inselumwandlung
 islandhome;Heimat: Inseln
@@ -169,22 +169,22 @@ landfall;Landung
 land type;Landtyp
 landcycling;Landumwandlung
 landwalk;Landtarnung
-leaves play;verlässt das Spiel
+leaves play;verlÃ¤sst das Spiel
 legend;Legende
-lethal damage;tödlicher Schaden
+lethal damage;tÃ¶dlicher Schaden
 level up;Stufe aufsteigen
 library;Bibliothek
 life;Leben
-lifelink;Lebensverknüpfung
+lifelink;LebensverknÃ¼pfung
 living weapon;Lebende Waffe
 local enchantment;lokale Verzauberung
 lose life;Lebenspunkte verlieren
 lose the game;das Spiel verlieren
-loyalty;Loyalität
+loyalty;LoyalitÃ¤t
 madness;Wahnsinn
 main phase;Hauptphase
 mana;Mana
-mana ability;Manafähigkeit
+mana ability;ManafÃ¤higkeit
 mana burn;Manabrand
 mana cost;Manakosten
 mana pool;Manavorrat
@@ -212,7 +212,7 @@ number;Zahl
 offering;Opfer
 opponent;Gegner
 order;Reihenfolge
-outside the game;außerhalb des Spiels
+outside the game;auÃŸerhalb des Spiels
 owner;Besitzer
 pass;abgeben
 pay;bezahlen
@@ -223,7 +223,7 @@ phase;Phase
 phase out;destabilisieren
 phase in;stabilisieren
 phased-out;destabilisiert
-phasing;Instabilität
+phasing;InstabilitÃ¤t
 pile;Haufen
 plains;Ebene
 plainscycling;Ebenenumwandlung
@@ -235,10 +235,10 @@ poison counter;Giftmarke
 poisoned;vergiftet
 poisonous;Gift
 postcombat main;zweite Hauptphase
-power;Stärke
+power;StÃ¤rke
 precombat main;erste Hauptphase
 prevent;verhindern
-priority;Priorität
+priority;PrioritÃ¤t
 proliferate;Wucherung
 protection from;Schutz vor
 provoke;provozieren
@@ -253,24 +253,24 @@ recover;Vergung
 red;rot
 redirect;umlenken
 regenerate;regenerieren
-reinforce;Unterstützung
+reinforce;UnterstÃ¼tzung
 remove from combat;aus dem Kampf entfernen
 remove from the game;aus dem Spiel entfernen
 replicate;Reproduktion
 requirement;Voraussetzung
 resolve;verrechnen
-restriction;Einschränkung
-retrace;Zurückverfolgen
+restriction;EinschrÃ¤nkung
+retrace;ZurÃ¼ckverfolgen
 reveal;aufdecken
 ripple;Wallung
 sacrifice;opfern
 scheme;Komplott
 scry;Hellsicht
 search;suchen
-shadow;Irrealität
-shroud;Verhüllt
+shadow;IrrealitÃ¤t
+shroud;VerhÃ¼llt
 shuffle;mischen
-skip;übergehen
+skip;Ã¼bergehen
 slivercycling;Remasuriumwandlung
 snow;verschneit
 snow-covered;verschneit
@@ -284,12 +284,12 @@ split card;geteilte Karte
 split second;Sekundenbruchteil
 stack;Stapel
 state-based effect;automatischer Effekt
-static ability;statische Fähigkeit
+static ability;statische FÃ¤higkeit
 step;Segment
 storm;Sturm
 successfully cast;erfolgreich sprechen
-summon;beschwören
-summoning sickness;Einsatzverzögerung
+summon;beschwÃ¶ren
+summoning sickness;EinsatzverzÃ¶gerung
 sunburst;Sonneneruption
 suspend;Aussetzen
 swamp;Sumpf
@@ -308,14 +308,14 @@ tombstone icon;Grabsteinsymbol
 total cost;Gesamtkosten
 total casting cost;Gesamtspruchkosten
 totem armor;Totembeistand
-toughness;Widerstandsfähigkeit
+toughness;WiderstandsfÃ¤higkeit
 trample;Trampeln
 transfigure;Umgestalten
 transform;Transformieren
 transmute;Transmutation
 tribal;Stammeskarte
-trigger;auslösen
-triggered ability;ausgelöste Fähigkeit
+trigger;auslÃ¶sen
+triggered ability;ausgelÃ¶ste FÃ¤higkeit
 turn;Zug
 type;Typ
 unblockable;unblockbar
@@ -328,7 +328,7 @@ upkeep;Versorgungssegment
 vanishing;Verschwinden
 vigilance;Wachsamkeit
 wall;Mauer
-white;weiß
+white;weiÃŸ
 win the game;Spiel gewinnen
 wither;Verdorren
 wizardcycling;Zaubererumwandlung

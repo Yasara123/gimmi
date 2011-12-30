@@ -1,4 +1,4 @@
-package gimmi;
+package gimmi.util;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class ConfigManager {
 		for (String key : ConfigManager.keys) {
 			if (ConfigManager.config.get(key) == null) {
 				throw new ConfigManagerException(
-						ConfigManagerException.ERR_CONFIG_INCOMPLETE, key);
+						ConfigManagerException.Error.CONFIG_INCOMPLETE, key);
 			}
 		}
 	}
@@ -53,7 +53,7 @@ public class ConfigManager {
 	public String getByKey(String key) throws ConfigManagerException {
 		if (ConfigManager.config.containsKey(key) == false) {
 			throw new ConfigManagerException(
-					ConfigManagerException.ERR_CONFIGKEY_NOT_FOUND, key);
+					ConfigManagerException.Error.CONFIGKEY_NOT_FOUND, key);
 		}
 
 		return ConfigManager.config.get(key);
@@ -68,7 +68,7 @@ public class ConfigManager {
 	public static ConfigManager getInstance() throws ConfigManagerException {
 		if (ConfigManager.initialized != true) {
 			throw new ConfigManagerException(
-					ConfigManagerException.ERR_NOT_INITIALIZED);
+					ConfigManagerException.Error.NOT_INITIALIZED);
 		}
 		return ConfigManager.instance;
 	}
