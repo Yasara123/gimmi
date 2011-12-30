@@ -15,11 +15,11 @@
     </servlet>
     <servlet>
         <servlet-name>TestLogger</servlet-name>
-        <servlet-class>gimmi.testing.TestLogging</servlet-class>
+        <servlet-class>gimmi.testing.servlet.TestLogging</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>TestDatabase</servlet-name>
-        <servlet-class>gimmi.testing.TestDatabase</servlet-class>
+        <servlet-name>TestDatabaseConnection</servlet-name>
+        <servlet-class>gimmi.testing.servlet.TestDatabaseConnection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -31,7 +31,7 @@
         <url-pattern>/log</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestDatabase</servlet-name>
+        <servlet-name>TestDatabaseConnection</servlet-name>
         <url-pattern>/db</url-pattern>
     </servlet-mapping>
 </web-app>
