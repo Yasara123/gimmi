@@ -1,4 +1,4 @@
-package gimmi.database;
+package gimmi.database.mysql;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

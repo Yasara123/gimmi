@@ -1,4 +1,4 @@
-package gimmi.database;
+package gimmi.database.mysql;
 
 /**
  * Repraesentiert eine Spalte in einer Datenbank

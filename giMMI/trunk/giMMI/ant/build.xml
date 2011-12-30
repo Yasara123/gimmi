@@ -47,8 +47,10 @@
 
 	<target name="compile" depends="init">
 		<echo>Compile the source files</echo>
-		<javac srcdir="${src.dir}" destdir="${build.dir}/WEB-INF/classes" includeantruntime="false">
+		<javac destdir="${build.dir}/WEB-INF/classes" includeantruntime="false">			
 			<classpath refid="classpath"/>
+			<src path="${src.dir}"/>
+			<exclude name="gimmi/testing/**"/>
 		</javac>
 	</target>	
 	
@@ -58,7 +60,6 @@
 		</copy>
 		<copy todir="${build.dir}/WEB-INF/lib">
 			<fileset refid="libs.general"/>
-			<!--<fileset refid="libs.tomcat"/>-->
 		</copy>
 		<copy todir="${build.dir}/WEB-INF/classes">
 			<fileset dir="${conf.dir}"/>

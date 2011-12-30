@@ -1,22 +1,18 @@
-package gimmi.testing;
-
-import gimmi.database.Table;
+package gimmi.testing.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class TestDatabase extends HttpServlet {
-    /**
-     * 
-     */
+public class TestLogging extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private Table tblSites;
+
+    private ServletContext context;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,19 +20,15 @@ public class TestDatabase extends HttpServlet {
 	response.setContentType("text/html");
 	PrintWriter writer = response.getWriter();
 
+	this.context = this.getServletContext();
+	this.context.log("Test LOG entry");
+
 	writer.println("<html>");
 	writer.println("<head>");
-	writer.println("<title>testDatabase</title>");
+	writer.println("<title>test</title>");
 	writer.println("</head>");
 	writer.println("<body bgcolor=white>");
-	try {
-	    this.tblSites = new Table("sites");
-	    writer.println("Table 'sites' seems to be accessible!");
-
-	} catch (SQLException e) {
-	    writer.println("Cannot access table 'sites' .. see log!");
-	    e.printStackTrace();
-	}
+	writer.println("Log entry has been written!");
 	writer.println("</body>");
 	writer.println("</html>");
     }

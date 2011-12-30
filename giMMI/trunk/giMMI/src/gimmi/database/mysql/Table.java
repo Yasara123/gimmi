@@ -1,4 +1,7 @@
-package gimmi.database;
+package gimmi.database.mysql;
+
+import gimmi.database.CorpusDatabase;
+import gimmi.database.CorpusDatabaseTable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -10,28 +13,33 @@ import java.util.Iterator;
 
 /**
  * Klasse fuer Tabellen einer MySQL Datenbank
+ * 
  * @author kastners
- *
+ * 
  */
-public class Table {
+public class Table implements CorpusDatabaseTable {
 	String tableName;
 	HashMap<String, Column> columns = new HashMap<String, Column>();
 	ArrayList<String> requiredFields = new ArrayList<String>();
-	MysqlDao dao = MysqlDao.getInstance();
-	Connection connection = dao.getConnection();
+	CorpusDatabase database = null;
+	Connection connection = null;
 
-	public Table(String tableName) throws SQLException {
-		setTableName(tableName);
-		createColumns();
+	public Table(CorpusDatabase database, String tableName) throws SQLException {
+		this.connection = database.getConnection();
+		this.database = database;
+		this.setTableName(tableName);
+		this.createColumns();
 	}
-	
+
 	/**
 	 * Liest alle Datensaetze aus
-	 * @throws SQLException 
+	 * 
+	 * @throws SQLException
 	 */
 	public ResultSet fetchAll() throws SQLException {
-		String query = "SELECT * FROM " + addBackticks(getTableName()) + ";";
-		Statement statement = connection.createStatement();
+		String query = "SELECT * FROM "
+				+ Table.addBackticks(this.getTableName()) + ";";
+		Statement statement = this.connection.createStatement();
 		return statement.executeQuery(query);
 	}
 
@@ -43,9 +51,10 @@ public class Table {
 	 * @throws SQLException
 	 */
 	public ResultSet find(String condition) throws SQLException {
-		String query = "SELECT * FROM " + addBackticks(getTableName()) + ""
-				+ "WHERE " + condition;
-		Statement statement = connection.createStatement();
+		String query = "SELECT * FROM "
+				+ Table.addBackticks(this.getTableName()) + "" + "WHERE "
+				+ condition;
+		Statement statement = this.connection.createStatement();
 		return statement.executeQuery(query);
 	}
 
@@ -58,8 +67,8 @@ public class Table {
 	 * @throws SQLException
 	 */
 	public ResultSet find(String field, String value) throws SQLException {
-		String condition = getConditionFromFieldValuePair(field, value);
-		return find(condition);
+		String condition = this.getConditionFromFieldValuePair(field, value);
+		return this.find(condition);
 	}
 
 	/**
@@ -69,6 +78,7 @@ public class Table {
 	 * @return int
 	 * @throws SQLException
 	 */
+	@Override
 	public int save(HashMap<String, String> values) throws SQLException {
 		StringBuffer cols = new StringBuffer();
 		StringBuffer vals = new StringBuffer();
@@ -77,39 +87,41 @@ public class Table {
 
 		Iterator<String> it = values.keySet().iterator();
 		while (it.hasNext()) {
-			String key = (String) it.next();
-			// ueberpruefung, ob der key erlaubt ist, bzw in der tabelle vorhanden
+			String key = it.next();
+			// ueberpruefung, ob der key erlaubt ist, bzw in der tabelle
+			// vorhanden
 			// ist
-			if ((column = columns.get(key)) != null) {
-				cols.append(addBackticks(column.getColumnName()) + ", ");
-				vals.append(escape(values.get(key), column) + ", ");
+			if ((column = this.columns.get(key)) != null) {
+				cols.append(Table.addBackticks(column.getColumnName()) + ", ");
+				vals.append(this.escape(values.get(key), column) + ", ");
 				if (column.isRequired()) {
 					requiredCount++;
 				}
 			} else {
 				// nen schicker logger waere toll!
 				System.out.println("Das Feld \"" + key
-						+ "\" existiert nicht in " + getTableName());
+						+ "\" existiert nicht in " + this.getTableName());
 			}
 		}
-		if (requiredCount < requiredFields.size()) {
+		if (requiredCount < this.requiredFields.size()) {
 			System.out.println("Required Fields:");
-			for(int i=0;i<requiredFields.size();i++) {
-				System.out.println(requiredFields.get(i));
+			for (int i = 0; i < this.requiredFields.size(); i++) {
+				System.out.println(this.requiredFields.get(i));
 			}
-			throw new SQLException("Es wurden nicht alle benoetigten Felder angegeben!");
+			throw new SQLException(
+					"Es wurden nicht alle benoetigten Felder angegeben!");
 		}
 		cols.delete((cols.length() - 2), cols.length());
 		vals.delete((vals.length() - 2), vals.length());
-		String insert = "INSERT INTO " + addBackticks(getTableName()) + "("
+		String insert = "INSERT INTO "
+				+ Table.addBackticks(this.getTableName()) + "("
 				+ cols.toString() + ")" + " VALUES " + "(" + vals.toString()
 				+ ");";
 		int id = -1;
-		Statement st = connection.createStatement();
+		Statement st = this.connection.createStatement();
 		try {
 			st.executeUpdate(insert, Statement.RETURN_GENERATED_KEYS);
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println("Query: \n" + insert);
 			e.printStackTrace();
 		}
@@ -123,60 +135,71 @@ public class Table {
 		}
 		return id;
 	}
-	
+
+	@Override
+	public String toString() {
+		return this.getTableName();
+	}
+
 	/**
 	 * UPDATE von Werten in der Tabelle
+	 * 
 	 * @param where
 	 * @param values
 	 * @return int
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	public int update(String where, HashMap<String, String> values) throws SQLException {
-		//gibt -1 zurück, wenn keine werte für das update angegeben wurden
-		if(values.isEmpty())
+	public int update(String where, HashMap<String, String> values)
+			throws SQLException {
+		// gibt -1 zurück, wenn keine werte für das update angegeben wurden
+		if (values.isEmpty()) {
 			return -1;
-		
+		}
+
 		StringBuffer vals = new StringBuffer();
 		Column column;
 
 		Iterator<String> it = values.keySet().iterator();
 		while (it.hasNext()) {
-			String key = (String) it.next();
-			// ueberpruefung, ob der key erlaubt ist, bzw in der tabelle vorhanden
+			String key = it.next();
+			// ueberpruefung, ob der key erlaubt ist, bzw in der tabelle
+			// vorhanden
 			// ist
-			if ((column = columns.get(key)) != null) {
-				vals.append(addBackticks(column.getColumnName()) + " = " 
-							+ escape(values.get(key), column) + ", ");
+			if ((column = this.columns.get(key)) != null) {
+				vals.append(Table.addBackticks(column.getColumnName()) + " = "
+						+ this.escape(values.get(key), column) + ", ");
 			} else {
 				// nen schicker logger waere toll!
 				System.out.println("Das Feld \"" + key
-						+ "\" existiert nicht in " + getTableName());
+						+ "\" existiert nicht in " + this.getTableName());
 			}
 		}
 		vals.delete((vals.length() - 2), vals.length());
-		String update = "UPDATE " + addBackticks(getTableName()) + 
-						" SET "
-						+ vals.toString() + 
-						" WHERE " + where + ";";
-		Statement st = connection.createStatement();
+		String update = "UPDATE " + Table.addBackticks(this.getTableName())
+				+ " SET " + vals.toString() + " WHERE " + where + ";";
+		Statement st = this.connection.createStatement();
 		st.executeUpdate(update);
 		int affectedRows = st.getUpdateCount();
 		if (affectedRows < 0) {
-			System.out.println("Das Update betraf mit '" + where + "' keine Zeilen");
+			System.out.println("Das Update betraf mit '" + where
+					+ "' keine Zeilen");
 		}
 		return affectedRows;
 	}
-	
+
 	/**
 	 * Update von Werten in der Tabelle
+	 * 
 	 * @param field
 	 * @param value
 	 * @param values
 	 * @return int
 	 * @throws SQLException
 	 */
-	public int update(String field, String value, HashMap<String, String> values) throws SQLException {
-		return update(getConditionFromFieldValuePair(field, value), values);
+	public int update(String field, String value, HashMap<String, String> values)
+			throws SQLException {
+		return this.update(this.getConditionFromFieldValuePair(field, value),
+				values);
 	}
 
 	/**
@@ -190,21 +213,23 @@ public class Table {
 
 	/**
 	 * Erzeugt zu einem Feld Wert Paar ein WHERE Statement
+	 * 
 	 * @param field
 	 * @param value
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	protected String getConditionFromFieldValuePair(String field, String value) throws SQLException {
+	protected String getConditionFromFieldValuePair(String field, String value)
+			throws SQLException {
 		Column column;
-		if ((column = columns.get(field)) == null) {
+		if ((column = this.columns.get(field)) == null) {
 			throw new SQLException("Feld " + field + " nicht vorhanden!");
 		}
-		if(value == null) {
-			return addBackticks(field) + " IS NULL";
+		if (value == null) {
+			return Table.addBackticks(field) + " IS NULL";
 		}
-		return addBackticks(field) + " = " + escape(value, column);
+		return Table.addBackticks(field) + " = " + this.escape(value, column);
 	}
-	
+
 	/**
 	 * Escaped einen String ausgehend vom Spaltentyp
 	 * 
@@ -213,7 +238,7 @@ public class Table {
 	 * @return String
 	 */
 	public String escape(String value, Column column) {
-		return escape(value, column.getColumnType());
+		return this.escape(value, column.getColumnType());
 	}
 
 	/**
@@ -244,7 +269,7 @@ public class Table {
 	 * @return
 	 */
 	protected Table setTableName(String name) {
-		tableName = name;
+		this.tableName = name;
 		return this;
 	}
 
@@ -254,7 +279,7 @@ public class Table {
 	 * @return String
 	 */
 	public String getTableName() {
-		return tableName;
+		return this.tableName;
 	}
 
 	/**
@@ -276,9 +301,9 @@ public class Table {
 	 * @return
 	 */
 	protected Table addColumn(String name, int type, boolean flag) {
-		columns.put(name, new Column(name, type, flag));
+		this.columns.put(name, new Column(name, type, flag));
 		if (flag == true) {
-			requiredFields.add(name);
+			this.requiredFields.add(name);
 		}
 		return this;
 	}
@@ -292,7 +317,7 @@ public class Table {
 	 * @return
 	 */
 	protected Table addColumn(String name, int type) {
-		columns.put(name, new Column(name, type, false));
+		this.columns.put(name, new Column(name, type, false));
 		return this;
 	}
 
@@ -305,7 +330,7 @@ public class Table {
 	 * @return
 	 */
 	protected Table addColumn(String name) {
-		columns.put(name, new Column(name, Column.TEXT_TYPE, false));
+		this.columns.put(name, new Column(name, Column.TEXT_TYPE, false));
 		return this;
 	}
 
@@ -333,22 +358,34 @@ public class Table {
 	protected boolean isRequiredByDescription(ResultSet desc)
 			throws SQLException {
 		return (desc.getString("NULL").equals("NO")
-				&& desc.getString("Default") == null && !desc
-				.getString("Extra").equals("auto_increment"));
+				&& (desc.getString("Default") == null) && !desc.getString(
+				"Extra").equals("auto_increment"));
 	}
 
 	/**
 	 * Erstellt die Spalten auf Basis eines DESCRIBEs
-	 * @throws SQLException 
+	 * 
+	 * @throws SQLException
 	 */
 	protected void createColumns() throws SQLException {
-		ResultSet desc = dao.getResultset("DESCRIBE "
-				+ addBackticks(getTableName()));
+		ResultSet desc = this.database.getResultset("DESCRIBE "
+				+ Table.addBackticks(this.getTableName()));
 
 		while (desc.next()) {
-			addColumn(desc.getString("Field"), getTypeByDescription(desc
-					.getString("Type")), isRequiredByDescription(desc));
+			this.addColumn(desc.getString("Field"),
+					this.getTypeByDescription(desc.getString("Type")),
+					this.isRequiredByDescription(desc));
 		}
 
+	}
+
+	@Override
+	public long countRows() throws SQLException {
+		String query = "SELECT COUNT(*) AS count FROM "
+				+ Table.addBackticks(this.getTableName()) + ";";
+		Statement statement = this.connection.createStatement();
+		ResultSet rs = statement.executeQuery(query);
+		rs.next();
+		return rs.getLong("count");
 	}
 }
