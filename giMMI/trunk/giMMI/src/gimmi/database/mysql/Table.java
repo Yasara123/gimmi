@@ -1,6 +1,7 @@
 package gimmi.database.mysql;
 
 import gimmi.database.CorpusDatabase;
+import gimmi.database.CorpusDatabaseException;
 import gimmi.database.CorpusDatabaseTable;
 
 import java.sql.Connection;
@@ -10,11 +11,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Klasse fuer Tabellen einer MySQL Datenbank
+ * Class handling MySQL tables
  * 
  * @author kastners
+ * @author Jens Bertram <code@jens-bertram.net>
  * 
  */
 public class Table implements CorpusDatabaseTable {
@@ -23,31 +27,51 @@ public class Table implements CorpusDatabaseTable {
 	ArrayList<String> requiredFields = new ArrayList<String>();
 	CorpusDatabase database = null;
 	Connection connection = null;
+	private static final Pattern PATTERN_COLSIZE = Pattern.compile("([0-9]+)");
 
-	public Table(CorpusDatabase database, String tableName) throws SQLException {
+	public Table(CorpusDatabase database, String tableName)
+			throws SQLException, CorpusDatabaseException {
 		this.connection = database.getConnection();
 		this.database = database;
 		this.setTableName(tableName);
 		this.createColumns();
 	}
 
-	/**
-	 * Liest alle Datensaetze aus
-	 * 
-	 * @throws SQLException
-	 */
-	public ResultSet fetchAll() throws SQLException {
-		String query = "SELECT * FROM "
+	@Override
+	public ResultSet fetchAll() throws SQLException, CorpusDatabaseException {
+		return this.fetchAll(new String[] { "*" });
+	}
+
+	@Override
+	public ResultSet fetchAll(String[] fields) throws SQLException,
+			CorpusDatabaseException {
+		// pre-check
+		for (String col : fields) {
+			if (this.columns.get(col) == null) {
+				throw new CorpusDatabaseException(
+						CorpusDatabaseException.Error.COLUMN_NOT_FOUND, col);
+			}
+		}
+		// build field list
+		String fieldList = new String();
+		for (String field : fields) {
+			fieldList = fieldList + Table.addBackticks(field) + ",";
+		}
+		// query
+		String query = "SELECT "
+				+ fieldList.substring(0, fieldList.length() - 1) + " FROM "
 				+ Table.addBackticks(this.getTableName()) + ";";
 		Statement statement = this.connection.createStatement();
+		// return
 		return statement.executeQuery(query);
 	}
 
 	/**
-	 * Findet Datensaetze zu der angegebenen Bedingung
+	 * Search for rows based on the given condition
 	 * 
 	 * @param condition
-	 * @return ResultSet
+	 *            The condition used as WHERE clause in the SQL statement
+	 * @return ResultSet The rows matching the given condition
 	 * @throws SQLException
 	 */
 	public ResultSet find(String condition) throws SQLException {
@@ -71,52 +95,53 @@ public class Table implements CorpusDatabaseTable {
 		return this.find(condition);
 	}
 
-	/**
-	 * Speichert einen Datensatz in der Tabelle und gibt die erzeugte ID zurueck
-	 * 
-	 * @param values
-	 * @return int
-	 * @throws SQLException
-	 */
 	@Override
-	public int save(HashMap<String, String> values) throws SQLException {
-		StringBuffer cols = new StringBuffer();
-		StringBuffer vals = new StringBuffer();
-		int requiredCount = 0;
+	public int save(HashMap<String, Object> values) throws SQLException,
+			CorpusDatabaseException {
+		StringBuffer sqlColString = new StringBuffer();
+		StringBuffer sqlValString = new StringBuffer();
+		int requiredCols = 0;
 		Column column;
 
-		Iterator<String> it = values.keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			// ueberpruefung, ob der key erlaubt ist, bzw in der tabelle
-			// vorhanden
-			// ist
-			if ((column = this.columns.get(key)) != null) {
-				cols.append(Table.addBackticks(column.getColumnName()) + ", ");
-				vals.append(this.escape(values.get(key), column) + ", ");
+		// check & build column > value order
+		for (String key : values.keySet()) {
+			column = this.columns.get(key);
+			if (column != null) {
+				sqlColString.append(Table.addBackticks(column.toString())
+						+ ", ");
+				// TODO: differentiate objects (date, int, etc.)
+				sqlValString.append(this.escape(values.get(key),
+						column.getColumnType())
+						+ ", ");
+
+				// collect required rows
 				if (column.isRequired()) {
-					requiredCount++;
+					requiredCols++;
 				}
 			} else {
-				// nen schicker logger waere toll!
-				System.out.println("Das Feld \"" + key
-						+ "\" existiert nicht in " + this.getTableName());
+				// a row was specified, but not found in the database
+				throw new CorpusDatabaseException(
+						CorpusDatabaseException.Error.COLUMN_NOT_FOUND, key);
 			}
 		}
-		if (requiredCount < this.requiredFields.size()) {
-			System.out.println("Required Fields:");
-			for (int i = 0; i < this.requiredFields.size(); i++) {
-				System.out.println(this.requiredFields.get(i));
+
+		// test, if all required fields are set
+		if (requiredCols < this.requiredFields.size()) {
+			String fields = "";
+			for (String field : this.requiredFields) {
+				fields = fields + field + ", ";
 			}
-			throw new SQLException(
-					"Es wurden nicht alle benoetigten Felder angegeben!");
+			fields = fields.substring(0, fields.length() - 2);
+			throw new CorpusDatabaseException(
+					CorpusDatabaseException.Error.FIELDS_MISSING, fields);
 		}
-		cols.delete((cols.length() - 2), cols.length());
-		vals.delete((vals.length() - 2), vals.length());
+
+		sqlColString.delete((sqlColString.length() - 2), sqlColString.length());
+		sqlValString.delete((sqlValString.length() - 2), sqlValString.length());
 		String insert = "INSERT INTO "
 				+ Table.addBackticks(this.getTableName()) + "("
-				+ cols.toString() + ")" + " VALUES " + "(" + vals.toString()
-				+ ");";
+				+ sqlColString.toString() + ")" + " VALUES " + "("
+				+ sqlValString.toString() + ");";
 		int id = -1;
 		Statement st = this.connection.createStatement();
 		try {
@@ -166,8 +191,9 @@ public class Table implements CorpusDatabaseTable {
 			// vorhanden
 			// ist
 			if ((column = this.columns.get(key)) != null) {
-				vals.append(Table.addBackticks(column.getColumnName()) + " = "
-						+ this.escape(values.get(key), column) + ", ");
+				vals.append(Table.addBackticks(column.toString()) + " = "
+						+ this.escape(values.get(key), column.getColumnType())
+						+ ", ");
 			} else {
 				// nen schicker logger waere toll!
 				System.out.println("Das Feld \"" + key
@@ -202,14 +228,14 @@ public class Table implements CorpusDatabaseTable {
 				values);
 	}
 
-	/**
-	 * Speichert mehrere Datensaetze auf einmal
-	 * 
-	 * @param values
-	 */
-	public void save(ArrayList<HashMap<String, String>> values) {
-		// TODO: save fuer mehrere datensaetze implementieren
-	}
+	// /**
+	// * Speichert mehrere Datensaetze auf einmal
+	// *
+	// * @param values
+	// */
+	// public void save(ArrayList<HashMap<String, String>> values) {
+	// // TODO: save fuer mehrere datensaetze implementieren
+	// }
 
 	/**
 	 * Erzeugt zu einem Feld Wert Paar ein WHERE Statement
@@ -227,39 +253,44 @@ public class Table implements CorpusDatabaseTable {
 		if (value == null) {
 			return Table.addBackticks(field) + " IS NULL";
 		}
-		return Table.addBackticks(field) + " = " + this.escape(value, column);
+		return Table.addBackticks(field) + " = "
+				+ this.escape(value, column.getColumnType());
 	}
 
+	// /**
+	// * Escaped einen String ausgehend vom Spaltentyp
+	// *
+	// * @param value
+	// * @param column
+	// * @return String
+	// */
+	// public String escape(Object value, Column column) {
+	// return this.escape(value, column.getColumnType());
+	// }
+
 	/**
-	 * Escaped einen String ausgehend vom Spaltentyp
+	 * Escape a string based on its type.
 	 * 
-	 * @param value
-	 * @param column
-	 * @return String
-	 */
-	public String escape(String value, Column column) {
-		return this.escape(value, column.getColumnType());
-	}
-
-	/**
-	 * Escapet einen String ausgehend vom Typ
+	 * TODO: add more object types
 	 * 
 	 * @param value
 	 * @param type
 	 * @return String
 	 */
-	public String escape(String value, int type) {
+	public String escape(Object value, CorpusDatabaseTable.columnType type) {
 		if (value == null) {
 			return "null";
 		}
-		if (type == Column.INT_TYPE) {
-			// hier koennte man noch alle nicht numerischen zeichen entfernen
-			// oder den string parsen..
-			return value;
-		} else if (type == Column.TEXT_TYPE) {
-			return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
+		switch (type) {
+		case INT:
+			return Integer.toString(Integer.parseInt(value.toString()));
+		case TXT:
+			return "'"
+					+ value.toString().replace("\\", "\\\\")
+							.replace("'", "\\'") + "'";
 		}
-		return value;
+
+		return null;
 	}
 
 	/**
@@ -293,58 +324,85 @@ public class Table implements CorpusDatabaseTable {
 	}
 
 	/**
-	 * Fuegt eine Spalte hinzu
+	 * Adds a column to the list
 	 * 
 	 * @param name
+	 *            The name of the column
 	 * @param type
+	 *            The type as defined by {@link CorpusDatabaseTable.columnType}
 	 * @param flag
-	 * @return
+	 *            Denotes, if the column is required
+	 * @throws CorpusDatabaseException
 	 */
-	protected Table addColumn(String name, int type, boolean flag) {
-		this.columns.put(name, new Column(name, type, flag));
+	protected void addColumn(String name, CorpusDatabaseTable.columnType type,
+			int size, boolean flag) throws CorpusDatabaseException {
+		this.columns.put(name, new Column(name, type, size, flag));
 		if (flag == true) {
 			this.requiredFields.add(name);
 		}
-		return this;
 	}
 
-	/**
-	 * Fuegt eine Spalte hinzu
-	 * 
-	 * @param name
-	 * @param type
-	 * @param flag
-	 * @return
-	 */
-	protected Table addColumn(String name, int type) {
-		this.columns.put(name, new Column(name, type, false));
-		return this;
-	}
+	// /**
+	// * Fuegt eine Spalte hinzu
+	// *
+	// * @param name
+	// * @param type
+	// * @param flag
+	// * @return
+	// * @throws CorpusDatabaseException
+	// */
+	// protected Table addColumn(String name, int type)
+	// throws CorpusDatabaseException {
+	// this.columns.put(name, new Column(name, type, false));
+	// return this;
+	// }
+
+	// /**
+	// * Fuegt eine Spalte hinzu
+	// *
+	// * @param name
+	// * @param type
+	// * @param flag
+	// * @return
+	// * @throws CorpusDatabaseException
+	// */
+	// protected Table addColumn(String name) throws CorpusDatabaseException {
+	// this.columns.put(name, new Column(name, Column.TYPE_TEXT, false));
+	// return this;
+	// }
 
 	/**
-	 * Fuegt eine Spalte hinzu
+	 * Tries to guess the type of a column by MySQL DESCRIBE results
 	 * 
-	 * @param name
-	 * @param type
-	 * @param flag
-	 * @return
-	 */
-	protected Table addColumn(String name) {
-		this.columns.put(name, new Column(name, Column.TEXT_TYPE, false));
-		return this;
-	}
-
-	/**
-	 * Ermittelt anhand der Daten eines DESCRIBEs den Feldtyp
+	 * TODO: add more datatypes
 	 * 
 	 * @param type
-	 * @return
+	 *            The type as given by MySQL DESCRIBE
+	 * @return The guessed datatype
 	 */
-	protected int getTypeByDescription(String type) {
-		if (type.contains("int")) {
-			return Column.INT_TYPE;
+	protected CorpusDatabaseTable.columnType getTypeByDescription(String type) {
+		if (type.matches("^((tiny|small|medium|big)int|int|integer).*")) {
+			return CorpusDatabaseTable.columnType.INT;
+		} else if (type.matches("^(date|time|datetime).*")) {
+			return CorpusDatabaseTable.columnType.DATETIME;
+		} else if (type.matches("^float.*")) {
+			return CorpusDatabaseTable.columnType.FLOAT;
+		} else if (type.matches("^double.*")) {
+			return CorpusDatabaseTable.columnType.DOUBLE;
 		}
-		return Column.TEXT_TYPE;
+		return CorpusDatabaseTable.columnType.TXT;
+	}
+
+	/**
+	 * Roughly guess the size of a column by it's description
+	 * 
+	 * @param type
+	 *            The description string of a table column
+	 * @return The size of the column or -1 if the size couldn't be estimated
+	 */
+	protected int getSizeByDescription(String description) {
+		Matcher m = Table.PATTERN_COLSIZE.matcher(description);
+		return m.find() ? Integer.parseInt(m.group(1)) : -1;
 	}
 
 	/**
@@ -366,14 +424,16 @@ public class Table implements CorpusDatabaseTable {
 	 * Erstellt die Spalten auf Basis eines DESCRIBEs
 	 * 
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
-	protected void createColumns() throws SQLException {
+	protected void createColumns() throws SQLException, CorpusDatabaseException {
 		ResultSet desc = this.database.getResultset("DESCRIBE "
 				+ Table.addBackticks(this.getTableName()));
 
 		while (desc.next()) {
 			this.addColumn(desc.getString("Field"),
 					this.getTypeByDescription(desc.getString("Type")),
+					this.getSizeByDescription(desc.getString("Type")),
 					this.isRequiredByDescription(desc));
 		}
 
@@ -387,5 +447,10 @@ public class Table implements CorpusDatabaseTable {
 		ResultSet rs = statement.executeQuery(query);
 		rs.next();
 		return rs.getLong("count");
+	}
+
+	@Override
+	public HashMap<String, Column> getColumns() {
+		return this.columns;
 	}
 }

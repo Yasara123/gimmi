@@ -1,5 +1,8 @@
 package gimmi.database.mysql;
 
+import gimmi.database.CorpusDatabaseException;
+import gimmi.database.CorpusDatabaseTable;
+
 /**
  * Repraesentiert eine Spalte in einer Datenbank
  * 
@@ -7,71 +10,69 @@ package gimmi.database.mysql;
  * 
  */
 public class Column {
-	public static int INT_TYPE = 0;
-	public static int TEXT_TYPE = 1;
-
 	protected String columnName;
-	protected int columnType;
+	protected CorpusDatabaseTable.columnType columnType;
 	protected boolean required;
-	
-	/**
-	 * Konstruktor mit allen 3 Parametern
-	 * @param name
-	 * @param type
-	 * @param flag
-	 */
-	public Column(String name, int type, boolean flag) {
-		setColumnName(name);
-		setColumnType(type);
-		setRequired(flag);
+
+	/** size of this column */
+	private int size = -1;
+
+	public Column(String name, CorpusDatabaseTable.columnType type, int size,
+			boolean flag) throws CorpusDatabaseException {
+		this.setColumnName(name);
+		this.setColumnType(type);
+		this.setRequired(flag);
+		this.setSize(size);
 	}
-	
-	/**
-	 * Konstruktor ohne den required Parameter
-	 * @param name
-	 * @param type
-	 */
-	public Column(String name, int type) {
-		this(name, type, false);
+
+	public Column(String name, CorpusDatabaseTable.columnType type, boolean flag)
+			throws CorpusDatabaseException {
+		this.setColumnName(name);
+		this.setColumnType(type);
+		this.setRequired(flag);
 	}
-	
-	/**
-	 * Konstruktor ohne required und ohne type Parameter
-	 * @param name
-	 */
-	public Column(String name) {
-		this(name, TEXT_TYPE, false);
-	}
-	
+
 	public Column setColumnName(String name) {
-		columnName = name;
+		this.columnName = name;
 		return this;
 	}
 
-	public String getColumnName() {
-		return columnName;
+	@Override
+	public String toString() {
+		return this.columnName;
 	}
 
-	public Column setColumnType(int type) {
-		if (type != INT_TYPE && type != TEXT_TYPE) {
-			System.out
-					.println("Feldtyp kann nicht gesetzt werden! Ungueltiger Typ uebergeben!");
-		}
-		columnType = type;
-		return this;
+	public void setColumnType(CorpusDatabaseTable.columnType type)
+			throws CorpusDatabaseException {
+		this.columnType = type;
 	}
 
-	public int getColumnType() {
-		return columnType;
+	public CorpusDatabaseTable.columnType getColumnType() {
+		return this.columnType;
 	}
 
 	public Column setRequired(boolean flag) {
-		required = flag;
+		this.required = flag;
 		return this;
 	}
 
 	public boolean isRequired() {
-		return required;
+		return this.required;
 	}
 
+	private void setSize(int size) {
+		this.size = size;
+	}
+
+	/**
+	 * Get the size of this column
+	 * 
+	 * @return The size as Integer value or null if no size could be determined
+	 */
+	public Integer getSize() {
+		if (this.size == -1) {
+			return null;
+		}
+		return Integer.valueOf(this.size);
+	}
 }

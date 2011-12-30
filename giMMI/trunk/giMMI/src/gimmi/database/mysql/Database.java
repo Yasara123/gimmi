@@ -1,6 +1,7 @@
 package gimmi.database.mysql;
 
 import gimmi.database.CorpusDatabase;
+import gimmi.database.CorpusDatabaseException;
 import gimmi.database.CorpusDatabaseTable;
 
 import java.sql.Connection;
@@ -114,7 +115,8 @@ public class Database implements CorpusDatabase {
 	}
 
 	@Override
-	public CorpusDatabaseTable getTable(String name) throws SQLException {
+	public CorpusDatabaseTable getTable(String name) throws SQLException,
+			CorpusDatabaseException {
 		return new Table(this, name);
 	}
 }
