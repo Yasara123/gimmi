@@ -15,13 +15,28 @@ public class Language extends CorpusContent {
 		this.setTable(db.getTable(Language.TABLE_NAME));
 	}
 
-	public Integer getIdByLangCode(String code) throws SQLException {
+	/**
+	 * Get the id of a language-code string value in the database
+	 * 
+	 * @param code
+	 * @return
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 * @throws IllegalArgumentException
+	 */
+	public Integer getIdByCode(String code) throws SQLException,
+			CorpusDatabaseException, IllegalArgumentException {
 		if (code.length() != 3) {
-			return null;
+			throw new IllegalArgumentException(
+					"You should only specify 3-letter language-codes as defined by ISO639-alpha-3.");
 		}
 
-		ResultSet rs = this.getTable().find("lang_code", code);
-
-		return null;
+		ResultSet languageRS = this.getTable().find("lang_code", code);
+		if (languageRS.next()) {
+			return languageRS.getInt("language_id");
+		}
+		throw new CorpusDatabaseException(
+				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
+				"The language-code you specified");
 	}
 }
