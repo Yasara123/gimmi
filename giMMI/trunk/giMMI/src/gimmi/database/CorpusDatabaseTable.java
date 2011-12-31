@@ -58,4 +58,26 @@ public interface CorpusDatabaseTable {
 	 */
 	public ResultSet fetchAll(String[] fields) throws SQLException,
 			CorpusDatabaseException;
+
+	/**
+	 * Searches for rows matching the given condition
+	 * 
+	 * @param condition
+	 *            An expression for the MySQL WHERE clause
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet find(String condition) throws SQLException;
+
+	/**
+	 * Searches for rows matching the given field->value condition
+	 * 
+	 * @param field
+	 *            The field to search for
+	 * @param value
+	 *            The value the given field should have
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet find(String field, String value) throws SQLException;
 }

@@ -44,7 +44,6 @@ public class FillDatabase {
 	private static Domain DOMAIN = null;
 	private static Site SITE = null;
 	private static CorpusDatabase DB = null;
-	private static ConfigManager CNF = null;
 	private static List<String> DATA = new ArrayList<String>();
 	private static ResultSet rs = null;
 	private static final Random random = new Random();
@@ -101,16 +100,15 @@ public class FillDatabase {
 		// access config in non-servlet way
 		Properties prop = new Properties();
 		prop.load(new FileInputStream("conf/gimmi.properties"));
-		FillDatabase.CNF = new ConfigManager(prop);
-		FillDatabase.CNF.validate();
+		ConfigManager.loadProperties(prop);
+		ConfigManager.validate();
 
 		// ### connect to DB
 		FillDatabase.logHeader("Database");
 		FillDatabase.log("Try connecting to database..");
-		FillDatabase.DB = new Database(
-				FillDatabase.CNF.getByKey("database.name"),
-				FillDatabase.CNF.getByKey("database.user"),
-				FillDatabase.CNF.getByKey("database.password"));
+		FillDatabase.DB = new Database(ConfigManager.getByKey("database.name"),
+				ConfigManager.getByKey("database.user"),
+				ConfigManager.getByKey("database.password"));
 
 		// ### query
 		FillDatabase.log("Setting up table objects..");
