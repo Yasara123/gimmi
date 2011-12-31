@@ -15,12 +15,12 @@ public class Domain extends CorpusContent {
 	}
 
 	@Override
-	public void write() throws CorpusDatabaseException, SQLException {
+	public int write() throws CorpusDatabaseException, SQLException {
 		// set current time as timestamp, if not explicitly given
 		if (this.rowData.containsKey("added") == false) {
 			this.rowData.put("added", new Long(
 					System.currentTimeMillis() / 1000));
 		}
-		super.write();
+		return super.write();
 	}
 }

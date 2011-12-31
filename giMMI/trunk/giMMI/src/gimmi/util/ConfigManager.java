@@ -32,8 +32,6 @@ public class ConfigManager {
 		while (e.hasMoreElements()) {
 			String key = e.nextElement();
 			String value = ConfigManager.conf.getProperty(key);
-			Debug.println(ConfigManager.class, "Load config: " + key + " == '"
-					+ value + "'");
 			ConfigManager.config.put(key, value);
 		}
 

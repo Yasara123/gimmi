@@ -19,7 +19,7 @@ public class Site extends CorpusContent {
 	}
 
 	@Override
-	public void write() throws CorpusDatabaseException, SQLException {
-		super.write();
+	public int write() throws CorpusDatabaseException, SQLException {
+		return super.write();
 	}
 }
