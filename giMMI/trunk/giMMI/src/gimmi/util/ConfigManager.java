@@ -1,5 +1,7 @@
 package gimmi.util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,7 @@ public class ConfigManager {
 			"database.password", // password to access the db
 	};
 
-	public ConfigManager(Properties properties) {
+	public static void loadProperties(Properties properties) {
 		ConfigManager.conf = properties;
 
 		// get all settings from the provided properties-file
@@ -30,7 +32,7 @@ public class ConfigManager {
 		while (e.hasMoreElements()) {
 			String key = e.nextElement();
 			String value = ConfigManager.conf.getProperty(key);
-			Debug.println(this.getClass(), "Load config: " + key + " == '"
+			Debug.println(ConfigManager.class, "Load config: " + key + " == '"
 					+ value + "'");
 			ConfigManager.config.put(key, value);
 		}
@@ -41,7 +43,7 @@ public class ConfigManager {
 	/**
 	 * Check, if all needed configuration parameters are set.
 	 */
-	public void validate() throws ConfigManagerException {
+	public static void validate() throws ConfigManagerException {
 		for (String key : ConfigManager.keys) {
 			if (ConfigManager.config.get(key) == null) {
 				throw new ConfigManagerException(
@@ -50,13 +52,51 @@ public class ConfigManager {
 		}
 	}
 
-	public String getByKey(String key) throws ConfigManagerException {
+	public static String getByKey(String key) throws ConfigManagerException {
 		if (ConfigManager.config.containsKey(key) == false) {
 			throw new ConfigManagerException(
 					ConfigManagerException.Error.CONFIGKEY_NOT_FOUND, key);
 		}
 
 		return ConfigManager.config.get(key);
+	}
+
+	public static boolean isInitialized() {
+		return ConfigManager.initialized;
+	}
+
+	public static void tryLoadFallbackConfig() {
+		Properties prop;
+		String path;
+
+		Log.println(ConfigManager.class,
+				"Try to load a configuration from the fallback locations.");
+
+		// local run
+		path = "conf/gimmi.properties";
+		Log.println(ConfigManager.class, "Trying to read from " + path + "");
+		prop = new Properties();
+		try {
+			prop.load(new FileInputStream(path));
+			ConfigManager.loadProperties(prop);
+			Log.println("success!");
+			return;
+		} catch (IOException e) {
+			Log.println("failed!");
+		}
+
+		// web run
+		path = "WEB-INF/classes/gimmi.properties";
+		Log.println(ConfigManager.class, "Trying to read from " + path + "");
+		prop = new Properties();
+		try {
+			prop.load(new FileInputStream(path));
+			ConfigManager.loadProperties(prop);
+			Log.println("success!");
+			return;
+		} catch (IOException e) {
+			Log.println("failed!");
+		}
 	}
 
 	/**
