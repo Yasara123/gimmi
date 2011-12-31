@@ -89,7 +89,7 @@ public abstract class CorpusContent {
 		this.rowData.putAll(data);
 	}
 
-	public void write() throws CorpusDatabaseException, SQLException {
-		this.getTable().save(this.rowData);
+	public int write() throws CorpusDatabaseException, SQLException {
+		return this.getTable().save(this.rowData);
 	}
 }
