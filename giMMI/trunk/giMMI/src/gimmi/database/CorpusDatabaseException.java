@@ -15,7 +15,8 @@ public class CorpusDatabaseException extends Exception {
 	public enum Error implements GimmiExceptionMessage {
 		COLUMN_NOT_FOUND("Database field '%s' does not exist."), //
 		FIELDS_MISSING("Not all required fields (namely: %s) where specified."), //
-		FIELDTYPE_UNKNOWN("The field type you specified is unknown (was '%s').");
+		FIELDTYPE_UNKNOWN("The field type you specified is unknown (was '%s')."), //
+		VALUE_NOT_FOUND("%s could not be found in the database.");
 
 		private String msg;
 

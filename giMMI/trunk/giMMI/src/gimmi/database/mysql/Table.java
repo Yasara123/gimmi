@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +75,7 @@ public class Table implements CorpusDatabaseTable {
 	 * @return ResultSet The rows matching the given condition
 	 * @throws SQLException
 	 */
+	@Override
 	public ResultSet find(String condition) throws SQLException {
 		String query = "SELECT * FROM "
 				+ Table.addBackticks(this.getTableName()) + "" + "WHERE "
@@ -90,6 +92,7 @@ public class Table implements CorpusDatabaseTable {
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
+	@Override
 	public ResultSet find(String field, String value) throws SQLException {
 		String condition = this.getConditionFromFieldValuePair(field, value);
 		return this.find(condition);
@@ -283,6 +286,9 @@ public class Table implements CorpusDatabaseTable {
 		}
 		switch (type) {
 		case INT:
+			if (value.getClass() == Timestamp.class) {
+				return ((Timestamp) value).toString();
+			}
 			return Integer.toString(Integer.parseInt(value.toString()));
 		case TXT:
 			return "'"
