@@ -1,4 +1,4 @@
-package gimmi.testing.standalone;
+package gimmi.example.standalone;
 
 import gimmi.api.Site;
 import gimmi.database.CorpusDatabaseException;
@@ -9,6 +9,12 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/**
+ * Simple example client wich creates a new site in the gimmi corpus database
+ * 
+ * @author Jens Bertram <code@jens-bertram.net>
+ * 
+ */
 public class APIClient {
 
     /**
