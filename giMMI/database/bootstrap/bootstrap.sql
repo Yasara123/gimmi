@@ -11,7 +11,7 @@ INTO TABLE gimmi.country
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 3 LINES
 (country_code, name_en);
 
 -- -------------------------------------
@@ -24,5 +24,5 @@ INTO TABLE gimmi.language
 CHARACTER SET utf8
 FIELDS TERMINATED BY'|'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 3 LINES
 (lang_code, @ignore, @ignore, name_en);
