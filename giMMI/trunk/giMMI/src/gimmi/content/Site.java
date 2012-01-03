@@ -11,22 +11,22 @@ import java.sql.SQLException;
  * 
  */
 public class Site extends CorpusContent {
-    /** The name of the database table */
-    private static final String TABLE_NAME = "sites";
+	/** The name of the database table */
+	private static final String TABLE_NAME = "site";
 
-    public Site(CorpusDatabase db) throws SQLException, CorpusDatabaseException {
-	this.setTable(db.getTable(Site.TABLE_NAME));
-    }
-
-    @Override
-    public int write() throws CorpusDatabaseException, SQLException {
-	// set crawl-time to now, if not specified
-	if (this.rowData.containsKey("crawl_time") == false) {
-	    this.rowData.put("crawl_time", new Long(
-		    System.currentTimeMillis() / 1000));
+	public Site(CorpusDatabase db) throws SQLException, CorpusDatabaseException {
+		this.setTable(db.getTable(Site.TABLE_NAME));
 	}
-	// TODO: generate a real storage path
-	this.rowData.put("storage_path", "/gimmi-storage/");
-	return super.write();
-    }
+
+	@Override
+	public int write() throws CorpusDatabaseException, SQLException {
+		// set crawl-time to now, if not specified
+		if (this.rowData.containsKey("crawl_time") == false) {
+			this.rowData.put("crawl_time", new Long(
+					System.currentTimeMillis() / 1000));
+		}
+		// TODO: generate a real storage path
+		this.rowData.put("storage_path", "/gimmi-storage/");
+		return super.write();
+	}
 }
