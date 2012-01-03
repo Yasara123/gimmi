@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class Domain extends CorpusContent {
 	/** The name of the database table */
-	private static final String TABLE_NAME = "domains";
+	private static final String TABLE_NAME = "domain";
 
 	public Domain(CorpusDatabase db) throws SQLException,
 			CorpusDatabaseException {

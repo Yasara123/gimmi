@@ -8,11 +8,6 @@
     <description>
 	Web based web-corpus backend.
     </description>
-
-    <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>mypackage.Hello</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>TestLogger</servlet-name>
         <servlet-class>gimmi.testing.servlet.TestLogging</servlet-class>
@@ -21,11 +16,6 @@
         <servlet-name>TestDatabaseConnection</servlet-name>
         <servlet-class>gimmi.testing.servlet.TestDatabaseConnection</servlet-class>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestLogger</servlet-name>
         <url-pattern>/log</url-pattern>
