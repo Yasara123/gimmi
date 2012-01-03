@@ -1,0 +1,8 @@
+# author: Jens Bertram <code@jens-bertram.net>
+# tag_id; tag_type_id; name_en; name_de
+1;2;example;Beispiel
+2;2;test;Test
+3;2;re-crawl;neu Crawlen
+4;1;complete analyzed;vollständig Analysiert
+5;1;advertisement;Werbung
+6;1;incomplete;Unvollständig
