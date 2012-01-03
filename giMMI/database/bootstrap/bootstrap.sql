@@ -6,23 +6,23 @@ SET collation_server=utf8_bin;
 -- -------------------------------------
 DELETE FROM gimmi.country;
 
-LOAD DATA LOCAL INFILE 'ISO3166-1_alpha-2.csv' REPLACE
+LOAD DATA LOCAL INFILE 'countries.csv' REPLACE
 INTO TABLE gimmi.country
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 3 LINES
-(country_code, name_en);
+IGNORE 5 LINES
+(country_id, country_code, tld, name_en, name_de);
 
 -- -------------------------------------
 -- LANGUAGE CODES
 -- -------------------------------------
 DELETE FROM gimmi.language;
 
-LOAD DATA LOCAL INFILE 'ISO639-alpha-3.csv' REPLACE
+LOAD DATA LOCAL INFILE 'languages.csv' REPLACE
 INTO TABLE gimmi.language
 CHARACTER SET utf8
-FIELDS TERMINATED BY'|'
+FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 3 LINES
-(lang_code, @ignore, @ignore, name_en);
+IGNORE 5 LINES
+(language_id, lang_code, name_en, name_de);
