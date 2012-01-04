@@ -30,13 +30,6 @@ public class CorpusDatabaseException extends Exception {
 		}
 	}
 
-	// public static final String ERR_COLUMN_NOT_FOUND =
-	// "Database field '%s' does not exist.";
-	// public static final String ERR_FIELDS_MISSING =
-	// "Not all required fields (namely: %s) where specified.";
-	// public static final String ERR_FIELDTYPE_UNKNOWN =
-	// "The field type you specified is unknown (was '%s').";
-
 	String message;
 
 	/**
