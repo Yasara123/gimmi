@@ -29,7 +29,7 @@ public class Site {
      * @throws SQLException
      */
     public Site() throws SQLException, ConfigManagerException {
-	Site.DB = gimmi.database.Database.getDatabase();
+	Site.DB = gimmi.database.Database.getInstance();
     }
 
     /**
