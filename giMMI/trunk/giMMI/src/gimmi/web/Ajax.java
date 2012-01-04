@@ -1,7 +1,8 @@
 package gimmi.web;
 
+import gimmi.content.Category;
+import gimmi.content.Country;
 import gimmi.content.Language;
-import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.Database;
 import gimmi.util.ConfigManagerException;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 
 interface Command {
 	void run();
@@ -31,8 +32,7 @@ public class Ajax implements RequestHandler {
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 
-	// just for debugging
-	private String tmpMsg = "noAction";
+	private String responseJSON;
 
 	public Ajax(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType(Ajax.MIME_TYPE);
@@ -43,9 +43,12 @@ public class Ajax implements RequestHandler {
 	@Override
 	public HttpServletResponse getResponse() throws IOException {
 		PrintWriter writer = this.response.getWriter();
-		JSONObject jObj = new JSONObject();
-		jObj.put("DBG", this.tmpMsg);
-		writer.write(jObj.toJSONString());
+		if (this.responseJSON != null) {
+			writer.write(this.responseJSON);
+		} else {
+			// TODO: do something useful here!
+			writer.write("UH! Got me..");
+		}
 		return null;
 	}
 
@@ -62,13 +65,23 @@ public class Ajax implements RequestHandler {
 		if (target == null) {
 			return;
 		}
+
+		JSONArray jArray = new JSONArray();
 		switch (target) {
 		case gimmi.content.Language.TABLE_NAME:
-			CorpusDatabase db = Database.getDatabase();
-			Language language = new Language(db);
-
-			language.getAllLanguages("name_de", true);
-			this.tmpMsg = "TABBLL!";
+			Language language = new Language(Database.getInstance());
+			jArray.addAll(language.getAllEntries("name_de", true));
+			this.responseJSON = jArray.toJSONString();
+			break;
+		case gimmi.content.Country.TABLE_NAME:
+			Country country = new Country(Database.getInstance());
+			jArray.addAll(country.getAllEntries("name_de", true));
+			this.responseJSON = jArray.toJSONString();
+			break;
+		case gimmi.content.Category.TABLE_NAME:
+			Category category = new Category(Database.getInstance());
+			jArray.addAll(category.getAllEntries("name_de", true));
+			this.responseJSON = jArray.toJSONString();
 			break;
 		}
 	}

@@ -72,7 +72,8 @@ public class ConfigManager {
 
 		// local run
 		path = "conf/gimmi.properties";
-		Log.println(ConfigManager.class, "Trying to read from " + path + "");
+		Log.println(ConfigManager.class, "Trying to read from " + path
+				+ " (standalone)");
 		prop = new Properties();
 		try {
 			prop.load(new FileInputStream(path));
@@ -84,11 +85,12 @@ public class ConfigManager {
 		}
 
 		// web run
-		path = "WEB-INF/classes/gimmi.properties";
-		Log.println(ConfigManager.class, "Trying to read from " + path + "");
+		path = "/gimmi.properties";
+		Log.println(ConfigManager.class, "Trying to read from " + path
+				+ " (online)");
 		prop = new Properties();
 		try {
-			prop.load(new FileInputStream(path));
+			prop.load(ConfigManager.class.getResourceAsStream(path));
 			ConfigManager.loadProperties(prop);
 			Log.println("success!");
 			return;

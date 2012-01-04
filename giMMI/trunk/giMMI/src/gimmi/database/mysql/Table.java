@@ -320,6 +320,7 @@ public class Table implements CorpusDatabaseTable {
 	 * 
 	 * @return String
 	 */
+	@Override
 	public String getTableName() {
 		return this.tableName;
 	}
@@ -475,12 +476,10 @@ public class Table implements CorpusDatabaseTable {
 				Table.addBackticks(this.getTableName()),//
 				Table.addBackticks(table2.getTableName()),//
 				Table.addBackticks(this.getTableName()) + "."
-						+ Table.addBackticks(field1)
+						+ Table.addBackticks(field1) + "="
 						+ Table.addBackticks(table2.getTableName()) + "."
 						+ Table.addBackticks(field2));
 		Statement statement = this.connection.createStatement();
-		ResultSet rs = statement.executeQuery(query);
-		rs.next();
-		return null;
+		return statement.executeQuery(query);
 	}
 }

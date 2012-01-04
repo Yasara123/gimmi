@@ -5,13 +5,15 @@ import gimmi.database.CorpusDatabaseException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class Country extends CorpusContent {
 	/** The name of the database table */
-	private static final String TABLE_NAME = "country";
+	public static final String TABLE_NAME = "country";
 
 	public Country(CorpusDatabase db) throws SQLException,
 			CorpusDatabaseException {
+		this.database = db;
 		this.setTable(db.getTable(Country.TABLE_NAME));
 	}
 
@@ -41,5 +43,13 @@ public class Country extends CorpusContent {
 		throw new CorpusDatabaseException(
 				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
 				"The country-code you specified");
+	}
+
+	@Override
+	public List<String> getAllEntries(String translation, boolean usedOnly)
+			throws SQLException, CorpusDatabaseException {
+		return this.simpleJoin(this.getTable(),
+				new Site(this.database).getTable(), "country_id", "country_id",
+				translation, usedOnly);
 	}
 }

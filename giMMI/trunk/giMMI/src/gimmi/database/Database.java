@@ -26,7 +26,7 @@ public class Database {
 	return Database.database;
     }
 
-    static public CorpusDatabase getDatabase() throws SQLException,
+    static public CorpusDatabase getInstance() throws SQLException,
 	    ConfigManagerException {
 	return (Database.database == null) ? Database.initDatabase()
 		: Database.database;

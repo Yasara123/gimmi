@@ -6,21 +6,14 @@ import gimmi.database.CorpusDatabaseException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TagType extends CorpusContent {
-	public static final String TABLE_NAME = "tagType";
+public class SiteHasCategory extends CorpusContent {
+	/** The name of the database table */
+	public static final String TABLE_NAME = "site_has_category";
 
-	/**
-	 * Constructor
-	 * 
-	 * @param db
-	 *            The database object to work with
-	 * @throws SQLException
-	 * @throws CorpusDatabaseException
-	 */
-	public TagType(CorpusDatabase db) throws SQLException,
+	public SiteHasCategory(CorpusDatabase db) throws SQLException,
 			CorpusDatabaseException {
 		this.database = db;
-		this.setTable(db.getTable(TagType.TABLE_NAME));
+		this.setTable(db.getTable(SiteHasCategory.TABLE_NAME));
 	}
 
 	@Override
@@ -29,4 +22,5 @@ public class TagType extends CorpusContent {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
