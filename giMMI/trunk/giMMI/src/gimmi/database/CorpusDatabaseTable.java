@@ -78,6 +78,21 @@ public interface CorpusDatabaseTable {
 	 *            The value the given field should have
 	 * @return
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
-	public ResultSet find(String field, String value) throws SQLException;
+	public ResultSet find(String field, String value) throws SQLException,
+			CorpusDatabaseException;
+
+	/**
+	 * 
+	 * @param table2
+	 * @param field1
+	 * @param field2
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet join(CorpusDatabaseTable table2, String field1,
+			String field2) throws SQLException;
+
+	public String getTableName();
 }

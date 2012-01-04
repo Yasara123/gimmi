@@ -91,9 +91,11 @@ public class Table implements CorpusDatabaseTable {
 	 * @param value
 	 * @return ResultSet
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
 	@Override
-	public ResultSet find(String field, String value) throws SQLException {
+	public ResultSet find(String field, String value) throws SQLException,
+			CorpusDatabaseException {
 		String condition = this.getConditionFromFieldValuePair(field, value);
 		return this.find(condition);
 	}
@@ -224,9 +226,10 @@ public class Table implements CorpusDatabaseTable {
 	 * @param values
 	 * @return int
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
 	public int update(String field, String value, HashMap<String, String> values)
-			throws SQLException {
+			throws SQLException, CorpusDatabaseException {
 		return this.update(this.getConditionFromFieldValuePair(field, value),
 				values);
 	}
@@ -246,12 +249,14 @@ public class Table implements CorpusDatabaseTable {
 	 * @param field
 	 * @param value
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
 	protected String getConditionFromFieldValuePair(String field, String value)
-			throws SQLException {
+			throws CorpusDatabaseException {
 		Column column;
 		if ((column = this.columns.get(field)) == null) {
-			throw new SQLException("Feld " + field + " nicht vorhanden!");
+			throw new CorpusDatabaseException(
+					CorpusDatabaseException.Error.COLUMN_NOT_FOUND, field);
 		}
 		if (value == null) {
 			return Table.addBackticks(field) + " IS NULL";
@@ -305,7 +310,7 @@ public class Table implements CorpusDatabaseTable {
 	 * @param name
 	 * @return
 	 */
-	protected Table setTableName(String name) {
+	private Table setTableName(String name) {
 		this.tableName = name;
 		return this;
 	}
@@ -402,6 +407,8 @@ public class Table implements CorpusDatabaseTable {
 	/**
 	 * Roughly guess the size of a column by it's description
 	 * 
+	 * TODO: is this needed?
+	 * 
 	 * @param type
 	 *            The description string of a table column
 	 * @return The size of the column or -1 if the size couldn't be estimated
@@ -458,5 +465,22 @@ public class Table implements CorpusDatabaseTable {
 	@Override
 	public HashMap<String, Column> getColumns() {
 		return this.columns;
+	}
+
+	@Override
+	public ResultSet join(CorpusDatabaseTable table2, String field1,
+			String field2) throws SQLException {
+		String query = String.format(
+				"SELECT * FROM %s INNER JOIN %s ON %s",
+				Table.addBackticks(this.getTableName()),//
+				Table.addBackticks(table2.getTableName()),//
+				Table.addBackticks(this.getTableName()) + "."
+						+ Table.addBackticks(field1)
+						+ Table.addBackticks(table2.getTableName()) + "."
+						+ Table.addBackticks(field2));
+		Statement statement = this.connection.createStatement();
+		ResultSet rs = statement.executeQuery(query);
+		rs.next();
+		return null;
 	}
 }

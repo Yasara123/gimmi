@@ -50,7 +50,7 @@
 		<javac destdir="${build.dir}/WEB-INF/classes" includeantruntime="false">			
 			<classpath refid="classpath"/>
 			<src path="${src.dir}"/>
-			<exclude name="gimmi/testing/**"/>
+			<exclude name="gimmi/example/**"/>
 		</javac>
 	</target>	
 	
