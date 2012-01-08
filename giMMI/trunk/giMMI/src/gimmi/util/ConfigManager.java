@@ -17,10 +17,7 @@ public class ConfigManager {
 	private static final String[] keys = new String[] {/*
 	*/
 			// database
-			"database.name", // username used for db access
-			"database.password", // password for the given db user
-			"database.password", // password to access the db
-	};
+			"database.name", "database.user", "database.password" };
 
 	public static void loadProperties(Properties properties) {
 		ConfigManager.conf = properties;
