@@ -1,6 +1,5 @@
 package gimmi.util;
 
-
 public class Debug {
 	public static boolean debug = true;
 	private static final String PREFIX = "DBG: ";

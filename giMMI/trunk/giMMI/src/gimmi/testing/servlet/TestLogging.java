@@ -10,26 +10,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class TestLogging extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private ServletContext context;
+	private ServletContext context;
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-	    throws IOException, ServletException {
-	response.setContentType("text/html");
-	PrintWriter writer = response.getWriter();
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		response.setContentType("text/html");
+		PrintWriter writer = response.getWriter();
 
-	this.context = this.getServletContext();
-	this.context.log("Test LOG entry");
+		this.context = this.getServletContext();
+		this.context.log("Test LOG entry");
 
-	writer.println("<html>");
-	writer.println("<head>");
-	writer.println("<title>test</title>");
-	writer.println("</head>");
-	writer.println("<body bgcolor=white>");
-	writer.println("Log entry has been written!");
-	writer.println("</body>");
-	writer.println("</html>");
-    }
+		writer.println("<html>");
+		writer.println("<head>");
+		writer.println("<title>test</title>");
+		writer.println("</head>");
+		writer.println("<body bgcolor=white>");
+		writer.println("Log entry has been written!");
+		writer.println("</body>");
+		writer.println("</html>");
+	}
 }

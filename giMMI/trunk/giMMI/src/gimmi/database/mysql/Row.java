@@ -35,7 +35,7 @@ public class Row implements Iterator<String[]> {
 	 * @throws SQLException
 	 */
 	public void addCols(String[] columns, String[] values) throws SQLException {
-		
+
 		int index = getNextIndex();
 		if (columns.length != values.length) {
 			throw new SQLException(
@@ -77,8 +77,7 @@ public class Row implements Iterator<String[]> {
 			String[] row = { cols.get(pointer), vals.get(pointer) };
 			pointer++;
 			return row;
-		}
-		else {
+		} else {
 			pointer++;
 			return null;
 		}
@@ -86,6 +85,6 @@ public class Row implements Iterator<String[]> {
 
 	@Override
 	public void remove() {
-		
+
 	}
 }
