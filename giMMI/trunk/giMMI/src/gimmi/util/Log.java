@@ -1,6 +1,5 @@
 package gimmi.util;
 
-
 import javax.servlet.ServletContext;
 
 public class Log {
