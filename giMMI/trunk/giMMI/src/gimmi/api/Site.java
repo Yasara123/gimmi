@@ -32,6 +32,26 @@ public class Site {
 		Site.DB = gimmi.database.Database.getInstance();
 	}
 
+	public Site(String url, String langCode, String countryCode,
+			String rootFile, String title) {
+		Site.DB = gimmi.database.Database.getInstance();
+
+		setTitle(title);
+		setURL(new URL(url));
+		setTimestamp(new Timestamp(new Long(
+				System.currentTimeMillis() / 1000)));
+		setLanguageCode(langCode);
+		setCountryCode(countryCode);
+		setRootFile(rootFile);
+		// write the site to the database
+		try {
+			write();
+		} catch (CorpusDatabaseException e) {
+			// seems we missed a property
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Set the URL property for this site
 	 * 
