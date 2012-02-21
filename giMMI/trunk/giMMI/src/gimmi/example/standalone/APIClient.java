@@ -40,11 +40,11 @@ public class APIClient {
 		site.setCountryCode("de");
 		site.setRootFile("index.html");
 		// write the site to the database
-		try {
-			site.write();
-		} catch (CorpusDatabaseException e) {
-			// seems we missed a property
-			e.printStackTrace();
-		}
+//		try {
+//			site.write();
+//		} catch (CorpusDatabaseException e) {
+//			// seems we missed a property
+//			e.printStackTrace();
+//		}
 	}
 }
