@@ -3,6 +3,7 @@ package gimmi.content;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -16,17 +17,18 @@ public class Category extends CorpusContent {
 		this.setTable(db.getTable(Category.TABLE_NAME));
 	}
 
-	/**
-	 * 
-	 * @param translation
-	 *            The translation of the category name. This must match the
-	 *            corresponding table column name
-	 * @param usedOnly
-	 *            Get only categories that are actually used by any site entry
-	 * @return A string-list with all categories found
-	 * @throws CorpusDatabaseException
-	 * @throws SQLException
-	 */
+	public Integer getNameById(Integer id) throws SQLException,
+			CorpusDatabaseException, IllegalArgumentException {
+		ResultSet categoryRS = this.getTable().find("category_id",
+				id.toString());
+		if (categoryRS.next()) {
+			return categoryRS.getInt("category_id");
+		}
+		throw new CorpusDatabaseException(
+				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
+				"The language-code you specified could not be found");
+	}
+
 	@Override
 	public List<String> getAllEntries(String translation, boolean usedOnly)
 			throws SQLException, CorpusDatabaseException {

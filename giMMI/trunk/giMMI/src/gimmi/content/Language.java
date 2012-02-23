@@ -39,7 +39,7 @@ public class Language extends CorpusContent {
 		}
 		throw new CorpusDatabaseException(
 				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
-				"The language-code you specified");
+				"The language-code you specified could not be found");
 	}
 
 	@Override
