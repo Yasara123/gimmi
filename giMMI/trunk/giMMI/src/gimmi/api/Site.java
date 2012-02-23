@@ -7,6 +7,7 @@ import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.util.ConfigManagerException;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,19 +34,21 @@ public class Site {
 	}
 
 	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title) {
+			String rootFile, String title) throws SQLException,
+			ConfigManagerException, MalformedURLException,
+			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
 
-		setTitle(title);
-		setURL(new URL(url));
-		setTimestamp(new Timestamp(new Long(
+		this.setTitle(title);
+		this.setURL(new URL(url));
+		this.setTimestamp(new Timestamp(new Long(
 				System.currentTimeMillis() / 1000)));
-		setLanguageCode(langCode);
-		setCountryCode(countryCode);
-		setRootFile(rootFile);
+		this.setLanguageCode(langCode);
+		this.setCountryCode(countryCode);
+		this.setRootFile(rootFile);
 		// write the site to the database
 		try {
-			write();
+			this.write();
 		} catch (CorpusDatabaseException e) {
 			// seems we missed a property
 			e.printStackTrace();
