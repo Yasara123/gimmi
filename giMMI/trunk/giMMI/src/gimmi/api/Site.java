@@ -1,5 +1,6 @@
 package gimmi.api;
 
+import gimmi.content.Category;
 import gimmi.content.Country;
 import gimmi.content.Domain;
 import gimmi.content.Language;
@@ -33,9 +34,29 @@ public class Site {
 		Site.DB = gimmi.database.Database.getInstance();
 	}
 
+	/**
+	 * Constructor creating a new site entry in one step.
+	 * 
+	 * @param url
+	 *            The URL object for this site
+	 * @param langCode
+	 *            The three-letter language code as specified by ISO639-alpha-3
+	 * @param countryCode
+	 *            The two-letter language code as specified by ISO3166-1-alpha-2
+	 * @param rootFile
+	 *            Root document for this site snapshot
+	 * @param title
+	 *            The title for this site
+	 * @param category
+	 *            The sites category
+	 * @throws SQLException
+	 * @throws ConfigManagerException
+	 * @throws MalformedURLException
+	 * @throws CorpusDatabaseException
+	 */
 	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title) throws SQLException,
-			ConfigManagerException, MalformedURLException,
+			String rootFile, String title, Integer category)
+			throws SQLException, ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
 
@@ -46,6 +67,7 @@ public class Site {
 		this.setLanguageCode(langCode);
 		this.setCountryCode(countryCode);
 		this.setRootFile(rootFile);
+		this.setCategory(category);
 		// write the site to the database
 		try {
 			this.write();
@@ -159,6 +181,24 @@ public class Site {
 		} else {
 			throw new IllegalArgumentException(
 					"The site-title you specified seems to be empty.");
+		}
+	}
+
+	/**
+	 * Set the category id for this site
+	 * 
+	 * @param category
+	 *            The id of the category for this site
+	 * @throws CorpusDatabaseException
+	 * @throws SQLException
+	 */
+	public void setCategory(Integer categoryId)
+			throws IllegalArgumentException, SQLException,
+			CorpusDatabaseException {
+		Category category = new Category(Site.DB);
+		Integer cCode = category.getNameById(categoryId);
+		if (cCode != null) {
+			this.properties.put("country_id", cCode);
 		}
 	}
 
