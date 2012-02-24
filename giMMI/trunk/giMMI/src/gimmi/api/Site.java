@@ -62,13 +62,15 @@ public class Site {
 	 *            The title for this site
 	 * @param category
 	 *            The sites category
+	 * @param storage
+	 *            The relative storage path in the corpus
 	 * @throws SQLException
 	 * @throws ConfigManagerException
 	 * @throws MalformedURLException
 	 * @throws CorpusDatabaseException
 	 */
 	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title, Number category)
+			String rootFile, String title, Number category, String storage)
 			throws SQLException, ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
@@ -82,6 +84,7 @@ public class Site {
 		this.setCountryCode(countryCode);
 		this.setRootFile(rootFile);
 		this.setCategory(category);
+		this.setStoragePath(storage);
 
 		// write the site to the database
 		try {
@@ -258,6 +261,26 @@ public class Site {
 	 */
 	public Number getNewSiteId() {
 		return this.newSiteId;
+	}
+
+	/**
+	 * Set the relative path portion (relative to the corpus store-root) for the
+	 * current site. Path must be noted in POSIX (forward slashes!) style.
+	 * 
+	 * TODO: check path for invalid chars
+	 * 
+	 * @param path
+	 *            The relative path portion. Leading and trailing slashes will
+	 *            be added if missing. Path is unchecked!
+	 */
+	public void setStoragePath(String path) {
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		if (!path.endsWith("/")) {
+			path = path + "/";
+		}
+		this.properties.put("storage_path", path);
 	}
 
 	/**
