@@ -109,20 +109,24 @@ public abstract class CorpusContent {
 
 	protected List<String> simpleJoin(CorpusDatabaseTable tLeft,
 			CorpusDatabaseTable tRight, String joinLeft, String joinRight,
-			String translation, boolean usedOnly) throws SQLException,
-			CorpusDatabaseException {
+			String translation) throws SQLException, CorpusDatabaseException {
 		if (this.getTable().getColumns().keySet().contains(translation) == false) {
 			return null;
 		}
 
 		ArrayList<String> results = new ArrayList<String>();
-		if (usedOnly == true) {
-			ResultSet rs = tLeft.join(tRight, joinLeft, joinRight);
-			while (rs.next()) {
-				results.add(rs.getString(translation));
-			}
-		} else {
+		ResultSet rs = tLeft.join(tRight, joinLeft, joinRight);
+		while (rs.next()) {
+			results.add(rs.getString(translation));
+		}
+		return results;
+	}
 
+	protected List<String> resultsetToStringList(ResultSet rs)
+			throws SQLException {
+		ArrayList<String> results = new ArrayList<String>();
+		while (rs.next()) {
+			results.add(rs.getString(1));
 		}
 		return results;
 	}
