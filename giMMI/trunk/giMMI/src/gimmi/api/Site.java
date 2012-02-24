@@ -1,19 +1,25 @@
 package gimmi.api;
 
 import gimmi.content.Category;
+import gimmi.content.CorpusContent;
 import gimmi.content.Country;
 import gimmi.content.Domain;
 import gimmi.content.Language;
+import gimmi.content.SiteHasCategory;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
+import gimmi.database.MultilanguageContent;
 import gimmi.util.ConfigManagerException;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -21,9 +27,10 @@ import java.util.HashMap;
  * 
  */
 public class Site {
-	private final HashMap<String, Object> properties = new HashMap<String, Object>();
-	private String siteCategory;
-	private Integer siteCategoryId;
+	private final Map<String, Object> properties = new HashMap<String, Object>();
+	private final List<CorpusContent> preWrite = new ArrayList<CorpusContent>();
+	private final List<CorpusContent> postWrite = new ArrayList<CorpusContent>();
+	private Number siteCategoryId;
 	private static CorpusDatabase DB;
 
 	/**
@@ -34,53 +41,54 @@ public class Site {
 	 */
 	public Site() throws SQLException, ConfigManagerException {
 		Site.DB = gimmi.database.Database.getInstance();
-		this.setTimestamp(new Timestamp(new Long(
-				System.currentTimeMillis() / 1000)));
+		this.setTimestamp(new Timestamp(Calendar.getInstance().getTime()
+				.getTime()));
 	}
 
-	/**
-	 * Constructor creating a new site entry in one step.
-	 * 
-	 * @param url
-	 *            The URL object for this site
-	 * @param langCode
-	 *            The three-letter language code as specified by ISO639-alpha-3
-	 * @param countryCode
-	 *            The two-letter language code as specified by ISO3166-1-alpha-2
-	 * @param rootFile
-	 *            Root document for this site snapshot
-	 * @param title
-	 *            The title for this site
-	 * @param category
-	 *            The sites category
-	 * @throws SQLException
-	 * @throws ConfigManagerException
-	 * @throws MalformedURLException
-	 * @throws CorpusDatabaseException
-	 */
-	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title, Integer category)
-			throws SQLException, ConfigManagerException, MalformedURLException,
-			CorpusDatabaseException {
-		Site.DB = gimmi.database.Database.getInstance();
-
-		this.setTitle(title);
-		this.setURL(new URL(url));
-		this.setTimestamp(new Timestamp(new Long(
-				System.currentTimeMillis() / 1000)));
-		this.setLanguageCode(langCode);
-		this.setCountryCode(countryCode);
-		this.setRootFile(rootFile);
-		this.setCategory(category);
-		// write the site to the database
-		try {
-			this.write();
-		} catch (CorpusDatabaseException e) {
-			// plain die
-			// seems we missed a property
-			e.printStackTrace();
-		}
-	}
+	// /**
+	// * Constructor creating a new site entry in one step.
+	// *
+	// * @param url
+	// * The URL object for this site
+	// * @param langCode
+	// * The three-letter language code as specified by ISO639-alpha-3
+	// * @param countryCode
+	// * The two-letter language code as specified by ISO3166-1-alpha-2
+	// * @param rootFile
+	// * Root document for this site snapshot
+	// * @param title
+	// * The title for this site
+	// * @param category
+	// * The sites category
+	// * @throws SQLException
+	// * @throws ConfigManagerException
+	// * @throws MalformedURLException
+	// * @throws CorpusDatabaseException
+	// */
+	// public Site(String url, String langCode, String countryCode,
+	// String rootFile, String title, Integer category)
+	// throws SQLException, ConfigManagerException, MalformedURLException,
+	// CorpusDatabaseException {
+	// Site.DB = gimmi.database.Database.getInstance();
+	//
+	// this.setTitle(title);
+	// this.setURL(new URL(url));
+	// this.setTimestamp(new Timestamp(new
+	// Timestamp(Calendar.getInstance().getTime()
+	// .getTime())));
+	// this.setLanguageCode(langCode);
+	// this.setCountryCode(countryCode);
+	// this.setRootFile(rootFile);
+	// this.setCategory(category);
+	// // write the site to the database
+	// try {
+	// this.write();
+	// } catch (CorpusDatabaseException e) {
+	// // plain die
+	// // seems we missed a property
+	// e.printStackTrace();
+	// }
+	// }
 
 	/**
 	 * Set the URL property for this site
@@ -100,7 +108,8 @@ public class Site {
 			domainId = domainRS.getInt("domain_id");
 		} else {
 			domain.setProperty("url", url.getHost());
-			domainId = domain.write();
+			// update on write
+			this.preWrite.add(domain);
 		}
 		this.properties.put("domain_id", domainId);
 	}
@@ -203,11 +212,11 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public void setCategory(Integer categoryId)
-			throws IllegalArgumentException, SQLException,
-			CorpusDatabaseException {
+	public void setCategory(Number categoryId) throws IllegalArgumentException,
+			SQLException, CorpusDatabaseException {
 		if (new Category(Site.DB).hasId(categoryId)) {
 			this.siteCategoryId = categoryId;
+			this.postWrite.add(new SiteHasCategory(Site.DB));
 		} else {
 			throw new IllegalArgumentException(
 					"The category-id you specified could not be found.");
@@ -219,33 +228,65 @@ public class Site {
 	 * 
 	 * @param category
 	 *            The category for this site as string
+	 * @param language
+	 *            Which language should be used when setting the category name.
+	 *            Currently only (de,en) are supported
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public void setCategory(String categoryName)
+	public void setCategory(MultilanguageContent categoryName)
 			throws IllegalArgumentException, SQLException,
 			CorpusDatabaseException {
 		Category category = new Category(Site.DB);
-		Integer cCode = category.getIdByName(categoryName);
+		Number cCode = category.getIdByName(categoryName);
 		if (cCode != null) {
 			this.siteCategoryId = cCode;
 		} else {
-			this.siteCategory = categoryName;
+			category.create(categoryName);
+			this.preWrite.add(category);
+			this.postWrite.add(new SiteHasCategory(Site.DB));
 		}
 	}
 
 	/**
 	 * Commits the new site object to the database
 	 * 
+	 * TODO: There is no rollback if write as whole fails. Needs transaction
+	 * handling!
+	 * 
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 * @throws ConfigManagerException
 	 */
-	public void write() throws SQLException, CorpusDatabaseException,
+	public Number write() throws SQLException, CorpusDatabaseException,
 			ConfigManagerException {
+		Integer returnCode;
+
+		// write content that should be written beforehand
+		for (CorpusContent content : this.preWrite) {
+			if (content.getClass().equals(Domain.class)) {
+				this.properties.put("domain_id", content.write());
+			} else if (content.getClass().equals(Category.class)) {
+				this.siteCategoryId = content.write();
+			} else {
+				content.write();
+			}
+		}
 		// use the underlying content object to write
 		gimmi.content.Site site = new gimmi.content.Site(Site.DB);
 		site.setProperties(this.properties);
-		site.write();
+		returnCode = site.write();
+		// write content that should be written afterwards
+		for (CorpusContent content : this.postWrite) {
+			if (content.getClass().equals(SiteHasCategory.class)) {
+				content.setProperty("site_id", returnCode);
+				content.setProperty("category_id", this.siteCategoryId);
+				content.write();
+			} else {
+				content.write();
+			}
+		}
+
+		return returnCode;
 	}
 }

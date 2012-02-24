@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * General abstract class for corpus content tables
@@ -94,7 +95,7 @@ public abstract class CorpusContent {
 	 * @throws CorpusDatabaseException
 	 *             Thrown if a property does not exist in the database
 	 */
-	public void setProperties(HashMap<String, Object> data)
+	public void setProperties(Map<String, Object> data)
 			throws CorpusDatabaseException {
 		// check if fields are valid
 		for (String name : data.keySet()) {
@@ -115,7 +116,7 @@ public abstract class CorpusContent {
 		}
 
 		ArrayList<String> results = new ArrayList<String>();
-		ResultSet rs = tLeft.join(tRight, joinLeft, joinRight);
+		ResultSet rs = tLeft.join(joinLeft, tRight, joinRight);
 		while (rs.next()) {
 			results.add(rs.getString(translation));
 		}

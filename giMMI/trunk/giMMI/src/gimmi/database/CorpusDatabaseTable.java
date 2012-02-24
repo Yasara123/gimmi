@@ -84,15 +84,50 @@ public interface CorpusDatabaseTable {
 			CorpusDatabaseException;
 
 	/**
+	 * First table is the current one.
 	 * 
-	 * @param table2
 	 * @param field1
+	 * @param table2
 	 * @param field2
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet join(CorpusDatabaseTable table2, String field1,
+	public ResultSet join(String field1, CorpusDatabaseTable table2,
 			String field2) throws SQLException;
 
-	public String getTableName();
+	public ResultSet join(CorpusDatabaseTable table1, String field1,
+			CorpusDatabaseTable table2, String field2) throws SQLException;
+
+	/**
+	 * 
+	 * @param table2
+	 * @param field1
+	 * @param field2
+	 * @param condition
+	 *            The condition used as WHERE clause in the SQL statement. This
+	 *            string will be used as is without any quoting!
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet joinWithCondition(CorpusDatabaseTable table1,
+			String field1, CorpusDatabaseTable table2, String field2,
+			String condition) throws SQLException;
+
+	/**
+	 * Join with additional WHERE condition. First table is the current one.
+	 * 
+	 * @param table2
+	 * @param field1
+	 * @param field2
+	 * @param condition
+	 *            The condition used as WHERE clause in the SQL statement. This
+	 *            string will be used as is without any quoting!
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet joinWithCondition(String field1,
+			CorpusDatabaseTable table2, String field2, String condition)
+			throws SQLException;
+
+	public String getName();
 }

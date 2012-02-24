@@ -37,9 +37,21 @@ public class Language extends CorpusContent {
 		if (languageRS.next()) {
 			return languageRS.getInt("language_id");
 		}
-		throw new CorpusDatabaseException(
-				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
-				"The language-code you specified could not be found");
+		return null;
+	}
+
+	public String getCodeById(Number id) throws CorpusDatabaseException,
+			SQLException {
+		if (id.intValue() < 0) {
+			throw new IllegalArgumentException(
+					"You should only pass in positive values.");
+		}
+		ResultSet languageRS = this.getTable().find("language_id",
+				id.toString());
+		if (languageRS.next()) {
+			return languageRS.getString("lang_code");
+		}
+		return null;
 	}
 
 	@Override

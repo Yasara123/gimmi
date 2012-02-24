@@ -1,15 +1,22 @@
 package gimmi.testing.api;
 
 import gimmi.api.Site;
+import gimmi.content.Category;
 import gimmi.content.Country;
 import gimmi.content.Language;
+import gimmi.content.SiteHasCategory;
 import gimmi.database.CorpusDatabase;
+import gimmi.database.MultilanguageContent;
 import gimmi.testing.Testing;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Static test for the Site api
@@ -21,11 +28,10 @@ public class SiteTest extends Testing {
 	private static CorpusDatabase db = null;
 	private static Site site = null;
 	// store settings for final comparison
-	private static final HashMap<String, Object> properties = new HashMap<String, Object>();
+	private static final Map<String, Object> properties = new HashMap<String, Object>();
 
 	private static void testTimestamp() {
-		Timestamp ts = new Timestamp(
-				new Long(System.currentTimeMillis() / 1000));
+		Timestamp ts = new Timestamp(Calendar.getInstance().getTime().getTime());
 		Testing.so("Setting timestamp: " + ts.toString(), Format.STEP);
 		try {
 			SiteTest.site.setTimestamp(ts);
@@ -37,7 +43,7 @@ public class SiteTest extends Testing {
 
 	private static void testTitle() {
 		String title = Testing.randomString(35);
-		Testing.so("Setting root-file: " + title, Format.STEP);
+		Testing.so("Setting title: " + title, Format.STEP);
 		try {
 			SiteTest.site.setTitle(title);
 			SiteTest.properties.put("title", title);
@@ -58,11 +64,15 @@ public class SiteTest extends Testing {
 	}
 
 	private static void testCategory() {
-		String category = Testing.randomString(15);
-		Testing.so("Setting category: " + category, Format.STEP);
+		MultilanguageContent mCategory = new MultilanguageContent();
+		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
+				.values()) {
+			mCategory.setLangString(lang, Testing.randomString(15));
+		}
+		Testing.so("Setting category: " + mCategory, Format.STEP);
 		try {
-			SiteTest.site.setCategory(category);
-			SiteTest.properties.put("category", category);
+			SiteTest.site.setCategory(mCategory);
+			SiteTest.properties.put("category", mCategory.toString());
 		} catch (Exception e) {
 			Testing.err(e);
 		}
@@ -169,12 +179,70 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static final boolean checkTest() {
-		for (String setting : SiteTest.properties.keySet()) {
-			System.out
-					.printf("%-15s: set['%-40s'] get['%-40s'] = %s\n", setting,
-							SiteTest.properties.get(setting), "none yet", "ok");
+	private static final boolean checkTest(Number siteId) {
+		final Map<String, Object> dbData = new HashMap<String, Object>();
+		System.out.println("Site id is " + siteId);
 
+		try {
+			gimmi.content.Site newSite = new gimmi.content.Site(SiteTest.db);
+			ResultSet newSiteRS = newSite.getTable().find("site_id",
+					siteId.toString());
+			if (newSiteRS.next()) {
+				// simple types
+				dbData.put("timestamp", newSiteRS.getString("crawl_time"));
+				dbData.put("time", newSiteRS.getString("crawl_time"));
+				dbData.put("url", newSiteRS.getString("url_path"));
+				dbData.put("rootfile", newSiteRS.getString("root_file"));
+				dbData.put("title", newSiteRS.getString("title"));
+				// referenced types
+				Language language = new Language(SiteTest.db);
+				dbData.put("languagecode",
+						language.getCodeById(newSiteRS.getInt("language_id")));
+				Country country = new Country(SiteTest.db);
+				dbData.put("countrycode",
+						country.getCodeById(newSiteRS.getInt("country_id")));
+				// relation types
+				SiteHasCategory siteCategory = new SiteHasCategory(SiteTest.db);
+				ResultSet siteCategoryRS = siteCategory.getTable()
+						.joinWithCondition(
+								"category_id",
+								new Category(SiteTest.db).getTable(),
+								"category_id",
+								siteCategory.getTable().getName()
+										+ ".site_id='" + siteId + "'");
+				if (siteCategoryRS.next()) {
+					dbData.put("category", newSite.getCategoryNameById(siteId)
+							.toString());
+				}
+			}
+		} catch (Exception e) {
+			Testing.err(e);
+		}
+
+		for (String setting : SiteTest.properties.keySet()) {
+			String test = null;
+			if (setting == "url") {
+				try {
+					test = (new URL(SiteTest.properties.get(setting).toString())
+							.getPath()).equals(dbData.get(setting)) ? "ok"
+							: "fail";
+				} catch (MalformedURLException e) {
+					Testing.err(e);
+				}
+			} else if (setting == "timestamp") {
+				// cut the hundreds - they aren't stored in the db
+				String ts1 = SiteTest.properties.get(setting).toString();
+				ts1 = ts1.substring(0, ts1.lastIndexOf("."));
+				String ts2 = SiteTest.properties.get(setting).toString();
+				ts2 = ts2.substring(0, ts2.lastIndexOf("."));
+				test = ts1.equals(ts2) ? "ok" : "fail";
+			} else {
+				test = SiteTest.properties.get(setting).equals(
+						dbData.get(setting)) ? "ok" : "fail";
+			}
+			System.out.printf("%-15s: set['%-45s'] get['%-45s'] = %s\n",
+					setting, SiteTest.properties.get(setting),
+					dbData.get(setting), test);
 		}
 		return true;
 	}
@@ -183,6 +251,8 @@ public class SiteTest extends Testing {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Number newSiteId = -1;
+
 		Testing.so("Initialize", Format.HEADER);
 		Testing.so("These tests should run without any errors.",
 				Format.HEADERSUB);
@@ -214,11 +284,11 @@ public class SiteTest extends Testing {
 		SiteTest.testTimestamp();
 		Testing.so("Writing data..", Format.STEPFINAL);
 		try {
-			SiteTest.site.write();
+			newSiteId = SiteTest.site.write();
 		} catch (Exception e) {
 			Testing.err(e);
 		}
 		Testing.so("Legal site creation (easy): final check", Format.HEADER);
-		SiteTest.checkTest();
+		SiteTest.checkTest(newSiteId);
 	}
 }
