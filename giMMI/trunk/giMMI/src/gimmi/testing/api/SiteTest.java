@@ -6,12 +6,15 @@ import gimmi.content.Country;
 import gimmi.content.Language;
 import gimmi.content.SiteHasCategory;
 import gimmi.database.CorpusDatabase;
+import gimmi.database.CorpusDatabaseException;
 import gimmi.database.MultilanguageContent;
 import gimmi.testing.Testing;
+import gimmi.util.ConfigManagerException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -41,8 +44,12 @@ public class SiteTest extends Testing {
 		}
 	}
 
+	private static String getTestTitle() {
+		return Testing.randomString(35);
+	}
+
 	private static void testTitle() {
-		String title = Testing.randomString(35);
+		String title = SiteTest.getTestTitle();
 		Testing.so("Setting title: " + title, Format.STEP);
 		try {
 			SiteTest.site.setTitle(title);
@@ -52,8 +59,12 @@ public class SiteTest extends Testing {
 		}
 	}
 
+	private static String getTestRootFile() {
+		return Testing.randomString(15) + ".html";
+	}
+
 	private static void testRootFile() {
-		String file = Testing.randomString(15) + ".html";
+		String file = SiteTest.getTestRootFile();
 		Testing.so("Setting root-file: " + file, Format.STEP);
 		try {
 			SiteTest.site.setRootFile(file);
@@ -63,12 +74,17 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static void testCategory() {
+	private static MultilanguageContent getTestCategory() {
 		MultilanguageContent mCategory = new MultilanguageContent();
 		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
 				.values()) {
 			mCategory.setLangString(lang, Testing.randomString(15));
 		}
+		return mCategory;
+	}
+
+	private static void testCategory() {
+		MultilanguageContent mCategory = SiteTest.getTestCategory();
 		Testing.so("Setting category: " + mCategory, Format.STEP);
 		try {
 			SiteTest.site.setCategory(mCategory);
@@ -78,16 +94,27 @@ public class SiteTest extends Testing {
 		}
 	}
 
+	private static URL getTestURL() throws MalformedURLException {
+		return new URL("http://www." + Testing.randomString(10)
+				+ ".com/testpage/");
+	}
+
 	private static void testURL() {
 		try {
-			String URL = "http://www." + Testing.randomString(10)
-					+ ".com/testpage/";
-			Testing.so("Setting URL: " + URL, Format.STEP);
-			SiteTest.site.setURL(new URL(URL));
-			SiteTest.properties.put("url", URL);
+			URL url = SiteTest.getTestURL();
+			Testing.so("Setting URL: " + url.toString(), Format.STEP);
+			SiteTest.site.setURL(url);
+			SiteTest.properties.put("url", url.toString());
 		} catch (Exception e) {
 			Testing.err(e);
 		}
+	}
+
+	private static String getTestCountryCode() throws SQLException,
+			CorpusDatabaseException {
+		List<String> countriesAll = new Country(SiteTest.db).getAllEntries(
+				"country_code", false);
+		return countriesAll.get(Testing.randomInt(countriesAll.size()));
 	}
 
 	private static void testCountryCode() {
@@ -131,6 +158,13 @@ public class SiteTest extends Testing {
 		} catch (Exception e) {
 			Testing.err(e);
 		}
+	}
+
+	private static String getTestLanguageCode() throws SQLException,
+			CorpusDatabaseException {
+		List<String> languagesAll = new Language(SiteTest.db).getAllEntries(
+				"lang_code", false);
+		return languagesAll.get(Testing.randomInt(languagesAll.size()));
 	}
 
 	private static void testLanguage() {
@@ -248,24 +282,13 @@ public class SiteTest extends Testing {
 	}
 
 	/**
-	 * @param args
+	 * Create a new site entry with no faulty values. Site object will be
+	 * created step by step by calling the appropriate methods.
 	 */
-	public static void main(String[] args) {
+	private static void runTest_LegalStepped() {
 		Number newSiteId = -1;
 
-		Testing.so("Initialize", Format.HEADER);
-		Testing.so("These tests should run without any errors.",
-				Format.HEADERSUB);
-		Testing.so("Opening database", Format.STEP);
-
-		try {
-			SiteTest.db = gimmi.database.Database.getInstance();
-		} catch (Exception e) {
-			Testing.err(e);
-		}
-
-		// test 1 - easy
-		Testing.so("Legal site creation (easy)", Format.HEADER);
+		Testing.so("All legal site creation in single steps", Format.HEADER);
 		Testing.so("These tests should run without any errors.",
 				Format.HEADERSUB);
 		Testing.so("Creating a new Site object", Format.STEP);
@@ -288,7 +311,72 @@ public class SiteTest extends Testing {
 		} catch (Exception e) {
 			Testing.err(e);
 		}
-		Testing.so("Legal site creation (easy): final check", Format.HEADER);
+		Testing.so("All legal site creation in single steps: final check",
+				Format.HEADER);
 		SiteTest.checkTest(newSiteId);
+	}
+
+	/**
+	 * Create a new site entry with no faulty values. Site object will be
+	 * created in one step with the appropriate constructor.
+	 * 
+	 * @throws ConfigManagerException
+	 * @throws SQLException
+	 */
+	private static void runTest_SingleStepped() {
+		Number newSiteId = -1;
+
+		// gather data
+		try {
+			SiteTest.properties.put("url", SiteTest.getTestURL());
+			SiteTest.properties.put("languagecode",
+					SiteTest.getTestLanguageCode());
+			SiteTest.properties.put("countrycode",
+					SiteTest.getTestCountryCode());
+		} catch (Exception e) {
+			Testing.err(e);
+		}
+		SiteTest.properties.put("rootfile", SiteTest.getTestRootFile());
+		SiteTest.properties.put("title", SiteTest.getTestTitle());
+		SiteTest.properties.put("category", "!!UNTESTED!!");
+
+		// create site object
+		try {
+			Site site = new Site(//
+					SiteTest.properties.get("url").toString(),//
+					SiteTest.properties.get("languagecode").toString(),//
+					SiteTest.properties.get("countrycode").toString(),//
+					SiteTest.properties.get("rootfile").toString(),//
+					SiteTest.properties.get("title").toString(),//
+					1// default to the first one so we don't have to check for
+						// any legal value
+			);
+			newSiteId = site.getNewSiteId();
+		} catch (Exception e) {
+			Testing.err(e);
+		}
+
+		SiteTest.checkTest(newSiteId);
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Testing.so("Initialize", Format.HEADER);
+		Testing.so("These tests should run without any errors.",
+				Format.HEADERSUB);
+		Testing.so("Opening database", Format.STEP);
+
+		try {
+			SiteTest.db = gimmi.database.Database.getInstance();
+		} catch (Exception e) {
+			Testing.err(e);
+		}
+
+		// simple create test - multiple steps
+		// SiteTest.runTest_LegalStepped();
+		// simple create test - one step
+		SiteTest.runTest_SingleStepped();
 	}
 }
