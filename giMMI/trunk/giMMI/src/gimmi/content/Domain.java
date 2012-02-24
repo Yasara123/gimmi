@@ -31,6 +31,6 @@ public class Domain extends CorpusContent {
 			throws SQLException, CorpusDatabaseException {
 		return this.simpleJoin(this.getTable(),
 				new Site(this.database).getTable(), "domain_id", "domain_id",
-				translation, usedOnly);
+				translation);
 	}
 }

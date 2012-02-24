@@ -50,6 +50,6 @@ public class Country extends CorpusContent {
 			throws SQLException, CorpusDatabaseException {
 		return this.simpleJoin(this.getTable(),
 				new Site(this.database).getTable(), "country_id", "country_id",
-				translation, usedOnly);
+				translation);
 	}
 }

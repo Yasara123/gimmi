@@ -34,6 +34,6 @@ public class Category extends CorpusContent {
 			throws SQLException, CorpusDatabaseException {
 		return this.simpleJoin(this.getTable(), new SiteHasCategory(
 				this.database).getTable(), "category_id", "category_id",
-				translation, usedOnly);
+				translation);
 	}
 }
