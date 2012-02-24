@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 
 /**
  * Simple example client wich creates a new site in the gimmi corpus database
@@ -34,17 +35,17 @@ public class APIClient {
 		site = new gimmi.api.Site();
 		site.setTitle("A new Site - build in single steps");
 		site.setURL(new URL("http://www.example.com/foo/bar"));
-		site.setTimestamp(new Timestamp(new Long(
-				System.currentTimeMillis() / 1000)));
+		site.setTimestamp(new Timestamp(Calendar.getInstance().getTime()
+				.getTime()));
 		site.setLanguageCode("ger");
 		site.setCountryCode("de");
 		site.setRootFile("index.html");
 		// write the site to the database
-//		try {
-//			site.write();
-//		} catch (CorpusDatabaseException e) {
-//			// seems we missed a property
-//			e.printStackTrace();
-//		}
+		// try {
+		// site.write();
+		// } catch (CorpusDatabaseException e) {
+		// // seems we missed a property
+		// e.printStackTrace();
+		// }
 	}
 }

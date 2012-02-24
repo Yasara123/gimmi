@@ -40,9 +40,20 @@ public class Country extends CorpusContent {
 		if (languageRS.next()) {
 			return languageRS.getInt("country_id");
 		}
-		throw new CorpusDatabaseException(
-				CorpusDatabaseException.Error.VALUE_NOT_FOUND,
-				"The country-code you specified");
+		return null;
+	}
+
+	public Object getCodeById(Number id) throws SQLException,
+			CorpusDatabaseException {
+		if (id.intValue() < 0) {
+			throw new IllegalArgumentException(
+					"You should only pass in positive values.");
+		}
+		ResultSet countryRS = this.getTable().find("country_id", id.toString());
+		if (countryRS.next()) {
+			return countryRS.getString("country_code");
+		}
+		return null;
 	}
 
 	@Override

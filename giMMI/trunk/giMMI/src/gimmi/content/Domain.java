@@ -4,6 +4,8 @@ import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 public class Domain extends CorpusContent {
@@ -20,8 +22,8 @@ public class Domain extends CorpusContent {
 	public int write() throws CorpusDatabaseException, SQLException {
 		// set current time as timestamp, if not explicitly given
 		if (this.rowData.containsKey("added") == false) {
-			this.rowData.put("added", new Long(
-					System.currentTimeMillis() / 1000));
+			this.rowData.put("added", new Timestamp(Calendar.getInstance()
+					.getTime().getTime()));
 		}
 		return super.write();
 	}

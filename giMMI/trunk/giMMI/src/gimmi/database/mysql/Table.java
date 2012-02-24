@@ -61,7 +61,7 @@ public class Table implements CorpusDatabaseTable {
 		// query
 		String query = "SELECT "
 				+ fieldList.substring(0, fieldList.length() - 1) + " FROM "
-				+ Table.addBackticks(this.getTableName()) + ";";
+				+ Table.addBackticks(this.getName()) + ";";
 		Statement statement = this.connection.createStatement();
 		// return
 		return statement.executeQuery(query);
@@ -71,15 +71,15 @@ public class Table implements CorpusDatabaseTable {
 	 * Search for rows based on the given condition
 	 * 
 	 * @param condition
-	 *            The condition used as WHERE clause in the SQL statement
+	 *            The condition used as WHERE clause in the SQL statement. This
+	 *            string will be used as is without any quoting!
 	 * @return ResultSet The rows matching the given condition
 	 * @throws SQLException
 	 */
 	@Override
 	public ResultSet find(String condition) throws SQLException {
-		String query = "SELECT * FROM "
-				+ Table.addBackticks(this.getTableName()) + "" + "WHERE "
-				+ condition;
+		String query = "SELECT * FROM " + Table.addBackticks(this.getName())
+				+ "" + "WHERE " + condition;
 		Statement statement = this.connection.createStatement();
 		return statement.executeQuery(query);
 	}
@@ -144,9 +144,8 @@ public class Table implements CorpusDatabaseTable {
 
 		sqlColString.delete((sqlColString.length() - 2), sqlColString.length());
 		sqlValString.delete((sqlValString.length() - 2), sqlValString.length());
-		String insert = "INSERT INTO "
-				+ Table.addBackticks(this.getTableName()) + "("
-				+ sqlColString.toString() + ")" + " VALUES " + "("
+		String insert = "INSERT INTO " + Table.addBackticks(this.getName())
+				+ "(" + sqlColString.toString() + ")" + " VALUES " + "("
 				+ sqlValString.toString() + ");";
 		int id = -1;
 		Statement st = this.connection.createStatement();
@@ -169,7 +168,7 @@ public class Table implements CorpusDatabaseTable {
 
 	@Override
 	public String toString() {
-		return this.getTableName();
+		return this.getName();
 	}
 
 	/**
@@ -203,11 +202,11 @@ public class Table implements CorpusDatabaseTable {
 			} else {
 				// nen schicker logger waere toll!
 				System.out.println("Das Feld \"" + key
-						+ "\" existiert nicht in " + this.getTableName());
+						+ "\" existiert nicht in " + this.getName());
 			}
 		}
 		vals.delete((vals.length() - 2), vals.length());
-		String update = "UPDATE " + Table.addBackticks(this.getTableName())
+		String update = "UPDATE " + Table.addBackticks(this.getName())
 				+ " SET " + vals.toString() + " WHERE " + where + ";";
 		Statement st = this.connection.createStatement();
 		st.executeUpdate(update);
@@ -291,6 +290,8 @@ public class Table implements CorpusDatabaseTable {
 			return "null";
 		}
 		switch (type) {
+		case DATETIME:
+			return "'" + value.toString() + "'";
 		case INT:
 			if (value.getClass() == Timestamp.class) {
 				return ((Timestamp) value).toString();
@@ -322,7 +323,7 @@ public class Table implements CorpusDatabaseTable {
 	 * @return String
 	 */
 	@Override
-	public String getTableName() {
+	public String getName() {
 		return this.tableName;
 	}
 
@@ -443,7 +444,7 @@ public class Table implements CorpusDatabaseTable {
 	 */
 	protected void createColumns() throws SQLException, CorpusDatabaseException {
 		ResultSet desc = this.database.getResultset("DESCRIBE "
-				+ Table.addBackticks(this.getTableName()));
+				+ Table.addBackticks(this.getName()));
 
 		while (desc.next()) {
 			this.addColumn(desc.getString("Field"),
@@ -457,7 +458,7 @@ public class Table implements CorpusDatabaseTable {
 	@Override
 	public long countRows() throws SQLException {
 		String query = "SELECT COUNT(*) AS count FROM "
-				+ Table.addBackticks(this.getTableName()) + ";";
+				+ Table.addBackticks(this.getName()) + ";";
 		Statement statement = this.connection.createStatement();
 		ResultSet rs = statement.executeQuery(query);
 		rs.next();
@@ -470,15 +471,49 @@ public class Table implements CorpusDatabaseTable {
 	}
 
 	@Override
-	public ResultSet join(CorpusDatabaseTable table2, String field1,
+	public ResultSet join(String field1, CorpusDatabaseTable table2,
 			String field2) throws SQLException {
 		String query = String.format(
 				"SELECT * FROM %s INNER JOIN %s ON %s",
-				Table.addBackticks(this.getTableName()),//
-				Table.addBackticks(table2.getTableName()),//
-				Table.addBackticks(this.getTableName()) + "."
+				Table.addBackticks(this.getName()),//
+				Table.addBackticks(table2.getName()),//
+				Table.addBackticks(this.getName()) + "."
 						+ Table.addBackticks(field1) + "="
-						+ Table.addBackticks(table2.getTableName()) + "."
+						+ Table.addBackticks(table2.getName()) + "."
+						+ Table.addBackticks(field2));
+		Statement statement = this.connection.createStatement();
+		return statement.executeQuery(query);
+	}
+
+	@Override
+	public ResultSet joinWithCondition(String field1,
+			CorpusDatabaseTable table2, String field2, String condition)
+			throws SQLException {
+		return this.joinWithCondition(this, field1, table2, field2, condition);
+	}
+
+	@Override
+	public ResultSet join(CorpusDatabaseTable table1, String field1,
+			CorpusDatabaseTable table2, String field2) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet joinWithCondition(CorpusDatabaseTable table1,
+			String field1, CorpusDatabaseTable table2, String field2,
+			String condition) throws SQLException {
+		String queryBase = "SELECT * FROM %s INNER JOIN %s ON %s";
+		if (condition != null) {
+			queryBase += " WHERE " + condition;
+		}
+		String query = String.format(
+				queryBase,
+				Table.addBackticks(table1.getName()),//
+				Table.addBackticks(table2.getName()),//
+				Table.addBackticks(table1.getName()) + "."
+						+ Table.addBackticks(field1) + "="
+						+ Table.addBackticks(table2.getName()) + "."
 						+ Table.addBackticks(field2));
 		Statement statement = this.connection.createStatement();
 		return statement.executeQuery(query);
