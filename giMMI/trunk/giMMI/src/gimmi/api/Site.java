@@ -22,6 +22,8 @@ import java.util.HashMap;
  */
 public class Site {
 	private final HashMap<String, Object> properties = new HashMap<String, Object>();
+	private String siteCategory;
+	private Integer siteCategoryId;
 	private static CorpusDatabase DB;
 
 	/**
@@ -32,6 +34,8 @@ public class Site {
 	 */
 	public Site() throws SQLException, ConfigManagerException {
 		Site.DB = gimmi.database.Database.getInstance();
+		this.setTimestamp(new Timestamp(new Long(
+				System.currentTimeMillis() / 1000)));
 	}
 
 	/**
@@ -72,6 +76,7 @@ public class Site {
 		try {
 			this.write();
 		} catch (CorpusDatabaseException e) {
+			// plain die
 			// seems we missed a property
 			e.printStackTrace();
 		}
@@ -129,6 +134,9 @@ public class Site {
 		Integer lCode = language.getIdByCode(code);
 		if (lCode != null) {
 			this.properties.put("language_id", lCode);
+		} else {
+			throw new IllegalArgumentException(
+					"The language-code you specified could not be found.");
 		}
 	}
 
@@ -149,6 +157,9 @@ public class Site {
 		Integer cCode = country.getIdByCode(code);
 		if (cCode != null) {
 			this.properties.put("country_id", cCode);
+		} else {
+			throw new IllegalArgumentException(
+					"The country-code you specified could not be found.");
 		}
 	}
 
@@ -195,10 +206,31 @@ public class Site {
 	public void setCategory(Integer categoryId)
 			throws IllegalArgumentException, SQLException,
 			CorpusDatabaseException {
+		if (new Category(Site.DB).hasId(categoryId)) {
+			this.siteCategoryId = categoryId;
+		} else {
+			throw new IllegalArgumentException(
+					"The category-id you specified could not be found.");
+		}
+	}
+
+	/**
+	 * Set the category string for this site
+	 * 
+	 * @param category
+	 *            The category for this site as string
+	 * @throws CorpusDatabaseException
+	 * @throws SQLException
+	 */
+	public void setCategory(String categoryName)
+			throws IllegalArgumentException, SQLException,
+			CorpusDatabaseException {
 		Category category = new Category(Site.DB);
-		Integer cCode = category.getNameById(categoryId);
+		Integer cCode = category.getIdByName(categoryName);
 		if (cCode != null) {
-			this.properties.put("country_id", cCode);
+			this.siteCategoryId = cCode;
+		} else {
+			this.siteCategory = categoryName;
 		}
 	}
 
