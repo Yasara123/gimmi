@@ -138,7 +138,8 @@ public class Table implements CorpusDatabaseTable {
 			}
 			fields = fields.substring(0, fields.length() - 2);
 			throw new CorpusDatabaseException(
-					CorpusDatabaseException.Error.FIELDS_MISSING, fields);
+					CorpusDatabaseException.Error.FIELDS_MISSING, fields,
+					values.keySet().toString());
 		}
 
 		sqlColString.delete((sqlColString.length() - 2), sqlColString.length());

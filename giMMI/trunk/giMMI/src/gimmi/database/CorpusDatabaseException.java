@@ -14,7 +14,8 @@ public class CorpusDatabaseException extends Exception {
 	// predefined messages
 	public enum Error implements GimmiExceptionMessage {
 		COLUMN_NOT_FOUND("Database field '%s' does not exist."), //
-		FIELDS_MISSING("Not all required fields (namely: %s) where specified."), //
+		FIELDS_MISSING(
+				"Not all required fields (namely: %s) where specified. You gave: %s"), //
 		FIELDTYPE_UNKNOWN("The field type you specified is unknown (was '%s')."), //
 		VALUE_NOT_FOUND("%s could not be found in the database.");
 
@@ -70,7 +71,7 @@ public class CorpusDatabaseException extends Exception {
 	 * @param replacement
 	 *            Data to replace multiple format expressions in message
 	 */
-	public CorpusDatabaseException(String message, Object[] replacement) {
+	public CorpusDatabaseException(String message, Object... replacement) {
 		super(String.format(message, replacement));
 		this.message = String.format(message, replacement);
 	}
@@ -97,7 +98,7 @@ public class CorpusDatabaseException extends Exception {
 	 *            Data to replace multiple format expressions in message
 	 */
 	public CorpusDatabaseException(GimmiExceptionMessage geMessage,
-			Object[] replacement) {
+			Object... replacement) {
 		super(String.format(geMessage.toString(), replacement));
 		this.message = String.format(geMessage.toString(), replacement);
 	}

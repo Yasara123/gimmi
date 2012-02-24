@@ -48,8 +48,15 @@ public class Country extends CorpusContent {
 	@Override
 	public List<String> getAllEntries(String translation, boolean usedOnly)
 			throws SQLException, CorpusDatabaseException {
-		return this.simpleJoin(this.getTable(),
-				new Site(this.database).getTable(), "country_id", "country_id",
-				translation);
+		if (usedOnly) {
+			// get only used entries
+			return this.simpleJoin(this.getTable(),
+					new Site(this.database).getTable(), "country_id",
+					"country_id", translation);
+		} else {
+			// get all possible codes
+			return this.resultsetToStringList(this.getTable().fetchAll(
+					new String[] { translation }));
+		}
 	}
 }

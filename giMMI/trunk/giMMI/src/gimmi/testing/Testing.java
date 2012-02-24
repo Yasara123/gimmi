@@ -1,8 +1,25 @@
 package gimmi.testing;
 
+import java.util.Random;
+
 public abstract class Testing {
 	protected static enum Format {
-		HEADER, STEP, STEPSUB
+		PLAIN, HEADER, HEADERSUB, STEP, STEPSUB, STEPINFO, STEPFINAL
+	}
+
+	protected static int randomInt(int max) {
+		return (int) (max * Math.random()) + 1;
+	}
+
+	protected static String randomString(int length) {
+		Random ran = new Random();
+		char data = ' ';
+		String dat = "";
+		for (int i = 0; i <= length; i++) {
+			data = (char) (ran.nextInt(25) + 97);
+			dat = data + dat;
+		}
+		return dat;
 	}
 
 	/**
@@ -15,7 +32,11 @@ public abstract class Testing {
 		String msg;
 		switch (mType) {
 		case HEADER:
-			msg = String.format("[%s]", message);
+			msg = String.format("\n==========[%s]==========", message);
+			break;
+		case HEADERSUB:
+			msg = String.format("%s\n----------------------------------------",
+					message);
 			break;
 		case STEP:
 			msg = String.format(" * %s", message);
@@ -23,6 +44,13 @@ public abstract class Testing {
 		case STEPSUB:
 			msg = String.format("   %s", message);
 			break;
+		case STEPINFO:
+			msg = String.format("   >> %s", message);
+			break;
+		case STEPFINAL:
+			msg = String.format(" ### %s", message);
+			break;
+		case PLAIN:
 		default:
 			msg = message;
 			break;
