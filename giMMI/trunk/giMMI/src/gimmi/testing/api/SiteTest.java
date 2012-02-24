@@ -44,6 +44,16 @@ public class SiteTest extends Testing {
 		}
 	}
 
+	private static String getTestStorage() {
+		return Testing.randomString(27);
+	}
+
+	private static void testStorage() {
+		String store = SiteTest.getTestStorage();
+		SiteTest.site.setStoragePath(store);
+		SiteTest.properties.put("storage", store);
+	}
+
 	private static String getTestTitle() {
 		return Testing.randomString(35);
 	}
@@ -228,6 +238,7 @@ public class SiteTest extends Testing {
 				dbData.put("url", newSiteRS.getString("url_path"));
 				dbData.put("rootfile", newSiteRS.getString("root_file"));
 				dbData.put("title", newSiteRS.getString("title"));
+				dbData.put("storage", newSiteRS.getString("storage_path"));
 				// referenced types
 				Language language = new Language(SiteTest.db);
 				dbData.put("languagecode",
@@ -270,6 +281,16 @@ public class SiteTest extends Testing {
 				String ts2 = SiteTest.properties.get(setting).toString();
 				ts2 = ts2.substring(0, ts2.lastIndexOf("."));
 				test = ts1.equals(ts2) ? "ok" : "fail";
+			} else if (setting == "storage") {
+				String ts = SiteTest.properties.get(setting).toString();
+				// fix slashes like on add to db
+				if (!ts.startsWith("/")) {
+					ts = "/" + ts;
+				}
+				if (!ts.endsWith("/")) {
+					ts = ts + "/";
+				}
+				test = ts.equals(dbData.get(setting)) ? "ok" : "fail";
 			} else {
 				test = SiteTest.properties.get(setting).equals(
 						dbData.get(setting)) ? "ok" : "fail";
@@ -305,6 +326,7 @@ public class SiteTest extends Testing {
 		SiteTest.testRootFile();
 		SiteTest.testTitle();
 		SiteTest.testTimestamp();
+		SiteTest.testStorage();
 		Testing.so("Writing data..", Format.STEPFINAL);
 		try {
 			newSiteId = SiteTest.site.write();
@@ -326,6 +348,7 @@ public class SiteTest extends Testing {
 	private static void runTest_SingleStepped() {
 		Number newSiteId = -1;
 
+		Testing.so("All legal site creation in one step", Format.HEADER);
 		// gather data
 		try {
 			SiteTest.properties.put("url", SiteTest.getTestURL());
@@ -338,7 +361,8 @@ public class SiteTest extends Testing {
 		}
 		SiteTest.properties.put("rootfile", SiteTest.getTestRootFile());
 		SiteTest.properties.put("title", SiteTest.getTestTitle());
-		SiteTest.properties.put("category", "!!UNTESTED!!");
+		SiteTest.properties.put("category", "!!UNTESTED!! -> ignore fail");
+		SiteTest.properties.put("storage", SiteTest.getTestStorage());
 
 		// create site object
 		try {
@@ -348,8 +372,9 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("countrycode").toString(),//
 					SiteTest.properties.get("rootfile").toString(),//
 					SiteTest.properties.get("title").toString(),//
-					1// default to the first one so we don't have to check for
+					1,// default to the first one so we don't have to check for
 						// any legal value
+					SiteTest.properties.get("storage").toString()//
 			);
 			newSiteId = site.getNewSiteId();
 		} catch (Exception e) {
@@ -375,7 +400,7 @@ public class SiteTest extends Testing {
 		}
 
 		// simple create test - multiple steps
-		// SiteTest.runTest_LegalStepped();
+		SiteTest.runTest_LegalStepped();
 		// simple create test - one step
 		SiteTest.runTest_SingleStepped();
 	}

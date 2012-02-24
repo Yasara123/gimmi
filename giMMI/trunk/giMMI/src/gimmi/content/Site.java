@@ -29,13 +29,9 @@ public class Site extends CorpusContent {
 	public int write() throws CorpusDatabaseException, SQLException {
 		// set crawl-time to now, if not specified
 		if (this.rowData.containsKey("crawl_time") == false) {
-			System.out
-					.println("================================EH! new timestamp!");
 			this.rowData.put("crawl_time", new Timestamp(Calendar.getInstance()
 					.getTime().getTime()));
 		}
-		// TODO: generate a real storage path
-		this.rowData.put("storage_path", "/gimmi-storage/");
 		return super.write();
 	}
 
