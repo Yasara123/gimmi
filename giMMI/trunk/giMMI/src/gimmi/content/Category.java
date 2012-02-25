@@ -56,6 +56,33 @@ public class Category extends CorpusContent {
 		return null;
 	}
 
+	/**
+	 * FIXME: parameters are _unchecked_ passed to database
+	 * 
+	 * @param name
+	 * @return
+	 * @throws SQLException
+	 */
+	public Number getIdByName(String name) throws SQLException {
+		ResultSet categoryRS = null;
+		StringBuffer query = new StringBuffer();
+		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
+				.values()) {
+			query.append("name_" + lang.toString().toLowerCase() + "='" + name
+					+ "' OR ");
+		}
+		if (query.equals("")) {
+			return null;
+		}
+		categoryRS = this.getTable().find(
+				query.toString().substring(0,
+						query.toString().lastIndexOf(" OR ")));
+		if ((categoryRS != null) && categoryRS.next()) {
+			return categoryRS.getInt("category_id");
+		}
+		return null;
+	}
+
 	@Override
 	public List<String> getAllEntries(String translation, boolean usedOnly)
 			throws SQLException, CorpusDatabaseException {

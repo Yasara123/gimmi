@@ -93,6 +93,13 @@ public class SiteTest extends Testing {
 		return mCategory;
 	}
 
+	private static String getTestCategoryString() {
+		return new String[] { "cosmetics", "Kosmetik",//
+				"news", "Nachrichten",//
+				"sport", "Sport",//
+				"universities", "Hochschulen" }[Testing.randomInt(7)];
+	}
+
 	private static void testCategory() {
 		MultilanguageContent mCategory = SiteTest.getTestCategory();
 		Testing.so("Setting category: " + mCategory, Format.STEP);
@@ -361,7 +368,7 @@ public class SiteTest extends Testing {
 		}
 		SiteTest.properties.put("rootfile", SiteTest.getTestRootFile());
 		SiteTest.properties.put("title", SiteTest.getTestTitle());
-		SiteTest.properties.put("category", "!!UNTESTED!! -> ignore fail");
+		SiteTest.properties.put("category", SiteTest.getTestCategoryString());
 		SiteTest.properties.put("storage", SiteTest.getTestStorage());
 
 		// create site object
@@ -372,8 +379,7 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("countrycode").toString(),//
 					SiteTest.properties.get("rootfile").toString(),//
 					SiteTest.properties.get("title").toString(),//
-					1,// default to the first one so we don't have to check for
-						// any legal value
+					SiteTest.properties.get("category").toString(),//
 					SiteTest.properties.get("storage").toString()//
 			);
 			newSiteId = site.getNewSiteId();
