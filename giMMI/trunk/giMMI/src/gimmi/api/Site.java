@@ -34,6 +34,11 @@ public class Site {
 	private Number siteCategoryId;
 	private Number newSiteId = null;
 	private static CorpusDatabase DB;
+	/**
+	 * Allow a fallback value to be set for field settings that couldn't get
+	 * resolved.
+	 */
+	private static final boolean allowUnknownFieldContent = true;
 
 	/**
 	 * Constructor
@@ -150,8 +155,12 @@ public class Site {
 		if (lCode != null) {
 			this.properties.put("language_id", lCode);
 		} else {
-			throw new IllegalArgumentException(
-					"The language-code you specified could not be found.");
+			if (Site.allowUnknownFieldContent) {
+				this.properties.put("language_id", language.getIdForUnknown());
+			} else {
+				throw new IllegalArgumentException(
+						"The language-code you specified could not be found.");
+			}
 		}
 	}
 
@@ -174,8 +183,12 @@ public class Site {
 		if (lCode != null) {
 			this.properties.put("language_id", lCode);
 		} else {
-			throw new IllegalArgumentException("The language name ("
-					+ languageName + ") you specified could not be found.");
+			if (Site.allowUnknownFieldContent) {
+				this.properties.put("language_id", language.getIdForUnknown());
+			} else {
+				throw new IllegalArgumentException("The language name ("
+						+ languageName + ") you specified could not be found.");
+			}
 		}
 	}
 
@@ -197,8 +210,12 @@ public class Site {
 		if (cCode != null) {
 			this.properties.put("country_id", cCode);
 		} else {
-			throw new IllegalArgumentException(
-					"The country-code you specified could not be found.");
+			if (Site.allowUnknownFieldContent) {
+				this.properties.put("country_id", country.getIdForUnknown());
+			} else {
+				throw new IllegalArgumentException(
+						"The country-code you specified could not be found.");
+			}
 		}
 	}
 
@@ -221,9 +238,13 @@ public class Site {
 		if (cCode != null) {
 			this.properties.put("country_id", cCode);
 		} else {
-			throw new IllegalArgumentException(
-					"The country name you specified (" + countryName
-							+ ") could not be found.");
+			if (Site.allowUnknownFieldContent) {
+				this.properties.put("country_id", country.getIdForUnknown());
+			} else {
+				throw new IllegalArgumentException(
+						"The country name you specified (" + countryName
+								+ ") could not be found.");
+			}
 		}
 	}
 
