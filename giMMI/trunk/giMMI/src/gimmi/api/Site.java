@@ -70,7 +70,7 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 */
 	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title, Number category, String storage)
+			String rootFile, String title, String category, String storage)
 			throws SQLException, ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
@@ -218,14 +218,16 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public void setCategory(Number categoryId) throws IllegalArgumentException,
-			SQLException, CorpusDatabaseException {
-		if (new Category(Site.DB).hasId(categoryId)) {
+	public void setCategory(String categoryName)
+			throws IllegalArgumentException, SQLException,
+			CorpusDatabaseException {
+		Number categoryId = new Category(Site.DB).getIdByName(categoryName);
+		if (categoryId != null) {
 			this.siteCategoryId = categoryId;
 			this.postWrite.add(new SiteHasCategory(Site.DB));
 		} else {
-			throw new IllegalArgumentException(
-					"The category-id you specified could not be found.");
+			throw new IllegalArgumentException("The category you specified ("
+					+ categoryName + ") could not be found.");
 		}
 	}
 
