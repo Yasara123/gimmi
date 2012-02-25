@@ -4,11 +4,10 @@ import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.MultilanguageContent;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Category extends CorpusContent {
+public class Category extends CorpusContent implements CorpusContentNamed {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "category";
 
@@ -18,69 +17,15 @@ public class Category extends CorpusContent {
 		this.setTable(db.getTable(Category.TABLE_NAME));
 	}
 
-	public boolean hasId(Number id) {
-		try {
-			if (this.getTable().find("category_id", id.toString()).first()) {
-				return true;
-			}
-		} catch (SQLException | CorpusDatabaseException e) {
-			return false;
-		}
-		return false;
-	}
-
-	/**
-	 * FIXME: parameters are _unchecked_ passed to database
-	 * 
-	 * @param name
-	 * @param language
-	 * @return
-	 * @throws SQLException
-	 * @throws CorpusDatabaseException
-	 * @throws IllegalArgumentException
-	 */
+	@Override
 	public Number getIdByName(MultilanguageContent name) throws SQLException,
 			CorpusDatabaseException, IllegalArgumentException {
-		ResultSet categoryRS = null;
-		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
-				.values()) {
-			if (name.getLangString(lang) != null) {
-				categoryRS = this.getTable().find(
-						"name_" + lang.toString().toLowerCase() + "='"
-								+ name.getLangString(lang) + "'");
-			}
-		}
-		if ((categoryRS != null) && categoryRS.next()) {
-			return categoryRS.getInt("category_id");
-		}
-		return null;
+		return (Number) this.getFieldByName("category_id", name);
 	}
 
-	/**
-	 * FIXME: parameters are _unchecked_ passed to database
-	 * 
-	 * @param name
-	 * @return
-	 * @throws SQLException
-	 */
+	@Override
 	public Number getIdByName(String name) throws SQLException {
-		ResultSet categoryRS = null;
-		StringBuffer query = new StringBuffer();
-		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
-				.values()) {
-			query.append("name_" + lang.toString().toLowerCase() + "='" + name
-					+ "' OR ");
-		}
-		if (query.equals("")) {
-			return null;
-		}
-		categoryRS = this.getTable().find(
-				query.toString().substring(0,
-						query.toString().lastIndexOf(" OR ")));
-		if ((categoryRS != null) && categoryRS.next()) {
-			return categoryRS.getInt("category_id");
-		}
-		return null;
+		return (Number) this.getFieldByName("category_id", name);
 	}
 
 	@Override

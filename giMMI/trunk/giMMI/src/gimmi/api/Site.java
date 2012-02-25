@@ -52,10 +52,10 @@ public class Site {
 	 * 
 	 * @param url
 	 *            The URL object for this site
-	 * @param langCode
-	 *            The three-letter language code as specified by ISO639-alpha-3
-	 * @param countryCode
-	 *            The two-letter language code as specified by ISO3166-1-alpha-2
+	 * @param language
+	 *            The language name in one of the supported translations
+	 * @param country
+	 *            The country name in one of the supported translations
 	 * @param rootFile
 	 *            Root document for this site snapshot
 	 * @param title
@@ -69,9 +69,9 @@ public class Site {
 	 * @throws MalformedURLException
 	 * @throws CorpusDatabaseException
 	 */
-	public Site(String url, String langCode, String countryCode,
-			String rootFile, String title, String category, String storage)
-			throws SQLException, ConfigManagerException, MalformedURLException,
+	public Site(String url, String language, String country, String rootFile,
+			String title, String category, String storage) throws SQLException,
+			ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
 
@@ -80,8 +80,8 @@ public class Site {
 		// default to current adding
 		this.setTimestamp(new Timestamp(Calendar.getInstance().getTime()
 				.getTime()));
-		this.setLanguageCode(langCode);
-		this.setCountryCode(countryCode);
+		this.setLanguageCodeByName(language);
+		this.setCountryCodeByName(country);
 		this.setRootFile(rootFile);
 		this.setCategory(category);
 		this.setStoragePath(storage);
@@ -146,12 +146,36 @@ public class Site {
 	public void setLanguageCode(String code) throws IllegalArgumentException,
 			SQLException, CorpusDatabaseException {
 		Language language = new Language(Site.DB);
-		Integer lCode = language.getIdByCode(code);
+		Number lCode = language.getIdByCode(code);
 		if (lCode != null) {
 			this.properties.put("language_id", lCode);
 		} else {
 			throw new IllegalArgumentException(
 					"The language-code you specified could not be found.");
+		}
+	}
+
+	/**
+	 * Set the language property for this site
+	 * 
+	 * @param name
+	 *            Name of the language in one of the possible translations
+	 * @throws IllegalArgumentException
+	 *             Thrown if the language code does not match the ISO639-alpha-3
+	 *             scheme
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
+	public void setLanguageCodeByName(String name)
+			throws IllegalArgumentException, SQLException,
+			CorpusDatabaseException {
+		Language language = new Language(Site.DB);
+		Number lCode = language.getIdByName(name);
+		if (lCode != null) {
+			this.properties.put("language_id", lCode);
+		} else {
+			throw new IllegalArgumentException("The language name (" + name
+					+ ") you specified could not be found.");
 		}
 	}
 
@@ -170,6 +194,30 @@ public class Site {
 			SQLException, CorpusDatabaseException {
 		Country country = new Country(Site.DB);
 		Integer cCode = country.getIdByCode(code);
+		if (cCode != null) {
+			this.properties.put("country_id", cCode);
+		} else {
+			throw new IllegalArgumentException(
+					"The country-code you specified could not be found.");
+		}
+	}
+
+	/**
+	 * Set the country property for this site
+	 * 
+	 * @param countryName
+	 *            The country name in one of the supported translations
+	 * @throws IllegalArgumentException
+	 *             Thrown if the language code does not match the
+	 *             ISO3166-1-alpha-2 scheme
+	 * @throws CorpusDatabaseException
+	 * @throws SQLException
+	 */
+	public void setCountryCodeByName(String countryName)
+			throws IllegalArgumentException, SQLException,
+			CorpusDatabaseException {
+		Country country = new Country(Site.DB);
+		Number cCode = country.getIdByName(countryName);
 		if (cCode != null) {
 			this.properties.put("country_id", cCode);
 		} else {

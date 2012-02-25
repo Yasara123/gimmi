@@ -2,12 +2,13 @@ package gimmi.content;
 
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
+import gimmi.database.MultilanguageContent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Country extends CorpusContent {
+public class Country extends CorpusContent implements CorpusContentNamed {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "country";
 
@@ -54,6 +55,17 @@ public class Country extends CorpusContent {
 			return countryRS.getString("country_code");
 		}
 		return null;
+	}
+
+	@Override
+	public Number getIdByName(MultilanguageContent name) throws SQLException,
+			CorpusDatabaseException, IllegalArgumentException {
+		return (Number) this.getFieldByName("country_id", name);
+	}
+
+	@Override
+	public Number getIdByName(String name) throws SQLException {
+		return (Number) this.getFieldByName("country_id", name);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package gimmi.content;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.CorpusDatabaseTable;
+import gimmi.database.MultilanguageContent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -133,6 +134,67 @@ public abstract class CorpusContent {
 	}
 
 	/**
+	 * Get a table field based on content of the "name_.*" field
+	 * 
+	 * @param field
+	 *            Field to get
+	 * @param name
+	 *            Name to search for in all name_.* fields
+	 * @return The first occurrence found
+	 * @throws SQLException
+	 */
+	protected Object getFieldByName(String field, String name)
+			throws SQLException {
+		ResultSet resultSet = null;
+		StringBuffer query = new StringBuffer();
+		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
+				.values()) {
+			query.append("name_" + lang.toString().toLowerCase() + "='" + name
+					+ "' OR ");
+		}
+		if (query.equals("")) {
+			return null;
+		}
+		resultSet = this.getTable().find(
+				query.toString().substring(0,
+						query.toString().lastIndexOf(" OR ")));
+		if ((resultSet != null) && resultSet.next()) {
+			return resultSet.getObject(field);
+		}
+		return null;
+	}
+
+	/**
+	 * Get a table field based on content of the "name_.*" field
+	 * 
+	 * @param field
+	 *            Field to get
+	 * @param name
+	 *            Name to search for in all name_.* fields
+	 * @return The first occurrence found
+	 * @throws SQLException
+	 */
+	protected Object getFieldByName(String field, MultilanguageContent name)
+			throws SQLException {
+		ResultSet resultSet = null;
+		StringBuffer query = new StringBuffer();
+		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
+				.values()) {
+			if (name.getLangString(lang) != null) {
+				query.append("name_" + lang.toString().toLowerCase() + "='"
+						+ name + "' AND ");
+			}
+		}
+		resultSet = this.getTable().find(
+				query.toString().substring(0,
+						query.toString().lastIndexOf(" AND ")));
+		if ((resultSet != null) && resultSet.next()) {
+			return resultSet.getObject(field);
+		}
+		return null;
+	}
+
+	/**
 	 * 
 	 * @param translation
 	 *            The translation of the content name. This must match the
@@ -145,4 +207,23 @@ public abstract class CorpusContent {
 	 */
 	public abstract List<String> getAllEntries(String translation,
 			boolean usedOnly) throws SQLException, CorpusDatabaseException;
+
+	/**
+	 * Check if the id field (table name + "_id") contains the given id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	protected boolean hasId(Number id) {
+		try {
+			if (this.getTable()
+					.find(this.getTable().getName().toLowerCase() + "_id",
+							id.toString()).first()) {
+				return true;
+			}
+		} catch (SQLException | CorpusDatabaseException e) {
+			return false;
+		}
+		return false;
+	}
 }

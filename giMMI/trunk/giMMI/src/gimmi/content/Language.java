@@ -2,12 +2,13 @@ package gimmi.content;
 
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
+import gimmi.database.MultilanguageContent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Language extends CorpusContent {
+public class Language extends CorpusContent implements CorpusContentNamed {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "language";
 
@@ -26,7 +27,7 @@ public class Language extends CorpusContent {
 	 * @throws CorpusDatabaseException
 	 * @throws IllegalArgumentException
 	 */
-	public Integer getIdByCode(String code) throws SQLException,
+	public Number getIdByCode(String code) throws SQLException,
 			CorpusDatabaseException, IllegalArgumentException {
 		if (code.length() != 3) {
 			throw new IllegalArgumentException(
@@ -38,6 +39,17 @@ public class Language extends CorpusContent {
 			return languageRS.getInt("language_id");
 		}
 		return null;
+	}
+
+	@Override
+	public Number getIdByName(String name) throws SQLException {
+		return (Number) this.getFieldByName("language_id", name);
+	}
+
+	@Override
+	public Number getIdByName(MultilanguageContent name) throws SQLException,
+			CorpusDatabaseException, IllegalArgumentException {
+		return (Number) this.getFieldByName("language_id", name);
 	}
 
 	public String getCodeById(Number id) throws CorpusDatabaseException,
