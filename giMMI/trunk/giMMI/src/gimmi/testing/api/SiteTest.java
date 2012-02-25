@@ -44,22 +44,22 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static String getTestStorage() {
+	private static String getAStoragePath() {
 		return Testing.randomString(27);
 	}
 
 	private static void testStorage() {
-		String store = SiteTest.getTestStorage();
+		String store = SiteTest.getAStoragePath();
 		SiteTest.site.setStoragePath(store);
 		SiteTest.properties.put("storage", store);
 	}
 
-	private static String getTestTitle() {
+	private static String getATitle() {
 		return Testing.randomString(35);
 	}
 
 	private static void testTitle() {
-		String title = SiteTest.getTestTitle();
+		String title = SiteTest.getATitle();
 		Testing.so("Setting title: " + title, Format.STEP);
 		try {
 			SiteTest.site.setTitle(title);
@@ -69,12 +69,12 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static String getTestRootFile() {
+	private static String getARootFileName() {
 		return Testing.randomString(15) + ".html";
 	}
 
 	private static void testRootFile() {
-		String file = SiteTest.getTestRootFile();
+		String file = SiteTest.getARootFileName();
 		Testing.so("Setting root-file: " + file, Format.STEP);
 		try {
 			SiteTest.site.setRootFile(file);
@@ -84,7 +84,7 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static MultilanguageContent getTestCategory() {
+	private static MultilanguageContent getACategoryMultiName() {
 		MultilanguageContent mCategory = new MultilanguageContent();
 		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
 				.values()) {
@@ -93,7 +93,7 @@ public class SiteTest extends Testing {
 		return mCategory;
 	}
 
-	private static String getTestCategoryString() {
+	private static String getACategoryName() {
 		return new String[] { "cosmetics", "Kosmetik",//
 				"news", "Nachrichten",//
 				"sport", "Sport",//
@@ -101,7 +101,7 @@ public class SiteTest extends Testing {
 	}
 
 	private static void testCategory() {
-		MultilanguageContent mCategory = SiteTest.getTestCategory();
+		MultilanguageContent mCategory = SiteTest.getACategoryMultiName();
 		Testing.so("Setting category: " + mCategory, Format.STEP);
 		try {
 			SiteTest.site.setCategory(mCategory);
@@ -111,14 +111,14 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static URL getTestURL() throws MalformedURLException {
+	private static URL getAURL() throws MalformedURLException {
 		return new URL("http://www." + Testing.randomString(10)
 				+ ".com/testpage/");
 	}
 
 	private static void testURL() {
 		try {
-			URL url = SiteTest.getTestURL();
+			URL url = SiteTest.getAURL();
 			Testing.so("Setting URL: " + url.toString(), Format.STEP);
 			SiteTest.site.setURL(url);
 			SiteTest.properties.put("url", url.toString());
@@ -127,10 +127,19 @@ public class SiteTest extends Testing {
 		}
 	}
 
-	private static String getTestCountryCode() throws SQLException,
+	private static String getACountryCode() throws SQLException,
 			CorpusDatabaseException {
 		List<String> countriesAll = new Country(SiteTest.db).getAllEntries(
 				"country_code", false);
+		return countriesAll.get(Testing.randomInt(countriesAll.size()));
+	}
+
+	private static String getACountryName() throws SQLException,
+			CorpusDatabaseException {
+		Country country = new Country(SiteTest.db);
+		List<String> countriesAll = null;
+		countriesAll = country.getAllEntries("name_de", false);
+		countriesAll.addAll(country.getAllEntries("name_en", false));
 		return countriesAll.get(Testing.randomInt(countriesAll.size()));
 	}
 
@@ -141,10 +150,10 @@ public class SiteTest extends Testing {
 		List<String> ccodesAll = null;
 		List<String> ccodesUsed = null;
 		try {
-			ccodesAll = new Country(SiteTest.db).getAllEntries("country_code",
-					false);
-			ccodesUsed = new Country(SiteTest.db).getAllEntries("country_code",
-					true);
+			Country country = new Country(SiteTest.db);
+			ccodesAll = country.getAllEntries("name_de", false);
+			ccodesAll.addAll(country.getAllEntries("name_en", false));
+			ccodesUsed = country.getAllEntries("country_code", true);
 			Testing.so(String.format("%d of %d currently used",
 					ccodesUsed.size(), ccodesAll.size()), Format.STEPSUB);
 		} catch (Exception e) {
@@ -159,7 +168,7 @@ public class SiteTest extends Testing {
 			Testing.so("Try assigning country-code '" + ccodesAll.get(i) + "'",
 					Format.STEPSUB);
 			try {
-				SiteTest.site.setCountryCode(ccodesAll.get(i));
+				SiteTest.site.setCountryCodeByName(ccodesAll.get(i));
 			} catch (Exception e) {
 				Testing.err(e);
 			}
@@ -170,17 +179,19 @@ public class SiteTest extends Testing {
 			String cCode = ccodesAll.get(Testing.randomInt(ccodesAll.size()));
 			Testing.so("Setting country-code for this site to (random): '"
 					+ cCode + "'", Format.STEP);
-			SiteTest.site.setCountryCode(cCode);
+			SiteTest.site.setCountryCodeByName(cCode);
 			SiteTest.properties.put("countrycode", cCode);
 		} catch (Exception e) {
 			Testing.err(e);
 		}
 	}
 
-	private static String getTestLanguageCode() throws SQLException,
+	private static String getALanguageName() throws SQLException,
 			CorpusDatabaseException {
-		List<String> languagesAll = new Language(SiteTest.db).getAllEntries(
-				"lang_code", false);
+		Language lang = new Language(SiteTest.db);
+		List<String> languagesAll = null;
+		languagesAll = lang.getAllEntries("name_de", false);
+		languagesAll.addAll(lang.getAllEntries("name_en", false));
 		return languagesAll.get(Testing.randomInt(languagesAll.size()));
 	}
 
@@ -191,13 +202,13 @@ public class SiteTest extends Testing {
 		List<String> languagesAll = null;
 		List<String> languagesUsed = null;
 		try {
-			languagesAll = new Language(SiteTest.db).getAllEntries("lang_code",
-					false);
-			languagesUsed = new Language(SiteTest.db).getAllEntries(
-					"lang_code", true);
+			Language lang = new Language(SiteTest.db);
+			languagesAll = lang.getAllEntries("name_de", false);
+			languagesAll.addAll(lang.getAllEntries("name_en", false));
+			languagesUsed = lang.getAllEntries("lang_code", true);
 			Testing.so(
 					String.format("%d of %d currently used",
-							languagesUsed.size(), languagesAll.size()),
+							languagesUsed.size(), (languagesAll.size() / 2)),
 					Format.STEPSUB);
 		} catch (Exception e) {
 			Testing.err(e);
@@ -211,7 +222,7 @@ public class SiteTest extends Testing {
 			Testing.so("Try assigning language '" + languagesAll.get(i) + "'",
 					Format.STEPSUB);
 			try {
-				SiteTest.site.setLanguageCode(languagesAll.get(i));
+				SiteTest.site.setLanguageCodeByName(languagesAll.get(i));
 			} catch (Exception e) {
 				Testing.err(e);
 			}
@@ -223,7 +234,7 @@ public class SiteTest extends Testing {
 					.size()));
 			Testing.so("Setting language for this site to (random): '"
 					+ langCode + "'", Format.STEP);
-			SiteTest.site.setLanguageCode(langCode);
+			SiteTest.site.setLanguageCodeByName(langCode);
 			SiteTest.properties.put("languagecode", langCode);
 		} catch (Exception e) {
 			Testing.err(e);
@@ -248,11 +259,15 @@ public class SiteTest extends Testing {
 				dbData.put("storage", newSiteRS.getString("storage_path"));
 				// referenced types
 				Language language = new Language(SiteTest.db);
-				dbData.put("languagecode",
-						language.getCodeById(newSiteRS.getInt("language_id")));
+				dbData.put(
+						"languagecode",
+						language.getNameById("language_id",
+								newSiteRS.getInt("language_id")));
 				Country country = new Country(SiteTest.db);
-				dbData.put("countrycode",
-						country.getCodeById(newSiteRS.getInt("country_id")));
+				dbData.put(
+						"countrycode",
+						country.getNameById("country_id",
+								newSiteRS.getInt("country_id")));
 				// relation types
 				SiteHasCategory siteCategory = new SiteHasCategory(SiteTest.db);
 				ResultSet siteCategoryRS = siteCategory.getTable()
@@ -277,7 +292,7 @@ public class SiteTest extends Testing {
 				try {
 					test = (new URL(SiteTest.properties.get(setting).toString())
 							.getPath()).equals(dbData.get(setting)) ? "ok"
-							: "fail";
+							: "fail?";
 				} catch (MalformedURLException e) {
 					Testing.err(e);
 				}
@@ -287,7 +302,7 @@ public class SiteTest extends Testing {
 				ts1 = ts1.substring(0, ts1.lastIndexOf("."));
 				String ts2 = SiteTest.properties.get(setting).toString();
 				ts2 = ts2.substring(0, ts2.lastIndexOf("."));
-				test = ts1.equals(ts2) ? "ok" : "fail";
+				test = ts1.equals(ts2) ? "ok" : "fail?";
 			} else if (setting == "storage") {
 				String ts = SiteTest.properties.get(setting).toString();
 				// fix slashes like on add to db
@@ -297,10 +312,10 @@ public class SiteTest extends Testing {
 				if (!ts.endsWith("/")) {
 					ts = ts + "/";
 				}
-				test = ts.equals(dbData.get(setting)) ? "ok" : "fail";
+				test = ts.equals(dbData.get(setting)) ? "ok" : "fail?";
 			} else {
 				test = SiteTest.properties.get(setting).equals(
-						dbData.get(setting)) ? "ok" : "fail";
+						dbData.get(setting)) ? "ok" : "fail?";
 			}
 			System.out.printf("%-15s: set['%-45s'] get['%-45s'] = %s\n",
 					setting, SiteTest.properties.get(setting),
@@ -313,7 +328,7 @@ public class SiteTest extends Testing {
 	 * Create a new site entry with no faulty values. Site object will be
 	 * created step by step by calling the appropriate methods.
 	 */
-	private static void runTest_LegalStepped() {
+	private static void runTest_Stepped() {
 		Number newSiteId = -1;
 
 		Testing.so("All legal site creation in single steps", Format.HEADER);
@@ -352,24 +367,23 @@ public class SiteTest extends Testing {
 	 * @throws ConfigManagerException
 	 * @throws SQLException
 	 */
-	private static void runTest_SingleStepped() {
+	private static void runTest_Single() {
 		Number newSiteId = -1;
 
 		Testing.so("All legal site creation in one step", Format.HEADER);
 		// gather data
 		try {
-			SiteTest.properties.put("url", SiteTest.getTestURL());
-			SiteTest.properties.put("languagecode",
-					SiteTest.getTestLanguageCode());
-			SiteTest.properties.put("countrycode",
-					SiteTest.getTestCountryCode());
+			SiteTest.properties.put("url", SiteTest.getAURL());
+			SiteTest.properties
+					.put("languagecode", SiteTest.getALanguageName());
+			SiteTest.properties.put("countrycode", SiteTest.getACountryName());
 		} catch (Exception e) {
 			Testing.err(e);
 		}
-		SiteTest.properties.put("rootfile", SiteTest.getTestRootFile());
-		SiteTest.properties.put("title", SiteTest.getTestTitle());
-		SiteTest.properties.put("category", SiteTest.getTestCategoryString());
-		SiteTest.properties.put("storage", SiteTest.getTestStorage());
+		SiteTest.properties.put("rootfile", SiteTest.getARootFileName());
+		SiteTest.properties.put("title", SiteTest.getATitle());
+		SiteTest.properties.put("category", SiteTest.getACategoryName());
+		SiteTest.properties.put("storage", SiteTest.getAStoragePath());
 
 		// create site object
 		try {
@@ -406,8 +420,8 @@ public class SiteTest extends Testing {
 		}
 
 		// simple create test - multiple steps
-		SiteTest.runTest_LegalStepped();
+		SiteTest.runTest_Stepped();
 		// simple create test - one step
-		SiteTest.runTest_SingleStepped();
+		SiteTest.runTest_Single();
 	}
 }

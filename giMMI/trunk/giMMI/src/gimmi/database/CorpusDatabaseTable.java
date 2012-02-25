@@ -18,14 +18,25 @@ public interface CorpusDatabaseTable {
 		INT, TXT, DATETIME, FLOAT, DOUBLE
 	}
 
-	public HashMap<String, Column> getColumns();
+	HashMap<String, Column> getColumns();
+
+	/**
+	 * Escape a string based on its type.
+	 * 
+	 * TODO: add more object types
+	 * 
+	 * @param value
+	 * @param type
+	 * @return String
+	 */
+	String escape(Object value, CorpusDatabaseTable.columnType type);
 
 	/**
 	 * Count the number of rows in this table
 	 * 
 	 * @return The number of rows in this table
 	 */
-	public long countRows() throws SQLException;
+	long countRows() throws SQLException;
 
 	/**
 	 * Saves a table row to the database
@@ -35,7 +46,7 @@ public interface CorpusDatabaseTable {
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 */
-	public int save(HashMap<String, Object> values) throws SQLException,
+	int save(HashMap<String, Object> values) throws SQLException,
 			CorpusDatabaseException;
 
 	/**
@@ -45,10 +56,10 @@ public interface CorpusDatabaseTable {
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 */
-	public ResultSet fetchAll() throws SQLException, CorpusDatabaseException;
+	ResultSet fetchAll() throws SQLException, CorpusDatabaseException;
 
 	/**
-	 * Fetch all rows owned by this table
+	 * Fetch named rows owned by this table
 	 * 
 	 * @param fields
 	 *            List of field-names to restrict the query to
@@ -56,8 +67,11 @@ public interface CorpusDatabaseTable {
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 */
-	public ResultSet fetchAll(String[] fields) throws SQLException,
+	ResultSet fetchAll(String[] fields) throws SQLException,
 			CorpusDatabaseException;
+
+	ResultSet fetchAllWithCondition(String[] fields, String condition)
+			throws SQLException, CorpusDatabaseException;
 
 	/**
 	 * Searches for rows matching the given condition
@@ -67,7 +81,7 @@ public interface CorpusDatabaseTable {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet find(String condition) throws SQLException;
+	ResultSet find(String condition) throws SQLException;
 
 	/**
 	 * Searches for rows matching the given field->value condition
@@ -80,7 +94,7 @@ public interface CorpusDatabaseTable {
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 */
-	public ResultSet find(String field, String value) throws SQLException,
+	ResultSet find(String field, String value) throws SQLException,
 			CorpusDatabaseException;
 
 	/**
@@ -92,10 +106,10 @@ public interface CorpusDatabaseTable {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet join(String field1, CorpusDatabaseTable table2,
-			String field2) throws SQLException;
+	ResultSet join(String field1, CorpusDatabaseTable table2, String field2)
+			throws SQLException;
 
-	public ResultSet join(CorpusDatabaseTable table1, String field1,
+	ResultSet join(CorpusDatabaseTable table1, String field1,
 			CorpusDatabaseTable table2, String field2) throws SQLException;
 
 	/**
@@ -109,9 +123,9 @@ public interface CorpusDatabaseTable {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet joinWithCondition(CorpusDatabaseTable table1,
-			String field1, CorpusDatabaseTable table2, String field2,
-			String condition) throws SQLException;
+	ResultSet joinWithCondition(CorpusDatabaseTable table1, String field1,
+			CorpusDatabaseTable table2, String field2, String condition)
+			throws SQLException;
 
 	/**
 	 * Join with additional WHERE condition. First table is the current one.
@@ -125,9 +139,8 @@ public interface CorpusDatabaseTable {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet joinWithCondition(String field1,
-			CorpusDatabaseTable table2, String field2, String condition)
-			throws SQLException;
+	ResultSet joinWithCondition(String field1, CorpusDatabaseTable table2,
+			String field2, String condition) throws SQLException;
 
-	public String getName();
+	String getName();
 }

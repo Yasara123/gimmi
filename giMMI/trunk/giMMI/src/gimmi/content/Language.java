@@ -2,13 +2,12 @@ package gimmi.content;
 
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
-import gimmi.database.MultilanguageContent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Language extends CorpusContent implements CorpusContentNamed {
+public class Language extends CorpusContentNamed {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "language";
 
@@ -41,17 +40,6 @@ public class Language extends CorpusContent implements CorpusContentNamed {
 		return null;
 	}
 
-	@Override
-	public Number getIdByName(String name) throws SQLException {
-		return (Number) this.getFieldByName("language_id", name);
-	}
-
-	@Override
-	public Number getIdByName(MultilanguageContent name) throws SQLException,
-			CorpusDatabaseException, IllegalArgumentException {
-		return (Number) this.getFieldByName("language_id", name);
-	}
-
 	public String getCodeById(Number id) throws CorpusDatabaseException,
 			SQLException {
 		if (id.intValue() < 0) {
@@ -67,17 +55,17 @@ public class Language extends CorpusContent implements CorpusContentNamed {
 	}
 
 	@Override
-	public List<String> getAllEntries(String translation, boolean usedOnly)
+	public List<String> getAllEntries(String field, boolean usedOnly)
 			throws SQLException, CorpusDatabaseException {
 		if (usedOnly) {
 			// get only used entries
 			return this.simpleJoin(this.getTable(),
 					new Site(this.database).getTable(), "language_id",
-					"language_id", translation);
+					"language_id", field);
 		} else {
 			// get all possible codes
 			return this.resultsetToStringList(this.getTable().fetchAll(
-					new String[] { translation }));
+					new String[] { field }));
 		}
 	}
 }
