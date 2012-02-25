@@ -2,12 +2,11 @@ package gimmi.content;
 
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
-import gimmi.database.MultilanguageContent;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class TagType extends CorpusContent implements CorpusContentNamed {
+public class TagType extends CorpusContentNamed {
 	public static final String TABLE_NAME = "tagType";
 
 	/**
@@ -22,17 +21,6 @@ public class TagType extends CorpusContent implements CorpusContentNamed {
 			CorpusDatabaseException {
 		this.database = db;
 		this.setTable(db.getTable(TagType.TABLE_NAME));
-	}
-
-	@Override
-	public Number getIdByName(MultilanguageContent name) throws SQLException,
-			CorpusDatabaseException, IllegalArgumentException {
-		return (Number) this.getFieldByName("tag_type_id", name);
-	}
-
-	@Override
-	public Number getIdByName(String name) throws SQLException {
-		return (Number) this.getFieldByName("tag_type_id", name);
 	}
 
 	@Override

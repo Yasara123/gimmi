@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * 
@@ -55,13 +54,6 @@ public class Site extends CorpusContent {
 			}
 			return names;
 		}
-		return null;
-	}
-
-	@Override
-	public List<String> getAllEntries(String translation, boolean usedOnly)
-			throws SQLException, CorpusDatabaseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

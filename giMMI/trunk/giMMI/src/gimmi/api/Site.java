@@ -158,7 +158,7 @@ public class Site {
 	/**
 	 * Set the language property for this site
 	 * 
-	 * @param name
+	 * @param languageName
 	 *            Name of the language in one of the possible translations
 	 * @throws IllegalArgumentException
 	 *             Thrown if the language code does not match the ISO639-alpha-3
@@ -166,16 +166,16 @@ public class Site {
 	 * @throws SQLException
 	 * @throws CorpusDatabaseException
 	 */
-	public void setLanguageCodeByName(String name)
+	public void setLanguageCodeByName(String languageName)
 			throws IllegalArgumentException, SQLException,
 			CorpusDatabaseException {
 		Language language = new Language(Site.DB);
-		Number lCode = language.getIdByName(name);
+		Number lCode = language.getIdByName(languageName);
 		if (lCode != null) {
 			this.properties.put("language_id", lCode);
 		} else {
-			throw new IllegalArgumentException("The language name (" + name
-					+ ") you specified could not be found.");
+			throw new IllegalArgumentException("The language name ("
+					+ languageName + ") you specified could not be found.");
 		}
 	}
 
@@ -222,7 +222,8 @@ public class Site {
 			this.properties.put("country_id", cCode);
 		} else {
 			throw new IllegalArgumentException(
-					"The country-code you specified could not be found.");
+					"The country name you specified (" + countryName
+							+ ") could not be found.");
 		}
 	}
 

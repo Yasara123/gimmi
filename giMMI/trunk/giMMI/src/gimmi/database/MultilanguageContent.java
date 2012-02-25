@@ -12,6 +12,9 @@ public class MultilanguageContent {
 	}
 
 	public void setLangString(Lang language, String string) {
+		if (language == null) {
+			throw new IllegalArgumentException("No language specified.");
+		}
 		this.data.put(language, string);
 	}
 
@@ -21,6 +24,15 @@ public class MultilanguageContent {
 
 	public Map getLangStrings() {
 		return Collections.unmodifiableMap(this.data);
+	}
+
+	public Lang getLangByString(String language) {
+		for (Lang lang : Lang.values()) {
+			if (language.toUpperCase().equals(lang.toString().toUpperCase())) {
+				return lang;
+			}
+		}
+		return null;
 	}
 
 	@Override

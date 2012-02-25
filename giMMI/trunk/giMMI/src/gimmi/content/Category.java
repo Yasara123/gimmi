@@ -7,7 +7,7 @@ import gimmi.database.MultilanguageContent;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Category extends CorpusContent implements CorpusContentNamed {
+public class Category extends CorpusContentNamed {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "category";
 
@@ -15,17 +15,6 @@ public class Category extends CorpusContent implements CorpusContentNamed {
 			CorpusDatabaseException {
 		this.database = db;
 		this.setTable(db.getTable(Category.TABLE_NAME));
-	}
-
-	@Override
-	public Number getIdByName(MultilanguageContent name) throws SQLException,
-			CorpusDatabaseException, IllegalArgumentException {
-		return (Number) this.getFieldByName("category_id", name);
-	}
-
-	@Override
-	public Number getIdByName(String name) throws SQLException {
-		return (Number) this.getFieldByName("category_id", name);
 	}
 
 	@Override

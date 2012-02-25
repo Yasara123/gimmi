@@ -6,7 +6,6 @@ import gimmi.database.CorpusDatabaseException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 public class Domain extends CorpusContent {
 	/** The name of the database table */
@@ -26,13 +25,5 @@ public class Domain extends CorpusContent {
 					.getTime().getTime()));
 		}
 		return super.write();
-	}
-
-	@Override
-	public List<String> getAllEntries(String translation, boolean usedOnly)
-			throws SQLException, CorpusDatabaseException {
-		return this.simpleJoin(this.getTable(),
-				new Site(this.database).getTable(), "domain_id", "domain_id",
-				translation);
 	}
 }

@@ -94,7 +94,7 @@ public class Database implements CorpusDatabase {
 
 		String insert = "INSERT INTO `" + table + "`" + "(" + cols.toString()
 				+ ")" + "VALUES" + "(" + vals.toString() + ");";
-		System.out.println(insert);
+		// System.out.println(insert);
 
 		int autoIncKeyFromApi = -1;
 		try {

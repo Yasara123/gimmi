@@ -46,6 +46,12 @@ public class Table implements CorpusDatabaseTable {
 	@Override
 	public ResultSet fetchAll(String[] fields) throws SQLException,
 			CorpusDatabaseException {
+		return this.fetchAllWithCondition(fields, null);
+	}
+
+	@Override
+	public ResultSet fetchAllWithCondition(String[] fields, String condition)
+			throws SQLException, CorpusDatabaseException {
 		// pre-check
 		for (String col : fields) {
 			if (this.columns.get(col) == null) {
@@ -61,9 +67,14 @@ public class Table implements CorpusDatabaseTable {
 		// query
 		String query = "SELECT "
 				+ fieldList.substring(0, fieldList.length() - 1) + " FROM "
-				+ Table.addBackticks(this.getName()) + ";";
+				+ Table.addBackticks(this.getName());
+		if (condition != null) {
+			query += " WHERE " + condition;
+		}
+		query += ";";
+		// System.out.println(query);
 		Statement statement = this.connection.createStatement();
-		// return
+
 		return statement.executeQuery(query);
 	}
 
@@ -114,7 +125,6 @@ public class Table implements CorpusDatabaseTable {
 			if (column != null) {
 				sqlColString.append(Table.addBackticks(column.toString())
 						+ ", ");
-				// TODO: differentiate objects (date, int, etc.)
 				sqlValString.append(this.escape(values.get(key),
 						column.getColumnType())
 						+ ", ");
@@ -152,7 +162,6 @@ public class Table implements CorpusDatabaseTable {
 		try {
 			st.executeUpdate(insert, Statement.RETURN_GENERATED_KEYS);
 		} catch (Exception e) {
-			System.out.println("Query: \n" + insert);
 			e.printStackTrace();
 		}
 		ResultSet rs = st.getGeneratedKeys();
@@ -178,9 +187,10 @@ public class Table implements CorpusDatabaseTable {
 	 * @param values
 	 * @return int
 	 * @throws SQLException
+	 * @throws CorpusDatabaseException
 	 */
 	public int update(String where, HashMap<String, String> values)
-			throws SQLException {
+			throws SQLException, CorpusDatabaseException {
 		// gibt -1 zurück, wenn keine werte für das update angegeben wurden
 		if (values.isEmpty()) {
 			return -1;
@@ -200,9 +210,9 @@ public class Table implements CorpusDatabaseTable {
 						+ this.escape(values.get(key), column.getColumnType())
 						+ ", ");
 			} else {
-				// nen schicker logger waere toll!
-				System.out.println("Das Feld \"" + key
-						+ "\" existiert nicht in " + this.getName());
+				throw new CorpusDatabaseException(
+						CorpusDatabaseException.Error.COLUMN_NOT_FOUND, key,
+						this.getName());
 			}
 		}
 		vals.delete((vals.length() - 2), vals.length());
@@ -211,10 +221,10 @@ public class Table implements CorpusDatabaseTable {
 		Statement st = this.connection.createStatement();
 		st.executeUpdate(update);
 		int affectedRows = st.getUpdateCount();
-		if (affectedRows < 0) {
-			System.out.println("Das Update betraf mit '" + where
-					+ "' keine Zeilen");
-		}
+		// if (affectedRows < 0) {
+		// System.out.println("Das Update betraf mit '" + where
+		// + "' keine Zeilen");
+		// }
 		return affectedRows;
 	}
 
@@ -233,15 +243,6 @@ public class Table implements CorpusDatabaseTable {
 		return this.update(this.getConditionFromFieldValuePair(field, value),
 				values);
 	}
-
-	// /**
-	// * Speichert mehrere Datensaetze auf einmal
-	// *
-	// * @param values
-	// */
-	// public void save(ArrayList<HashMap<String, String>> values) {
-	// // TODO: save fuer mehrere datensaetze implementieren
-	// }
 
 	/**
 	 * Erzeugt zu einem Feld Wert Paar ein WHERE Statement
@@ -265,26 +266,7 @@ public class Table implements CorpusDatabaseTable {
 				+ this.escape(value, column.getColumnType());
 	}
 
-	// /**
-	// * Escaped einen String ausgehend vom Spaltentyp
-	// *
-	// * @param value
-	// * @param column
-	// * @return String
-	// */
-	// public String escape(Object value, Column column) {
-	// return this.escape(value, column.getColumnType());
-	// }
-
-	/**
-	 * Escape a string based on its type.
-	 * 
-	 * TODO: add more object types
-	 * 
-	 * @param value
-	 * @param type
-	 * @return String
-	 */
+	@Override
 	public String escape(Object value, CorpusDatabaseTable.columnType type) {
 		if (value == null) {
 			return "null";
@@ -298,12 +280,11 @@ public class Table implements CorpusDatabaseTable {
 			}
 			return Integer.toString(Integer.parseInt(value.toString()));
 		case TXT:
+		default:
 			return "'"
 					+ value.toString().replace("\\", "\\\\")
 							.replace("'", "\\'") + "'";
 		}
-
-		return null;
 	}
 
 	/**
@@ -355,35 +336,6 @@ public class Table implements CorpusDatabaseTable {
 			this.requiredFields.add(name);
 		}
 	}
-
-	// /**
-	// * Fuegt eine Spalte hinzu
-	// *
-	// * @param name
-	// * @param type
-	// * @param flag
-	// * @return
-	// * @throws CorpusDatabaseException
-	// */
-	// protected Table addColumn(String name, int type)
-	// throws CorpusDatabaseException {
-	// this.columns.put(name, new Column(name, type, false));
-	// return this;
-	// }
-
-	// /**
-	// * Fuegt eine Spalte hinzu
-	// *
-	// * @param name
-	// * @param type
-	// * @param flag
-	// * @return
-	// * @throws CorpusDatabaseException
-	// */
-	// protected Table addColumn(String name) throws CorpusDatabaseException {
-	// this.columns.put(name, new Column(name, Column.TYPE_TEXT, false));
-	// return this;
-	// }
 
 	/**
 	 * Tries to guess the type of a column by MySQL DESCRIBE results
@@ -495,8 +447,7 @@ public class Table implements CorpusDatabaseTable {
 	@Override
 	public ResultSet join(CorpusDatabaseTable table1, String field1,
 			CorpusDatabaseTable table2, String field2) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return this.joinWithCondition(table1, field1, table2, field2, null);
 	}
 
 	@Override

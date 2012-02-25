@@ -3,7 +3,6 @@ package gimmi.content;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.CorpusDatabaseTable;
-import gimmi.database.MultilanguageContent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -134,82 +133,9 @@ public abstract class CorpusContent {
 	}
 
 	/**
-	 * Get a table field based on content of the "name_.*" field
-	 * 
-	 * @param field
-	 *            Field to get
-	 * @param name
-	 *            Name to search for in all name_.* fields
-	 * @return The first occurrence found
-	 * @throws SQLException
-	 */
-	protected Object getFieldByName(String field, String name)
-			throws SQLException {
-		ResultSet resultSet = null;
-		StringBuffer query = new StringBuffer();
-		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
-				.values()) {
-			query.append("name_" + lang.toString().toLowerCase() + "='" + name
-					+ "' OR ");
-		}
-		if (query.equals("")) {
-			return null;
-		}
-		resultSet = this.getTable().find(
-				query.toString().substring(0,
-						query.toString().lastIndexOf(" OR ")));
-		if ((resultSet != null) && resultSet.next()) {
-			return resultSet.getObject(field);
-		}
-		return null;
-	}
-
-	/**
-	 * Get a table field based on content of the "name_.*" field
-	 * 
-	 * @param field
-	 *            Field to get
-	 * @param name
-	 *            Name to search for in all name_.* fields
-	 * @return The first occurrence found
-	 * @throws SQLException
-	 */
-	protected Object getFieldByName(String field, MultilanguageContent name)
-			throws SQLException {
-		ResultSet resultSet = null;
-		StringBuffer query = new StringBuffer();
-		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
-				.values()) {
-			if (name.getLangString(lang) != null) {
-				query.append("name_" + lang.toString().toLowerCase() + "='"
-						+ name + "' AND ");
-			}
-		}
-		resultSet = this.getTable().find(
-				query.toString().substring(0,
-						query.toString().lastIndexOf(" AND ")));
-		if ((resultSet != null) && resultSet.next()) {
-			return resultSet.getObject(field);
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * @param translation
-	 *            The translation of the content name. This must match the
-	 *            corresponding table column name
-	 * @param usedOnly
-	 *            Get only content that is actually used by any site entry
-	 * @return A string-list with all content found
-	 * @throws CorpusDatabaseException
-	 * @throws SQLException
-	 */
-	public abstract List<String> getAllEntries(String translation,
-			boolean usedOnly) throws SQLException, CorpusDatabaseException;
-
-	/**
-	 * Check if the id field (table name + "_id") contains the given id
+	 * Check if the id field contains the given id. The search field will
+	 * default to the name of the table returned by
+	 * <code>getTable().getName()</code> with <code>_id</code> as suffix added.
 	 * 
 	 * @param id
 	 * @return
@@ -225,5 +151,48 @@ public abstract class CorpusContent {
 			return false;
 		}
 		return false;
+	}
+
+	/**
+	 * Get the id for an entry by the content of a specific field. The search
+	 * field will default to the name of the table returned by
+	 * <code>getTable().getName()</code> with <code>_id</code> as suffix added.
+	 * 
+	 * @param field
+	 *            The field to find the content in
+	 * @param content
+	 *            Content to search for
+	 * @return Id of the row where the content was found, or null if nothing was
+	 *         found
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
+	protected Number getIdByField(String field, String content)
+			throws SQLException, CorpusDatabaseException {
+		return this.getIdByField(this.getTable().getName().toLowerCase()
+				+ "_id", field, content);
+	}
+
+	/**
+	 * Get the id for an entry by the content of a specific field.
+	 * 
+	 * @param idField
+	 *            Field that contains the row id to return
+	 * @param field
+	 *            The field to find the content in
+	 * @param content
+	 *            Content to search for
+	 * @return Id of the row where the content was found, or <code>null</code>
+	 *         if nothing was found
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
+	protected Number getIdByField(String idField, String field, String content)
+			throws SQLException, CorpusDatabaseException {
+		ResultSet languageRS = this.getTable().find(field, content);
+		if (languageRS.next()) {
+			return languageRS.getInt(idField);
+		}
+		return null;
 	}
 }
