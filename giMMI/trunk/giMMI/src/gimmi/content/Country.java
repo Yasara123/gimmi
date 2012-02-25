@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Country extends CorpusContentNamed {
+public class Country extends CorpusContentNamed implements SupportsUnknown {
 	/** The name of the database table */
 	public static final String TABLE_NAME = "country";
 
@@ -69,5 +69,15 @@ public class Country extends CorpusContentNamed {
 			return this.resultsetToStringList(this.getTable().fetchAll(
 					new String[] { translation }));
 		}
+	}
+
+	@Override
+	public Number getIdForUnknown() throws SQLException,
+			CorpusDatabaseException {
+		ResultSet rs = this.getTable().find("country_code", "@U");
+		if (rs.next()) {
+			return rs.getInt("country_id");
+		}
+		return null;
 	}
 }

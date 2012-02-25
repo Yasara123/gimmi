@@ -370,6 +370,7 @@ public class SiteTest extends Testing {
 	private static void runTest_Single() {
 		Number newSiteId = -1;
 
+		// test one
 		Testing.so("All legal site creation in one step", Format.HEADER);
 		// gather data
 		try {
@@ -384,7 +385,6 @@ public class SiteTest extends Testing {
 		SiteTest.properties.put("title", SiteTest.getATitle());
 		SiteTest.properties.put("category", SiteTest.getACategoryName());
 		SiteTest.properties.put("storage", SiteTest.getAStoragePath());
-
 		// create site object
 		try {
 			Site site = new Site(//
@@ -400,7 +400,31 @@ public class SiteTest extends Testing {
 		} catch (Exception e) {
 			Testing.err(e);
 		}
+		SiteTest.checkTest(newSiteId);
 
+		// test two
+		Testing.so("Bogous site creation in one step", Format.HEADER);
+		Testing.so(
+				"Country and Language shouldn't be resolvable and result in unknown or in an error, depending on the Site behaviour setting.",
+				Format.STEPINFO);
+		// just pass random junk
+		SiteTest.properties.put("countrycode", "scrambled");
+		SiteTest.properties.put("languagecode", "zizzlebizz");
+		// create site object
+		try {
+			Site site = new Site(//
+					SiteTest.properties.get("url").toString(),//
+					SiteTest.properties.get("languagecode").toString(),//
+					SiteTest.properties.get("countrycode").toString(),//
+					SiteTest.properties.get("rootfile").toString(),//
+					SiteTest.properties.get("title").toString(),//
+					SiteTest.properties.get("category").toString(),//
+					SiteTest.properties.get("storage").toString()//
+			);
+			newSiteId = site.getNewSiteId();
+		} catch (Exception e) {
+			Testing.err(e);
+		}
 		SiteTest.checkTest(newSiteId);
 	}
 

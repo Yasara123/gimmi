@@ -72,7 +72,6 @@ public abstract class CorpusContentNamed extends CorpusContent {
 		resultSet = this.getTable().find(
 				query.toString().substring(0,
 						query.toString().lastIndexOf(" OR ")));
-		System.out.println(query);
 		if ((resultSet != null) && resultSet.next()) {
 			return resultSet.getObject(field);
 		}
