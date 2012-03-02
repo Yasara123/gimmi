@@ -1,7 +1,14 @@
-# author: Jens Bertram <code@jens-bertram.net>
-# category_id; name_en; name_de; parent_id 
-gastronomy;Gastronomie;
-cosmetics;Kosmetik;
-news;Nachrichten;
-sport;Sport;
-universities;Hochschulen;
+# category_id; name_en; name_de; path 
+1;gastronomy;Gastronomie;
+2;cosmetics;Kosmetik;
+3;news;Nachrichten;
+4;sport;Sport;
+5;universities;Hochschulen;
+6;food;Essen;1
+7;drinks;Trinken;1
+8;spirits;Alkoholika;1:7
+9;juice;Saft;1:7
+10;beer;Bier;1:7:8
+11;suhi;Sushi;1:6
+12;it;IT;3
+13;blog;Blog;3:12

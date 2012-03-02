@@ -1,5 +1,7 @@
 SET character_set_server=utf8;
 SET collation_server=utf8_bin;
+-- allow us to be lazy
+SET foreign_key_checks = 0;
 
 -- -------------------------------------
 -- CATEGORIES
@@ -11,8 +13,8 @@ INTO TABLE gimmi.category
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 3 LINES
-(name_en, name_de, parent_id);
+IGNORE 1 LINES
+(category_id, name_en, name_de, path);
 
 -- -------------------------------------
 -- TAG TYPES
@@ -24,7 +26,7 @@ INTO TABLE gimmi.tagType
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (tag_type_id, name_en, name_de);
 
 -- -------------------------------------
@@ -37,7 +39,7 @@ INTO TABLE gimmi.tag
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (tag_id, tag_type_id, name_en, name_de);
 
 -- -------------------------------------
@@ -50,7 +52,7 @@ INTO TABLE gimmi.domain
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (domain_id, url, added);
 
 -- -------------------------------------
@@ -63,7 +65,7 @@ INTO TABLE gimmi.site
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (site_id, crawl_time, language_id, domain_id, country_id, storage_path, root_file, title, url_path);
 
 -- -------------------------------------
@@ -76,7 +78,7 @@ INTO TABLE gimmi.site_has_tag
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (site_id, tag_id);
 
 -- -------------------------------------
@@ -89,5 +91,8 @@ INTO TABLE gimmi.site_has_category
 CHARACTER SET utf8
 FIELDS TERMINATED BY';'
 LINES TERMINATED BY '\n'
-IGNORE 2 LINES
+IGNORE 1 LINES
 (site_has_category_id, category_id, site_id);
+
+-- stop us being lazy
+SET foreign_key_checks = 1;
