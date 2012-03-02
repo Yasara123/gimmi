@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `gimmi`.`category` ;
 
 CREATE  TABLE IF NOT EXISTS `gimmi`.`category` (
   `category_id` INT NOT NULL AUTO_INCREMENT ,
-  `parent_id` INT NULL ,
+  `path` VARCHAR(20) NULL ,
   `name_en` VARCHAR(200) NOT NULL ,
   `name_de` VARCHAR(200) NULL ,
   PRIMARY KEY (`category_id`) )
