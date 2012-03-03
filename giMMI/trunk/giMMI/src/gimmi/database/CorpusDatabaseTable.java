@@ -59,7 +59,19 @@ public interface CorpusDatabaseTable {
 	ResultSet fetchAll() throws SQLException, CorpusDatabaseException;
 
 	/**
-	 * Fetch named rows owned by this table
+	 * Fetch all rows based an a WHERE condition.
+	 * 
+	 * @param condition
+	 *            The condition used as WHERE clause in the SQL statement.
+	 * @return
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
+	ResultSet fetchAllWithCondition(String condition) throws SQLException,
+			CorpusDatabaseException;
+
+	/**
+	 * Fetch named rows owned by this table.
 	 * 
 	 * @param fields
 	 *            List of field-names to restrict the query to
@@ -70,11 +82,21 @@ public interface CorpusDatabaseTable {
 	ResultSet fetchAll(String[] fields) throws SQLException,
 			CorpusDatabaseException;
 
+	/**
+	 * Fetch named rows owned by this table based an a WHERE condition.
+	 * 
+	 * @param fields
+	 * @param condition
+	 *            The condition used as WHERE clause in the SQL statement.
+	 * @return
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
 	ResultSet fetchAllWithCondition(String[] fields, String condition)
 			throws SQLException, CorpusDatabaseException;
 
 	/**
-	 * Searches for rows matching the given condition
+	 * Searches for rows based an a WHERE condition.
 	 * 
 	 * @param condition
 	 *            An expression for the MySQL WHERE clause
@@ -118,8 +140,7 @@ public interface CorpusDatabaseTable {
 	 * @param field1
 	 * @param field2
 	 * @param condition
-	 *            The condition used as WHERE clause in the SQL statement. This
-	 *            string will be used as is without any quoting!
+	 *            The condition used as WHERE clause in the SQL statement.
 	 * @return
 	 * @throws SQLException
 	 */
@@ -134,8 +155,7 @@ public interface CorpusDatabaseTable {
 	 * @param field1
 	 * @param field2
 	 * @param condition
-	 *            The condition used as WHERE clause in the SQL statement. This
-	 *            string will be used as is without any quoting!
+	 *            The condition used as WHERE clause in the SQL statement.
 	 * @return
 	 * @throws SQLException
 	 */
