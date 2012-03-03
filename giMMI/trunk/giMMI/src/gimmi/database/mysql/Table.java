@@ -50,6 +50,12 @@ public class Table implements CorpusDatabaseTable {
 	}
 
 	@Override
+	public ResultSet fetchAllWithCondition(String condition)
+			throws SQLException, CorpusDatabaseException {
+		return this.fetchAllWithCondition(new String[] { "*" }, condition);
+	}
+
+	@Override
 	public ResultSet fetchAllWithCondition(String[] fields, String condition)
 			throws SQLException, CorpusDatabaseException {
 		// pre-check
