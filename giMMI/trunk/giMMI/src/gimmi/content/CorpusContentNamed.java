@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class CorpusContentNamed extends CorpusContent {
+	
 	/**
 	 * Get the id of a language by it's name. All name fields (of all
 	 * translations) will be searched and the first match will be returned. The
@@ -25,6 +26,32 @@ public abstract class CorpusContentNamed extends CorpusContent {
 		return (Number) this.getFieldByName(this.getTable().getName()
 				.toLowerCase()
 				+ "_id", name);
+	}
+	
+	/**
+	 * Acts exactly the way getFieldByName(String field, String name) does but
+	 * @param name
+	 * @param where
+	 * @return
+	 * @throws SQLException
+	 */
+	public Number getIdByName(String name, String where) throws SQLException {
+		return (Number) this.getFieldByName(this.getTable().getName()
+				.toLowerCase() + "_id", name, where);
+	}
+	
+	/**
+	 * Quick and dirty solution to handle the finding of Multi Language names with
+	 * an additional where clause by just searching for one language
+	 * @param name
+	 * @param where
+	 * @return
+	 * @throws SQLException
+	 */
+	public Number getIdByName(MultilanguageContent mlName, String where) throws SQLException {
+		String name = MultilanguageContent.Lang.DE.toString();
+		return (Number) this.getFieldByName(this.getTable().getName()
+				.toLowerCase() + "_id", name, where);
 	}
 
 	/**
@@ -60,6 +87,44 @@ public abstract class CorpusContentNamed extends CorpusContent {
 	 */
 	public Object getFieldByName(String field, String name) throws SQLException {
 		ResultSet resultSet = null;
+		String query = getFieldByNameQuery(field, name);
+		
+		resultSet = this.getTable().find(query);
+		
+		if ((resultSet != null) && resultSet.next()) {
+			return resultSet.getObject(field);
+		}
+		return null;
+	}
+	
+	/**
+	 * Acts exactly the way getFieldByName(String field, String name) does but 
+	 * allows an additional value for the WHERE statement to be specified
+	 * @param field
+	 * @param name
+	 * @param where
+	 * @return
+	 * @throws SQLException
+	 */
+	public Object getFieldByName(String field, String name, String where) throws SQLException {
+		ResultSet resultSet = null;
+		String query = "(" + getFieldByNameQuery(field, name) + ")" +
+					   "AND " + where;
+		
+		resultSet = this.getTable().find(query);
+		
+		if ((resultSet != null) && resultSet.next()) {
+			return resultSet.getObject(field);
+		}
+		return null; 
+	}
+	/**
+	 * Returns the WHERE statement for a getFieldByQuery lookup
+	 * @param field
+	 * @param name
+	 * @return
+	 */
+	protected String getFieldByNameQuery(String field, String name) {
 		StringBuffer query = new StringBuffer();
 		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
 				.values()) {
@@ -69,13 +134,8 @@ public abstract class CorpusContentNamed extends CorpusContent {
 					+ this.getTable().escape(name.toLowerCase(),
 							CorpusDatabaseTable.columnType.TXT) + " OR ");
 		}
-		resultSet = this.getTable().find(
-				query.toString().substring(0,
-						query.toString().lastIndexOf(" OR ")));
-		if ((resultSet != null) && resultSet.next()) {
-			return resultSet.getObject(field);
-		}
-		return null;
+
+		return query.toString().substring(0,query.toString().lastIndexOf(" OR "));
 	}
 
 	/**
@@ -182,4 +242,24 @@ public abstract class CorpusContentNamed extends CorpusContent {
 	 */
 	public abstract List<String> getAllEntries(String translation,
 			boolean usedOnly) throws SQLException, CorpusDatabaseException;
+	
+	
+	/**
+	 * Returns all entries as a ResultSet
+	 * 
+	 * @param usedOnly
+	 * 			Get only content that is actually used by any site entry
+	 * @return
+	 * @throws SQLException
+	 * @throws CorpusDatabaseException
+	 */
+	public ResultSet getAllEntries(boolean usedOnly) throws SQLException,
+			CorpusDatabaseException {
+		if (usedOnly) {
+			return this.getTable().join(this.table.getName() + "_id",
+					new Site(this.database).getTable(), this.table.getName() + "_id");
+		} else {
+			return this.getTable().fetchAll();
+		}
+	}
 }
