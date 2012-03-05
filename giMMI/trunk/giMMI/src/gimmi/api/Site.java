@@ -75,7 +75,8 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 */
 	public Site(String url, String language, String country, String rootFile,
-			String title, String category, String storage) throws SQLException,
+			String title, String category, String subCategory,
+			String subSubCategory, String storage) throws SQLException,
 			ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
@@ -88,7 +89,7 @@ public class Site {
 		this.setLanguageCodeByName(language);
 		this.setCountryCodeByName(country);
 		this.setRootFile(rootFile);
-		this.setCategory(category);
+		this.setCategory(category, subCategory, subSubCategory);
 		this.setStoragePath(storage);
 
 		// write the site to the database
@@ -288,19 +289,73 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public void setCategory(String categoryName)
-			throws IllegalArgumentException, SQLException,
-			CorpusDatabaseException {
-		Number categoryId = new Category(Site.DB).getIdByName(categoryName);
-		if (categoryId != null) {
-			this.siteCategoryId = categoryId;
-			this.postWrite.add(new SiteHasCategory(Site.DB));
-		} else {
-			throw new IllegalArgumentException("The category you specified ("
-					+ categoryName + ") could not be found.");
+	public void setCategory(String topCategory, String subCategory,
+			String subSubCategory) throws IllegalArgumentException,
+			SQLException, CorpusDatabaseException {
+		Category category = new Category(Site.DB);
+		
+		int topCatId;
+		int subCatId;
+		int subSubCatId;
+		
+		if(topCategory == null) {
+			throw new CorpusDatabaseException("A Top Category has to be supplied for the creation of a new site!");
 		}
-	}
+		Number categoryId = category.getIdByName(topCategory);
+		//check whether the top category exists
+		if (categoryId != null) {
+			topCatId = categoryId.intValue();
 
+			//check whether the sub category exists (if not null)
+			//do nothing if subcategory is null
+			if(subCategory != null) {
+			
+				categoryId = category.getCategoryId(subCategory, topCatId);
+				//check for the sub sub category if the sub category exists
+				if(categoryId != null) {
+					subCatId = categoryId.intValue();
+					
+					//check whether the sub sub category exists (if not null)
+					//do nothing if it is null
+					if(subSubCategory != null) {
+						categoryId = category.getCategoryId(subSubCategory, subCatId);
+						//create subcategory if it does not exist yet
+						if(categoryId != null) {
+							subSubCatId = categoryId.intValue();
+						}
+						else {
+							categoryId = createCategory(subSubCategory, subCatId);
+						}
+					}
+				}
+				//create sub category and sub sub category if the sub category does not exist yet
+				else {
+					categoryId = createCategory(subCategory, topCatId);
+					//create sub sub category if it does not exist yet
+					if(subSubCategory != null) {
+						categoryId = createCategory(subSubCategory, categoryId.intValue());
+					}
+				}
+			}
+
+		//if the top category does not exist, create the complete hierarchy
+		} else {
+			//create top category
+			categoryId = createCategory(topCategory, null);
+			//create sub category (if not null)
+			if(subCategory != null) {
+				categoryId = createCategory(subCategory, categoryId.intValue());
+				//create sub sub category (if not null)
+				if(subSubCategory != null) {
+					categoryId = createCategory(subSubCategory, categoryId.intValue());
+				}
+			}
+		}
+		
+		this.siteCategoryId = categoryId;
+		this.postWrite.add(new SiteHasCategory(Site.DB));
+	}
+	
 	/**
 	 * Set the category string for this site
 	 * 
@@ -312,18 +367,74 @@ public class Site {
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public void setCategory(MultilanguageContent categoryName)
+	public void setCategory(MultilanguageContent topCategory,
+			MultilanguageContent subCategory,
+			MultilanguageContent subSubCategory)
 			throws IllegalArgumentException, SQLException,
 			CorpusDatabaseException {
 		Category category = new Category(Site.DB);
-		Number cCode = category.getIdByName(categoryName);
-		if (cCode != null) {
-			this.siteCategoryId = cCode;
-		} else {
-			category.create(categoryName);
-			this.preWrite.add(category);
-			this.postWrite.add(new SiteHasCategory(Site.DB));
+
+		int topCatId;
+		int subCatId;
+		int subSubCatId;
+
+		if(topCategory == null) {
+			throw new CorpusDatabaseException("A Top Category has to be supplied for the creation of a new site!");
 		}
+		Number categoryId = category.getIdByName(topCategory);
+		
+		//check whether the top category exists
+		if (categoryId != null) {
+			topCatId = categoryId.intValue();
+
+			//check whether the sub category exists (if not null)
+			//do nothing if subcategory is null
+			if(subCategory != null) {
+			
+				categoryId = category.getCategoryId(subCategory, topCatId);
+				//check for the sub sub category if the sub category exists
+				if(categoryId != null) {
+					subCatId = categoryId.intValue();
+					
+					//check whether the sub sub category exists (if not null)
+					//do nothing if it is null
+					if(subSubCategory != null) {
+						categoryId = category.getCategoryId(subSubCategory, subCatId);
+						//create subcategory if it does not exist yet
+						if(categoryId != null) {
+							subSubCatId = categoryId.intValue();
+						}
+						else {
+							categoryId = createCategory(subSubCategory, subCatId);
+						}
+					}
+				}
+				//create sub category and sub sub category if the sub category does not exist yet
+				else {
+					categoryId = createCategory(subCategory, categoryId.intValue());
+					//create sub sub category if it does not exist yet
+					if(subSubCategory != null) {
+						categoryId = createCategory(subSubCategory, categoryId.intValue());
+					}
+				}
+			}
+
+		//if the top category does not exist, create the complete hierarchy
+		} else {
+			//create top category
+			categoryId = createCategory(topCategory, null);
+			//create sub category (if not null)
+			if(subCategory != null) {
+				categoryId = createCategory(subCategory, categoryId.intValue());
+				//create sub sub category (if not null)
+				if(subSubCategory != null) {
+					categoryId = createCategory(subSubCategory, categoryId.intValue());
+				}
+			}
+		}
+		
+		this.siteCategoryId = categoryId;
+		this.postWrite.add(new SiteHasCategory(Site.DB));
 	}
 
 	/**
@@ -392,5 +503,48 @@ public class Site {
 			}
 		}
 		return this.newSiteId;
+	}
+
+	/**
+	 * Create a new category entry. Directly writes a new category which is 
+	 * associated with its parent
+	 * To create a root node set parent to null
+	 * 
+	 * @param categoryData
+	 * @param parent
+	 *            Id of the parent category
+	 * @throws CorpusDatabaseException
+	 * @throws SQLException
+	 */
+	public int createCategory(MultilanguageContent categoryData, Integer parent)
+			throws CorpusDatabaseException, SQLException {
+		Category category = new Category(DB);
+		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
+				.values()) {
+			category.setProperty("name_" + lang.toString().toLowerCase(),
+					categoryData.getLangString(lang));
+		}
+		if (parent != null) {
+			category.setProperty("parent_id", parent.toString());
+		}
+		return category.write();
+	}
+
+	/**
+	 * Quick and dirty workaround
+	 * Enables the creation of categories for which only one language is given by 
+	 * writing this language for all specified languages
+	 * @param categoryName
+	 * @param parent
+	 * @throws CorpusDatabaseException
+	 * @throws SQLException
+	 */
+	public int createCategory(String categoryName, Integer parent)
+			throws CorpusDatabaseException, SQLException {
+		MultilanguageContent tc = new MultilanguageContent();
+		tc.setLangString(MultilanguageContent.Lang.DE, categoryName);
+		tc.setLangString(MultilanguageContent.Lang.EN, categoryName);
+
+		return createCategory(tc, parent);
 	}
 }

@@ -102,10 +102,14 @@ public class SiteTest extends Testing {
 
 	private static void testCategory() {
 		MultilanguageContent mCategory = SiteTest.getACategoryMultiName();
+		MultilanguageContent mSubCategory = SiteTest.getACategoryMultiName();
+		MultilanguageContent mSubSubCategory = SiteTest.getACategoryMultiName();
 		Testing.so("Setting category: " + mCategory, Format.STEP);
 		try {
-			SiteTest.site.setCategory(mCategory);
+			SiteTest.site.setCategory(mCategory, mSubCategory, mSubSubCategory);
 			SiteTest.properties.put("category", mCategory.toString());
+			SiteTest.properties.put("subcategory", mSubCategory.toString());
+			SiteTest.properties.put("subsubcategory", mSubSubCategory.toString());
 		} catch (Exception e) {
 			Testing.err(e);
 		}
@@ -384,6 +388,8 @@ public class SiteTest extends Testing {
 		SiteTest.properties.put("rootfile", SiteTest.getARootFileName());
 		SiteTest.properties.put("title", SiteTest.getATitle());
 		SiteTest.properties.put("category", SiteTest.getACategoryName());
+		SiteTest.properties.put("subcategory", SiteTest.getACategoryName());
+		SiteTest.properties.put("subsubcategory", SiteTest.getACategoryName());
 		SiteTest.properties.put("storage", SiteTest.getAStoragePath());
 		// create site object
 		try {
@@ -394,6 +400,8 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("rootfile").toString(),//
 					SiteTest.properties.get("title").toString(),//
 					SiteTest.properties.get("category").toString(),//
+					SiteTest.properties.get("subcategory").toString(),//
+					SiteTest.properties.get("subsubcategory").toString(),//
 					SiteTest.properties.get("storage").toString()//
 			);
 			newSiteId = site.getNewSiteId();
@@ -419,6 +427,8 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("rootfile").toString(),//
 					SiteTest.properties.get("title").toString(),//
 					SiteTest.properties.get("category").toString(),//
+					SiteTest.properties.get("subcategory").toString(),//
+					SiteTest.properties.get("subsubcategory").toString(),//
 					SiteTest.properties.get("storage").toString()//
 			);
 			newSiteId = site.getNewSiteId();

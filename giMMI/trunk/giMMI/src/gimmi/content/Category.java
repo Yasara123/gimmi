@@ -3,6 +3,7 @@ package gimmi.content;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.MultilanguageContent;
+import gimmi.testing.api.SiteTest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,12 +79,28 @@ public class Category extends CorpusContentNamed {
 	 *            Id of the parent category
 	 * @throws CorpusDatabaseException
 	 */
-	public void create(MultilanguageContent categoryData)
+	public void create(MultilanguageContent categoryData, Integer parent)
 			throws CorpusDatabaseException {
 		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
 				.values()) {
+			System.out.println("name_" + lang.toString());
 			this.setProperty("name_" + lang.toString().toLowerCase(),
 					categoryData.getLangString(lang));
 		}
+		if(parent != null) {
+			this.setProperty("parent_id", parent.toString());
+		}
+	}
+	
+	public Number getCategoryId(String categoryName) throws SQLException {
+		return getIdByName(categoryName);
+	}
+	
+	public Number getCategoryId(String categoryName, Number categoryId) throws SQLException {
+		return getIdByName(categoryName, "parent_id = " + categoryId);
+	}
+	
+	public Number getCategoryId(MultilanguageContent categoryName, Number categoryId) throws SQLException {
+		return getIdByName(categoryName, "parent_id = " + categoryId);
 	}
 }
