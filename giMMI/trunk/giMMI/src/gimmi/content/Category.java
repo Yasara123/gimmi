@@ -34,7 +34,6 @@ public class Category extends CorpusContentNamed {
 		}
 	}
 
-	@Override
 	public ResultSet getAllEntries(boolean usedOnly) throws SQLException, CorpusDatabaseException {
 		return this.getTable().join("category_id",
 				new SiteHasCategory(this.database).getTable(), "category_id");
