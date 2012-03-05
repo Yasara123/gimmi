@@ -13,7 +13,7 @@ public class MyTest {
 							 "Deutsch", 
 							 "Österreich", 
 							 "index.php", 
-							 "Foo Seite", 
+//							 "Foo Seite", 
 							 null,
 							 "Bar", 
 							 null,
