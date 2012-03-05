@@ -398,7 +398,7 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("languagecode").toString(),//
 					SiteTest.properties.get("countrycode").toString(),//
 					SiteTest.properties.get("rootfile").toString(),//
-					SiteTest.properties.get("title").toString(),//
+//					SiteTest.properties.get("title").toString(),//
 					SiteTest.properties.get("category").toString(),//
 					SiteTest.properties.get("subcategory").toString(),//
 					SiteTest.properties.get("subsubcategory").toString(),//
@@ -425,7 +425,7 @@ public class SiteTest extends Testing {
 					SiteTest.properties.get("languagecode").toString(),//
 					SiteTest.properties.get("countrycode").toString(),//
 					SiteTest.properties.get("rootfile").toString(),//
-					SiteTest.properties.get("title").toString(),//
+//					SiteTest.properties.get("title").toString(),//
 					SiteTest.properties.get("category").toString(),//
 					SiteTest.properties.get("subcategory").toString(),//
 					SiteTest.properties.get("subsubcategory").toString(),//

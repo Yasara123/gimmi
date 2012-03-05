@@ -74,14 +74,14 @@ public class Site {
 	 * @throws MalformedURLException
 	 * @throws CorpusDatabaseException
 	 */
-	public Site(String url, String language, String country, String rootFile,
-			String title, String category, String subCategory,
+	public Site(String url, String language, String country, String rootFile, 
+			String category, String subCategory,
 			String subSubCategory, String storage) throws SQLException,
 			ConfigManagerException, MalformedURLException,
 			CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
 
-		this.setTitle(title);
+		//this.setTitle(title);
 		this.setURL(new URL(url));
 		// default to current adding
 		this.setTimestamp(new Timestamp(Calendar.getInstance().getTime()
