@@ -7,8 +7,8 @@ import gimmi.testing.api.SiteTest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Category extends CorpusContentNamed {
 	/** The name of the database table */
@@ -52,10 +52,12 @@ public class Category extends CorpusContentNamed {
 	 * @throws CorpusDatabaseException
 	 * @throws SQLException
 	 */
-	public List<Map<Integer, String>> getMap(Integer[] parents, boolean usedOnly)
-			throws SQLException, CorpusDatabaseException {
+	public List<String[]> getMap(String translation, Integer[] parents,
+			boolean usedOnly) throws SQLException, CorpusDatabaseException {
 		ResultSet data;
 		StringBuffer path = new StringBuffer();
+		List<String[]> results = new ArrayList<String[]>();
+		;
 		if (parents == null) {
 			data = this.getTable().fetchAllWithCondition("path=''");
 		} else {
@@ -63,9 +65,14 @@ public class Category extends CorpusContentNamed {
 				path.append(i.toString() + ":");
 			}
 			data = this.getTable().fetchAllWithCondition(
+					new String[] { "category_id", "path", translation },
 					"path='" + path.substring(0, path.length() - 1) + "'");
 		}
-		return null;
+		while (data.next()) {
+			results.add(new String[] { data.getString(1), data.getString(2),
+					data.getString(3) });
+		}
+		return results;
 	}
 
 	/**

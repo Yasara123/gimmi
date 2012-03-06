@@ -21,14 +21,14 @@ public class Database implements CorpusDatabase {
 	 * 
 	 * @throws SQLException
 	 */
-	public Database(String database, String user, String password)
+	public Database(String host, String database, String user, String password)
 			throws SQLException {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			this.connection = DriverManager
-					.getConnection("jdbc:mysql://localhost/" + database
-							+ "?useUnicode=true&characterEncoding=utf-8&"
-							+ "user=" + user + "&password=" + password);
+			this.connection = DriverManager.getConnection("jdbc:mysql://"
+					+ host + "/" + database
+					+ "?useUnicode=true&characterEncoding=utf-8&" + "user="
+					+ user + "&password=" + password);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

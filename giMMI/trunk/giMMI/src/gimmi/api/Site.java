@@ -74,14 +74,13 @@ public class Site {
 	 * @throws MalformedURLException
 	 * @throws CorpusDatabaseException
 	 */
-	public Site(String url, String language, String country, String rootFile, 
-			String category, String subCategory,
-			String subSubCategory, String storage) throws SQLException,
-			ConfigManagerException, MalformedURLException,
-			CorpusDatabaseException {
+	public Site(String url, String language, String country, String rootFile,
+			String category, String subCategory, String subSubCategory,
+			String storage) throws SQLException, ConfigManagerException,
+			MalformedURLException, CorpusDatabaseException {
 		Site.DB = gimmi.database.Database.getInstance();
 
-		//this.setTitle(title);
+		// this.setTitle(title);
 		this.setURL(new URL(url));
 		// default to current adding
 		this.setTimestamp(new Timestamp(Calendar.getInstance().getTime()
@@ -91,6 +90,7 @@ public class Site {
 		this.setRootFile(rootFile);
 		this.setCategory(category, subCategory, subSubCategory);
 		this.setStoragePath(storage);
+		this.setTitle("not set");
 
 		// write the site to the database
 		try {
@@ -293,69 +293,75 @@ public class Site {
 			String subSubCategory) throws IllegalArgumentException,
 			SQLException, CorpusDatabaseException {
 		Category category = new Category(Site.DB);
-		
+
 		int topCatId;
 		int subCatId;
 		int subSubCatId;
-		
-		if(topCategory == null) {
-			throw new CorpusDatabaseException("A Top Category has to be supplied for the creation of a new site!");
+
+		if (topCategory == null) {
+			throw new CorpusDatabaseException(
+					"A Top Category has to be supplied for the creation of a new site!");
 		}
 		Number categoryId = category.getIdByName(topCategory);
-		//check whether the top category exists
+		// check whether the top category exists
 		if (categoryId != null) {
 			topCatId = categoryId.intValue();
 
-			//check whether the sub category exists (if not null)
-			//do nothing if subcategory is null
-			if(subCategory != null) {
-			
+			// check whether the sub category exists (if not null)
+			// do nothing if subcategory is null
+			if (subCategory != null) {
+
 				categoryId = category.getCategoryId(subCategory, topCatId);
-				//check for the sub sub category if the sub category exists
-				if(categoryId != null) {
+				// check for the sub sub category if the sub category exists
+				if (categoryId != null) {
 					subCatId = categoryId.intValue();
-					
-					//check whether the sub sub category exists (if not null)
-					//do nothing if it is null
-					if(subSubCategory != null) {
-						categoryId = category.getCategoryId(subSubCategory, subCatId);
-						//create subcategory if it does not exist yet
-						if(categoryId != null) {
+
+					// check whether the sub sub category exists (if not null)
+					// do nothing if it is null
+					if (subSubCategory != null) {
+						categoryId = category.getCategoryId(subSubCategory,
+								subCatId);
+						// create subcategory if it does not exist yet
+						if (categoryId != null) {
 							subSubCatId = categoryId.intValue();
-						}
-						else {
-							categoryId = createCategory(subSubCategory, subCatId);
+						} else {
+							categoryId = this.createCategory(subSubCategory,
+									subCatId);
 						}
 					}
 				}
-				//create sub category and sub sub category if the sub category does not exist yet
+				// create sub category and sub sub category if the sub category
+				// does not exist yet
 				else {
-					categoryId = createCategory(subCategory, topCatId);
-					//create sub sub category if it does not exist yet
-					if(subSubCategory != null) {
-						categoryId = createCategory(subSubCategory, categoryId.intValue());
+					categoryId = this.createCategory(subCategory, topCatId);
+					// create sub sub category if it does not exist yet
+					if (subSubCategory != null) {
+						categoryId = this.createCategory(subSubCategory,
+								categoryId.intValue());
 					}
 				}
 			}
 
-		//if the top category does not exist, create the complete hierarchy
+			// if the top category does not exist, create the complete hierarchy
 		} else {
-			//create top category
-			categoryId = createCategory(topCategory, null);
-			//create sub category (if not null)
-			if(subCategory != null) {
-				categoryId = createCategory(subCategory, categoryId.intValue());
-				//create sub sub category (if not null)
-				if(subSubCategory != null) {
-					categoryId = createCategory(subSubCategory, categoryId.intValue());
+			// create top category
+			categoryId = this.createCategory(topCategory, null);
+			// create sub category (if not null)
+			if (subCategory != null) {
+				categoryId = this.createCategory(subCategory,
+						categoryId.intValue());
+				// create sub sub category (if not null)
+				if (subSubCategory != null) {
+					categoryId = this.createCategory(subSubCategory,
+							categoryId.intValue());
 				}
 			}
 		}
-		
+
 		this.siteCategoryId = categoryId;
 		this.postWrite.add(new SiteHasCategory(Site.DB));
 	}
-	
+
 	/**
 	 * Set the category string for this site
 	 * 
@@ -378,61 +384,68 @@ public class Site {
 		int subCatId;
 		int subSubCatId;
 
-		if(topCategory == null) {
-			throw new CorpusDatabaseException("A Top Category has to be supplied for the creation of a new site!");
+		if (topCategory == null) {
+			throw new CorpusDatabaseException(
+					"A Top Category has to be supplied for the creation of a new site!");
 		}
 		Number categoryId = category.getIdByName(topCategory);
-		
-		//check whether the top category exists
+
+		// check whether the top category exists
 		if (categoryId != null) {
 			topCatId = categoryId.intValue();
 
-			//check whether the sub category exists (if not null)
-			//do nothing if subcategory is null
-			if(subCategory != null) {
-			
+			// check whether the sub category exists (if not null)
+			// do nothing if subcategory is null
+			if (subCategory != null) {
+
 				categoryId = category.getCategoryId(subCategory, topCatId);
-				//check for the sub sub category if the sub category exists
-				if(categoryId != null) {
+				// check for the sub sub category if the sub category exists
+				if (categoryId != null) {
 					subCatId = categoryId.intValue();
-					
-					//check whether the sub sub category exists (if not null)
-					//do nothing if it is null
-					if(subSubCategory != null) {
-						categoryId = category.getCategoryId(subSubCategory, subCatId);
-						//create subcategory if it does not exist yet
-						if(categoryId != null) {
+
+					// check whether the sub sub category exists (if not null)
+					// do nothing if it is null
+					if (subSubCategory != null) {
+						categoryId = category.getCategoryId(subSubCategory,
+								subCatId);
+						// create subcategory if it does not exist yet
+						if (categoryId != null) {
 							subSubCatId = categoryId.intValue();
-						}
-						else {
-							categoryId = createCategory(subSubCategory, subCatId);
+						} else {
+							categoryId = this.createCategory(subSubCategory,
+									subCatId);
 						}
 					}
 				}
-				//create sub category and sub sub category if the sub category does not exist yet
+				// create sub category and sub sub category if the sub category
+				// does not exist yet
 				else {
-					categoryId = createCategory(subCategory, categoryId.intValue());
-					//create sub sub category if it does not exist yet
-					if(subSubCategory != null) {
-						categoryId = createCategory(subSubCategory, categoryId.intValue());
+					categoryId = this.createCategory(subCategory,
+							categoryId.intValue());
+					// create sub sub category if it does not exist yet
+					if (subSubCategory != null) {
+						categoryId = this.createCategory(subSubCategory,
+								categoryId.intValue());
 					}
 				}
 			}
 
-		//if the top category does not exist, create the complete hierarchy
+			// if the top category does not exist, create the complete hierarchy
 		} else {
-			//create top category
-			categoryId = createCategory(topCategory, null);
-			//create sub category (if not null)
-			if(subCategory != null) {
-				categoryId = createCategory(subCategory, categoryId.intValue());
-				//create sub sub category (if not null)
-				if(subSubCategory != null) {
-					categoryId = createCategory(subSubCategory, categoryId.intValue());
+			// create top category
+			categoryId = this.createCategory(topCategory, null);
+			// create sub category (if not null)
+			if (subCategory != null) {
+				categoryId = this.createCategory(subCategory,
+						categoryId.intValue());
+				// create sub sub category (if not null)
+				if (subSubCategory != null) {
+					categoryId = this.createCategory(subSubCategory,
+							categoryId.intValue());
 				}
 			}
 		}
-		
+
 		this.siteCategoryId = categoryId;
 		this.postWrite.add(new SiteHasCategory(Site.DB));
 	}
@@ -506,9 +519,8 @@ public class Site {
 	}
 
 	/**
-	 * Create a new category entry. Directly writes a new category which is 
-	 * associated with its parent
-	 * To create a root node set parent to null
+	 * Create a new category entry. Directly writes a new category which is
+	 * associated with its parent To create a root node set parent to null
 	 * 
 	 * @param categoryData
 	 * @param parent
@@ -518,7 +530,7 @@ public class Site {
 	 */
 	public int createCategory(MultilanguageContent categoryData, Integer parent)
 			throws CorpusDatabaseException, SQLException {
-		Category category = new Category(DB);
+		Category category = new Category(Site.DB);
 		for (MultilanguageContent.Lang lang : MultilanguageContent.Lang
 				.values()) {
 			category.setProperty("name_" + lang.toString().toLowerCase(),
@@ -531,9 +543,10 @@ public class Site {
 	}
 
 	/**
-	 * Quick and dirty workaround
-	 * Enables the creation of categories for which only one language is given by 
-	 * writing this language for all specified languages
+	 * Quick and dirty workaround Enables the creation of categories for which
+	 * only one language is given by writing this language for all specified
+	 * languages
+	 * 
 	 * @param categoryName
 	 * @param parent
 	 * @throws CorpusDatabaseException
@@ -545,6 +558,6 @@ public class Site {
 		tc.setLangString(MultilanguageContent.Lang.DE, categoryName);
 		tc.setLangString(MultilanguageContent.Lang.EN, categoryName);
 
-		return createCategory(tc, parent);
+		return this.createCategory(tc, parent);
 	}
 }

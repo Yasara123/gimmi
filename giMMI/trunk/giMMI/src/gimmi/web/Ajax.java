@@ -173,22 +173,18 @@ public class Ajax implements RequestHandler {
 		}
 
 		// TODO: full requests need a upper limit for request results
-		switch (target) {
-		case gimmi.content.Language.TABLE_NAME:
+		if (target.equals(gimmi.content.Language.TABLE_NAME)) {
 			Language language = new Language(Database.getInstance());
 			jArray.addAll(language.getAllEntries("name_de", getFullData));
 			this.responseJSON = jArray.toJSONString();
-			break;
-		case gimmi.content.Country.TABLE_NAME:
+		} else if (target.equals(gimmi.content.Country.TABLE_NAME)) {
 			Country country = new Country(Database.getInstance());
 			jArray.addAll(country.getAllEntries("name_de", getFullData));
 			this.responseJSON = jArray.toJSONString();
-			break;
-		case gimmi.content.Category.TABLE_NAME:
+		} else if (target.equals(gimmi.content.Category.TABLE_NAME)) {
 			Category category = new Category(Database.getInstance());
 			jArray.addAll(category.getAllEntries("name_de", getFullData));
 			this.responseJSON = jArray.toJSONString();
-			break;
 		}
 	}
 
