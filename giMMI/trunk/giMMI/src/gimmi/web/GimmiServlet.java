@@ -23,8 +23,11 @@ public class GimmiServlet extends HttpServlet {
 			RequestHandler ajax = new Ajax(request, response);
 			try {
 				ajax.parseRequest();
-			} catch (SQLException | CorpusDatabaseException
-					| ConfigManagerException e) {
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (CorpusDatabaseException e) {
+				e.printStackTrace();
+			} catch (ConfigManagerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

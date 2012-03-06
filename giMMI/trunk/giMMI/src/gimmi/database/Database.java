@@ -20,6 +20,7 @@ public class Database {
 			ConfigManager.tryLoadFallbackConfig();
 		}
 		Database.database = new gimmi.database.mysql.Database(
+				ConfigManager.getByKey("database.host"),
 				ConfigManager.getByKey("database.name"),
 				ConfigManager.getByKey("database.user"),
 				ConfigManager.getByKey("database.password"));

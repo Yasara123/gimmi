@@ -147,7 +147,9 @@ public abstract class CorpusContent {
 							id.toString()).first()) {
 				return true;
 			}
-		} catch (SQLException | CorpusDatabaseException e) {
+		} catch (SQLException ex) {
+			return false;
+		} catch (CorpusDatabaseException e) {
 			return false;
 		}
 		return false;
