@@ -3,7 +3,6 @@ package gimmi.content;
 import gimmi.database.CorpusDatabase;
 import gimmi.database.CorpusDatabaseException;
 import gimmi.database.MultilanguageContent;
-import gimmi.testing.api.SiteTest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +34,9 @@ public class Category extends CorpusContentNamed {
 		}
 	}
 
-	public ResultSet getAllEntries(boolean usedOnly) throws SQLException, CorpusDatabaseException {
+	@Override
+	public ResultSet getAllEntries(boolean usedOnly) throws SQLException,
+			CorpusDatabaseException {
 		return this.getTable().join("category_id",
 				new SiteHasCategory(this.database).getTable(), "category_id");
 	}
@@ -94,20 +95,22 @@ public class Category extends CorpusContentNamed {
 			this.setProperty("name_" + lang.toString().toLowerCase(),
 					categoryData.getLangString(lang));
 		}
-		if(parent != null) {
+		if (parent != null) {
 			this.setProperty("parent_id", parent.toString());
 		}
 	}
-	
+
 	public Number getCategoryId(String categoryName) throws SQLException {
-		return getIdByName(categoryName);
+		return this.getIdByName(categoryName);
 	}
-	
-	public Number getCategoryId(String categoryName, Number categoryId) throws SQLException {
-		return getIdByName(categoryName, "parent_id = " + categoryId);
+
+	public Number getCategoryId(String categoryName, Number categoryId)
+			throws SQLException {
+		return this.getIdByName(categoryName, "parent_id = " + categoryId);
 	}
-	
-	public Number getCategoryId(MultilanguageContent categoryName, Number categoryId) throws SQLException {
-		return getIdByName(categoryName, "parent_id = " + categoryId);
+
+	public Number getCategoryId(MultilanguageContent categoryName,
+			Number categoryId) throws SQLException {
+		return this.getIdByName(categoryName, "parent_id = " + categoryId);
 	}
 }
