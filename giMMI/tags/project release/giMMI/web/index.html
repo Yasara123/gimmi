@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>giMMI Testing Page</title>
+</head>
+<body>
+<h1>g:// &mdash; giMMI Tests</h1>
+<h2>AJAX Tests</h2>
+All responses should be in <a href="http://www.json.org">JSON</a> format. Just <a href="http://jsonlint.com/">test</a> if it holds. And if it does, if it <a href="http://jsonformat.com">looks nice</a>..
+<h3>Data associated with sites</h3>
+<ul>
+	<!-- no filter is implicit "filter=used" -->
+	<li><a href="gimmi?ajax=1&task=list&target=language">Languages</a></li>
+	<li><a href="gimmi?ajax=1&task=list&target=country">Countries</a></li>
+	<li><a href="gimmi?ajax=1&task=list&target=category">Categories</a></li>
+</ul>
+<h3>All data regardless of any association with sites</h3>
+<ul>
+	<!-- filter "all" means "get all entries regardless of their usage" -->
+	<li><a href="gimmi?ajax=1&task=list&target=language&filter=all">Languages</a></li>
+	<li><a href="gimmi?ajax=1&task=list&target=country&filter=all">Countries</a></li>
+	<li><a href="gimmi?ajax=1&task=list&target=category&filter=all">Categories</a></li>
+</ul>
+</body>
+</html>
