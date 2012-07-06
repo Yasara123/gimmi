@@ -1,0 +1,38 @@
+\documentclass[a4paper]{article}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+
+% Seitenformatierung
+\usepackage{fancyhdr,setspace}
+
+%Raender einstellen
+\usepackage[left=2.5cm,right=3cm,top=2.5cm,bottom=2cm,includeheadfoot]{geometry}
+
+%Kopfzeile usw.
+\pagestyle{fancy}
+\fancyhf{}
+
+%Kopfzeile links bzw. innen
+\fancyhead[L]{\nouppercase{\leftmark}}
+%Kopfzeile rechts bzw. außen
+\fancyhead[R]{\thepage}
+%Linie oben
+\renewcommand{\headrulewidth}{0.5pt}
+
+\setlength{\parindent}{0pt}                  %Absatz-Beginn um 0pt einruecken
+\setlength{\parskip}{5pt plus 2pt minus 1pt} %Abstand zwischen Absaetzen
+
+%sollte für alle funktionieren
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+%Bibliograghie
+%\usepackage{natbib}
+\bibliographystyle{ieeetr}
+
+% Graphiken einbinden
+\usepackage{graphicx}
+
+%fußnoten mehrfach referenzierbar machen
+\newcommand{\footnoteremember}[2]{\footnote{#2}\newcounter{#1}\setcounter{#1}{\value{footnote}}}
+\newcommand{\footnoterecall}[1]{\footnotemark[\value{#1}]}

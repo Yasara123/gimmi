@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Fri Jul 06 11:52:49 CEST 2012
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=cwb-ministerpraesident.tex
+outputFile=cwb-ministerpraesident.pdf
+langSpell=de
+markDer=true
+srcDir=
