@@ -3,27 +3,92 @@
 
 \input{titelseite}
 
-% CQP-Doc:
-%	http://bulba.sdsu.edu/cqpman.ps
-%	http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/
-% STTS: http://www.ims.uni-stuttgart.de/projekte/corplex/TagSets/stts-table.html
-
-% Adjektiv+Nomen ohne McAllister (Top 10):
-%	// Korpus öffnen
-%	MPRAES;
-% 	// Lemma ??
-%	show +lemma;
-%	// Anfrage: Adjektiv+Nomen, nicht 'McAllister'
-%	[pos='ADJ(A|D)'][pos='N(E|N)' & word!='McAllister'];
-%	// Sortierung der Ergebnisse
-%	sort by word descending;
-%	// count nach Lemma
-%	count by lemma;
-% Referenzen:
+% CQP:
+% http://bulba.sdsu.edu/cqpman.ps
+% http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/
 % http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/node27.html#SECTION00830000000000000000
 % http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.pdf
 
-\section{Title}
+% STTS:
+% http://www.ims.uni-stuttgart.de/projekte/corplex/TagSets/stts-table.html
+
+% Adjektiv+Nomen ohne McAllister (Top 10) als LaTeX:
+%	// Korpus öffnen
+%	MPRAES;
+%	// LaTeX Ausgabe Mode
+%	set PrintMode latex;
+%	// Query
+%	@[pos='ADJ(A|D)']@[pos='N(E|N)' & word!='McAllister'];
+%	// Filter, Ausgabe in Datei tabelle1.tex
+%	group Last matchend word by match lemma > "tabelle1.tex";
+
+% Häufigste Nomina ohne McAllister (Top 10) als LaTeX
+%	// Korpus öffnen
+%	MPRAES;
+%	// LaTeX Ausgabe Mode
+%	set PrintMode latex;
+%	// Query
+%	@[pos='N(E|N)' & word!='McAllister'];
+%	// Filter, Ausgabe in Datei tabelle2.tex
+%	group Last target lemma > "tabelle2.tex";
+
+% Adjektive mit Suchwort (McAllister) (Top 10) als LaTeX
+%	// Korpus öffnen
+%	MPRAES;
+%	// LaTeX Ausgabe Mode
+%	set PrintMode latex;
+%	// Query
+%	@[pos='ADJ(A|D)']@[word='McAllister'];
+%	// Filter, Ausgabe in Datei tabelle3.tex
+%	group Last match lemma > "tabelle3.tex";
+
+\section{CQP Ausgaben}
+
+% tabelle 1: adjektive+nomen top10
+\begin{table}[htpb]\label{t}
+	\center
+	\begin{tabularx}{0.6\textwidth}{llr}
+		\toprule
+		\textbf{Adjektiv} & \textbf{Nomen} & \textbf{Quantität}\\
+		\midrule
+		% tabelle muss auf nur-Zeilen gekürzt werden!
+		\input{data/tabelle1.tex}
+		\bottomrule
+	\end{tabularx}
+	\caption{Kollokation Adjektive + Nomen, die häufigsten zehn Kombinationen.}
+	\label{tab:undefined}
+\end{table}
+
+% tabelle 2: nomina top10
+\begin{table}[htpb]\label{t}
+	\center
+	\begin{tabularx}{0.35\textwidth}{lr}
+		\toprule
+		\textbf{Nomen} & \textbf{Quantität}\\
+		\midrule
+		% tabelle muss auf nur-Zeilen gekürzt werden!
+		\input{data/tabelle2.tex}
+		\bottomrule
+	\end{tabularx}
+	\caption{Nomina, die häufigsten zehn Vorkommen.}
+	\label{tab:undefined}
+\end{table}
+
+% tabelle 3: nomina top10
+\begin{table}[htpb]\label{t}
+	\center
+	\begin{tabularx}{0.35\textwidth}{lr}
+		\toprule
+		\textbf{Adjektiv} & \textbf{Quantität}\\
+		\midrule
+		% tabelle muss auf nur-Zeilen gekürzt werden!
+		\input{data/tabelle3.tex}
+		\bottomrule
+	\end{tabularx}
+	\caption{Quantität der Adjektive, die in Kollokation mit dem Suchwort
+	auftreten.}
+	\label{tab:undefined}
+\end{table}
 
 \subsection{Subtitle}
 
