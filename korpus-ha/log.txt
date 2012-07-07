@@ -1,0 +1,34 @@
+
+1:
+----------------------------------------------------------------------------------------------------
+Dein Vorschlag:
+> @[pos='ADJ(A|D)']@[pos='N(E|N)' & word!='McAllister'];
+> group Last matchend word by match lemma > "tabelle1.tex";
+
+Angepasst: 
+> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & word!="Ministerpräsident.*"];
+> group adj_n matchend lemma by match lemma cut 4 > "tabelle1.tex";
+
+-> 1: matched auch deklinierte varianten von ministerpräsident
+-> 2: sie wollte es auf lemma ebene, deswegen zweimal lemma
+		cut 4 zeigt nur die ergebnisse an, die mindestens 4 mal vorkommen (sie will nur die 10 häufigsten kombinationen
+		habe nur einen cutoff basierend auf der häufigkeit und nicht basierend auf position gefunden
+		4 habe ich vorher durch abzählen bestimmt (ich kam mir mindestens so doof vor wie es klingt!)
+
+2:
+----------------------------------------------------------------------------------------------------
+Dein Vorschlag:
+> @[pos='N(E|N)' & word!='McAllister'];
+> group Last target lemma > "tabelle2.tex";
+
+Angepasst:
+> n = @[pos='N(E|N)' & word!='Ministerpräsident.*'];
+> group n target lemma cut 35 > "tabelle2.tex";
+
+-> 1: Ministerpräsident halt
+-> 2: elegante anpassung, dass nur 10 nomen ausgegeben werden
+
+3:
+----------------------------------------------------------------------------------------------------
+> adj = @[pos='ADJ(A|D)']@[word='Ministerpräsident.*'];
+> group adj match lemma cut 2 > "tabelle3.tex";
