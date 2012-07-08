@@ -6,7 +6,7 @@ Dein Vorschlag:
 > group Last matchend word by match lemma > "tabelle1.tex";
 
 Angepasst: 
-> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & word!="Ministerpräsident.*"];
+> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & lemma!="Ministerpräsident.?"];
 > group adj_n matchend lemma by match lemma cut 4 > "tabelle1.tex";
 
 -> 1: matched auch deklinierte varianten von ministerpräsident
@@ -22,7 +22,7 @@ Dein Vorschlag:
 > group Last target lemma > "tabelle2.tex";
 
 Angepasst:
-> n = @[pos='N(E|N)' & word!='Ministerpräsident.*'];
+> n = @[pos='N(E|N)' & lemma!='Ministerpräsident.?'];
 > group n target lemma cut 35 > "tabelle2.tex";
 
 -> 1: Ministerpräsident halt
@@ -30,5 +30,5 @@ Angepasst:
 
 3:
 ----------------------------------------------------------------------------------------------------
-> adj = @[pos='ADJ(A|D)']@[word='Ministerpräsident.*'];
+> adj = @[pos='ADJ(A|D)']@[lemma='Ministerpräsident.?'];
 > group adj match lemma cut 2 > "tabelle3.tex";
