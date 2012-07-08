@@ -140,7 +140,7 @@ Kombinationen beschränkt, die mindestens vier mal auftreten. Der Wert vier wurd
 bestimmt, indem der obige Befehl ohne den \texttt{cut} Befehl verwendet wurde.
 Die Ausgabe wurde in die Datei \texttt{tabelle1.tex} umgeleitet.
 
-Das Ergebnis ist der Tabelle \ref{tab:adjektive_nomina} zu entnehmen.
+Das Ergebnis ist der \reftab{tab:adjektive_nomina} zu entnehmen.
 
 % tabelle 1: adjektive+nomen top10
 \begin{table}[htpb]\label{t}
@@ -176,7 +176,7 @@ vorigen Beispiel manuell durch einen unbeschränkten Aufruf des selben
 Befehls ermittelt. Die Ausgabe wurde in die Datei \texttt{tabelle2.tex}
 umgeleitet.
 
-Das Ergebnis ist der Tabelle \ref{tab:nomina} zu entnehmen.
+Das Ergebnis ist der \reftab{tab:nomina} zu entnehmen.
 % tabelle 2: nomina top10
 \begin{table}[htpb]\label{t}
 	\center
@@ -208,7 +208,7 @@ die mindestens zweimal zusammen mit Ministerpräsident auftreten. Der Wert zwei
 wurde wie in den vorigen Beispielen manuell ermittelt. Auch hier wurde die Ausgabe
 wieder in eine Datei, diesmal \texttt{tabelle3.tex}, umgeleitet. 
 
-Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
+Das Ergebnis ist der \reftab{tab:adj_mpraes} zu entnehmen.
 \begin{table}[htpb]\label{t}
 	\center
 	\begin{tabularx}{0.5\textwidth}{lr}
@@ -225,12 +225,39 @@ Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
 \end{table}
 
 \section{Vergleich mit dem allgemeinem Zeitungskorpus \textit{(HGC)}}
-Für die Bestimmung der häufigsten Nomina, die nicht gleich
-\textit{"`Ministerpräsident"'} sind, wurden folgende Befehle verwendet:
+\subsection{Die häufigsten zehn Adjektiv+Nomina Kollokationen im Vergleich zum
+MPRAES Korpus}
+Die Bestimmung der häufigsten Adjektiv+Nomina Kollokationen, wurde das folgende
+Muster für die benötigten Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
 MPRAES> adj_n = @[lemma=LEMMA]@[word=NOMEN];
 MPRAES> group adj_n matchend lemma;
 \end{Verbatim}
+Hierbei wurden die Variablen \texttt{LEMMA} und \texttt{NOMEN} entsprechend
+\reftab{tab:adjektive_nomina} eingesetzt.
+\begin{table}[htpb]\label{t}
+	\center
+	\begin{tabularx}{0.6\textwidth}{lrr}
+		\toprule
+		\textbf{Adjektiv+Nomina} & \textbf{HGC} & \textbf{MPRAES}\\
+		\midrule
+		vergangen Woche & 0,0053395017\% & 2\\
+		vergangen Jahr & 0,0147280605\% &\\
+		öffentlich-rechtlich Rundfunk & 0,0001689345\% &\\
+		noddeutsch Landesbank & 0,000003906\% &\\
+		grün Gentechnik & 4,882e-7\% &\\
+		rein Spekulation & 0,0000727492\% &\\
+		liberaldemokratisch Partei & 0,000017577\% &\\
+		klug Entscheidung & 0,0000161122\% &\\
+		offen Denkmal & 0,0000107415\% &\\
+		früh Außenminister & 0,0000727492\% &\\
+		\bottomrule
+	\end{tabularx}
+	\caption{Vergleich der Frequenzen für Adjektiv+Nomina Kollokationen der
+	Korpora \texttt{HGC} (204.813.118 Token) und \texttt{MPRAES} (28.176 Token)
+	(auf Lemma-Basis) (gerundet).}
+	\label{tab:compare_adj_n}
+\end{table}
 % [lemma="vergangen"][lemma="Woche"]; group Last match lemma; -> 10936
 % [lemma="vergangen"][lemma="Jahr"]; group Last match lemma; -> 30165
 % [lemma="öffentlich-rechtlich"][lemma="Rundfunk"]; group Last match lemma; ->
