@@ -1,7 +1,40 @@
-\input{header}
+\documentclass[%
+	type=document,%
+  	style=article,% book, article
+  	media=print,
+  	pages=oneside,%
+  	prefixLecturer=Dozenten:,
+  	%draft,
+]{unihildesheim}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\graphicspath{{../img/}}
+
+% META
+\Contact{uni@jens-bertram.net}
+\Copyright{cc:by-nc-sa}
+\Date{08.07.2012}{08. Juli 2012}
+\Lecturer{Gertrud Faaß PhD,\\Dr. Ralph Kölle}
+\Seminar{Formalisierung\\[0.5em]{\small Fachbereich III -- Sprach- und
+Informationswissenschaften \\Institut für Informationswissenschaft und
+Sprachtechnologie}}
+\Semester{Sommersemester 2012}
+\Title{Hausaufgabe 6}
+\Subtitle{Erstellen von Bi- und Trigrammen und
+frequenzbasierte Untersuchungen am Beispiel von Zeitungstexten zum Thema
+Ministerpräsident}
+\Author{J. Bertram, S. Kastner}{Jens Bertram {\small(214508)}\\Sebastian Kastner
+{\small(202322)}}
+% /META
+
 \begin{document}
 
-\input{titelseite}
+\Titlepage
+\cleardoublepage
+\TOC
+\cleardoublepage
+
+%\input{titelseite}
 
 % CQP:
 % http://bulba.sdsu.edu/cqpman.ps
@@ -91,7 +124,7 @@ Das Ergebnis ist der Tabelle \ref{tab:adjektive_nomina} zu entnehmen.
 		\textbf{Adjektiv} & \textbf{Nomen} & \textbf{Quantität}\\
 		\midrule
 		% tabelle muss auf nur-Zeilen gekürzt werden!
-		\input{data/tabelle1.tex}
+		\input{data/tabelle1.tex.inc}
 		\bottomrule
 	\end{tabularx}
 	\caption{Kollokation Adjektive + Nomen, die häufigsten zehn Kombinationen.}
@@ -125,7 +158,7 @@ Das Ergebnis ist der Tabelle \ref{tab:nomina} zu entnehmen.
 		\textbf{Nomen} & \textbf{Quantität}\\
 		\midrule
 		% tabelle muss auf nur-Zeilen gekürzt werden!
-		\input{data/tabelle2.tex}
+		\input{data/tabelle2.tex.inc}
 		\bottomrule
 	\end{tabularx}
 	\caption{Nomina, die häufigsten zehn Vorkommen.}
@@ -151,12 +184,12 @@ wieder in eine Datei, diesmal tabelle3.tex, umgeleitet.
 Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
 \begin{table}[htpb]\label{t}
 	\center
-	\begin{tabularx}{0.35\textwidth}{lr}
+	\begin{tabularx}{0.5\textwidth}{lr}
 		\toprule
 		\textbf{Adjektiv} & \textbf{Quantität}\\
 		\midrule
 		% tabelle muss auf nur-Zeilen gekürzt werden!
-		\input{data/tabelle3.tex}
+		\input{data/tabelle3.tex.inc}
 		\bottomrule
 	\end{tabularx}
 	\caption{Quantität der Adjektive, die in Kollokation mit dem Suchwort
