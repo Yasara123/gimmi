@@ -7,6 +7,9 @@
   	author=multiple,
   	%draft,
 ]{unihildesheim} %19345ad1221aff38b3e458f5c3ae3338f2262ca0
+% unihildesheim dokumenttyp verfügbar unter 
+% https://github.com/JensBee/LaTeX-classes-UNI-Hildesheim
+
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 \usepackage{fancyvrb}
@@ -186,7 +189,7 @@ umgeleitet.
 
 Das Ergebnis ist der \reftab{tab:nomina} zu entnehmen.
 % tabelle 2: nomina top10
-\begin{table}[htpb]\label{t}
+\begin{table}[!hpb]\label{t}
 	\center
 	\begin{tabularx}{0.35\textwidth}{lr}
 		\toprule
@@ -217,7 +220,7 @@ wurde wie in den vorigen Beispielen manuell ermittelt. Auch hier wurde die Ausga
 wieder in eine Datei, diesmal \texttt{tabelle3.tex}, umgeleitet. 
 
 Das Ergebnis ist der \reftab{tab:adj_mpraes} zu entnehmen.
-\begin{table}[htpb]\label{t}
+\begin{table}[!hpb]\label{t}
 	\center
 	\begin{tabularx}{0.5\textwidth}{lr}
 		\toprule
@@ -232,9 +235,10 @@ Das Ergebnis ist der \reftab{tab:adj_mpraes} zu entnehmen.
 	\label{tab:adj_mpraes}
 \end{table}
 
-\section{Vergleich mit dem allgemeinen Zeitungskorpus \textit{(HGC)}}
+\section{Vergleich mit dem allgemeinen Zeitungskorpus (HGC)}
 \subsection{Die häufigsten zehn Adjektiv+Nomina Kollokationen im Vergleich zum
 MPRAES Korpus}
+\label{sec:comparison}
 Die Bestimmung der häufigsten Adjektiv+Nomina Kollokationen, wurde das folgende
 Muster für die benötigten Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
@@ -242,7 +246,8 @@ MPRAES> adj_n = @[lemma="$ADJEKTIV"]@[lemma="$NOMEN"];
 MPRAES> group adj_n matchend lemma;
 \end{Verbatim}
 Hierbei wurden die Variablen \texttt{\$ADJEKTIV} und \texttt{\$NOMEN}
-entsprechend \reftab{tab:adjektive_nomina} besetzt.
+entsprechend \reftab{tab:adjektive_nomina} besetzt. Das Ergebnis der Abfrage ist
+Tabelle \ref{tab:compare_adj_n} zu entnehmen.
 \begin{table}[!hpb]\label{t}
 	\center
 	\begin{tabularx}{\textwidth}{llrrrr}
@@ -271,7 +276,16 @@ entsprechend \reftab{tab:adjektive_nomina} besetzt.
 	\label{tab:compare_adj_n}
 \end{table}
 
-\begin{table}[htpb]\label{t}
+Für alle der untersuchten Kollokationen ist die relative Häufigkeit im
+kleineren MPRAES Korpus deutlich höher. Da das MPRAES Korpus über die Suche nach
+dem Ausdruck "Ministerpräsident" in einem größeren Korpus erstellt wurde handelt
+es sich dabei um ein Korpus, das sich mit einem Spezialgebiet befasst. Das
+Korpus ist damit also nicht als repräsentativ für die Gattung von
+Zeitungsberichten allgemein zu betrachten.
+
+Weiter wurde die absolute und relative Häufigkeit des Lemmas Ministerpräsident
+analysiert. Das Ergebnis befindet sich in Tabelle \ref{tab:corp_frequency}.
+\begin{table}[!hpb]\label{t}
 	\center
 	\begin{tabularx}{0.8\textwidth}{lcccc}
 		\toprule
@@ -288,5 +302,29 @@ entsprechend \reftab{tab:adjektive_nomina} besetzt.
 	den Korpora \texttt{HGC} (204.813.118 Token) und \texttt{MPRAES} (28.176 Token).}
 	\label{tab:corp_frequency}
 \end{table}
+
+Wie zu erwarten ist die relative Häufigkeit im MPRAES Korpus um ein vielfaches
+höher als im HGC Korpus. 
+
+\section{Interpretation der Ergebnisse}
+Auch wenn die Ergebnisse aus Kapitel \ref{sec:comparison} darauf hindeuten, dass
+es sich beim MPRAES um ein Spezialkorpus handelt, das sich von einem Korpus mit
+allgemeinen Zeitungsberichten unterscheidet, kann allgemein nicht davon
+ausgegangen werden, dass es sich dabei um ein umfassendes Korpus zum Thema
+Ministerpräsident handelt. Um eine erschöpfender und somit auch repräsentativere
+Behandlung des Themas Ministerpräsident zu gewährleisten könnte die Suche, mit
+der die Inhalte für das MPRAES Korpus erstellt wurde noch um Synonyme von
+Ministerpräsident erweitert werden. Der Duden bietet als Synonyme zum Beispiel
+Kabinettschef, Kabinettschefin, Regierungschef, Regierungschefin, Landesvater,
+Landesmutter
+\footnote{\url{http://www.duden.de/rechtschreibung/Ministerpraesident}}.
+
+Anstelle der verwendeten Abfrage \texttt{Ministerpräsident*} könnte also eine
+erweiterte, über boolsche Operatoren kombinierte Anfrage erstellt werden:
+
+\begin{Verbatim}[frame=single,commandchars=\\\{\}]
+Ministerpräsident* OR Kabinettschef* OR Regierungschef* \codebr 
+OR Landesvater* OR Landesmutter*
+\end{Verbatim}
 
 \end{document}
