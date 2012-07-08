@@ -1,5 +1,5 @@
 #TeXlipse project settings
-#Sun Jul 08 12:16:47 CEST 2012
+#Sun Jul 08 21:38:16 CEST 2012
 markTmpDer=true
 builderNum=2
 outputDir=
@@ -7,8 +7,8 @@ makeIndSty=
 bibrefDir=
 outputFormat=pdf
 tempDir=tmp
-mainTexFile=cwb-ministerpraesident.tex
-outputFile=cwb-ministerpraesident.pdf
+mainTexFile=cqp-ministerpraesident.tex
+outputFile=cqp-ministerpraesident.pdf
 langSpell=de
 markDer=true
 srcDir=
