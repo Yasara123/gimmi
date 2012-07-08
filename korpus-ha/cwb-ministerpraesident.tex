@@ -49,40 +49,48 @@ konnte. Eine detaillierte Erklärung zu den verwendeten Befehlen ist in der
 beiligenden Datei \textit{.info} zu finden.
 \begin{enumerate}
   \item \textbf{Erzeugung von Unicode}
-  \\Da die Ausgangsdatei in LATIN1 enkodiert ist
-  wurde sie im ersten Schritt in UTF8 umgewandelt
+  \\Da die Ausgangsdatei in \texttt{LATIN1} enkodiert ist
+  wurde sie im ersten Schritt in \texttt{UTF8} umgewandelt
   \item \textbf{Entfernen und Kommentieren von Metadaten}
    \\Die ersten 34 Zeilen, in denen sich nur Metadaten befinden und kein
   tatsächlicher Inhalt befinden wurden entfernt. Die Metadaten wurden zuvor
-  manuell in die Datei \textit{.info} übernommen, damit sie später in CQP über
-  den Befehle \verb info zur Verfügung stehen. Weiter wurden die Quellangaben
+  manuell in die Datei \texttt{.info} übernommen, damit sie später in CQP über
+  den Befehle \texttt{info} zur Verfügung stehen. Weiter wurden die Quellangaben
   \\ Außerdem wurden hier die Quellangaben, also auch Metadaten, auskommentiert,
-  indem ein Hashtag (\#) vorangestellt wurde
+  indem ein Hashtag (\texttt{\#}) vorangestellt wurde
   \item \textbf{Entfernung von Autorenangaben}
   \\ Zeilen mit Autorenangaben, also Zeilen, die mit "`Von \{GROßBUCHSTABE\}"`
   beginnen, wurden entfernt, da sie ebenfalls Metadaten darstellen und nicht zum
   eigentlichen Inhalt gehören
   \item \textbf{Tagging von Ortsangaben}
-  \\ Im Ausgangstext wurden Ortsangaben häufig mit einem * eingeleitet. In
-  diesem Schritt wurden wurden die Ortsangaben ausgelesen und anstelle eines
-  führenden * mit einem p Tag <p ort="\{ORTSNAME\}"> ersetzt. Somit steht der
-  Ortsname später als Meta Datum für den jeweiligen Absatz zur Verfügung.
+  \\ Im Ausgangstext wurden Ortsangaben häufig mit einem \texttt{*} eingeleitet.
+  In diesem Schritt wurden wurden die Ortsangaben ausgelesen und anstelle eines
+  führenden \texttt{*} mit einem \texttt{p} Tag \texttt{<p ort="\{ORTSNAME\}">}
+  ersetzt.
+  Somit steht der Ortsname später als Meta Datum für den jeweiligen Absatz zur Verfügung.
   \item \textbf{Entfernung von COSMAS Match-Kennzeichnungen}
-  \\ Hier wurden COSMAS Kennzeichnungen im Format <B>\{Kennzeichnung\}</> aus
-  der Ausgangsdatei entfernt
-  \item {Erstellung einer Liste der Quellen}
+  \\ Hier wurden COSMAS Kennzeichnungen im Format
+  \texttt{<B>\{Kennzeichnung\}</>} aus der Ausgangsdatei entfernt
+  \item \textbf{Erstellung einer Liste der Quellen}
   \\ Die zuvor auskommentierten Quellangaben werden alle ausgelesen, sortiert
   und nummeriert. Das Ergebnis wird in einer separaten Datei gespeichert.
-  \item \textbf{SKRIPT VON DER GERDL}
+  \item \textbf{Skript: source\_encode.perl}
+  \\Dieses Skript nimmt die Ergebniss aus Schritt sechs über eine Linux-Pipe
+  entgegen. Zusätzlich werden die Ergebnisse aus Schritt fünf (Korpus) per
+  Kommandozeilenparameter an dieses übergeben. Das Skript nimmt schließlich eine
+  Assoziation der Quellen mit der Eingabe des Korpus vor. Als Ergebnis wird ein
+  Tag \texttt{<src code="\{QUELLENNUMMER\}>"} erzeugt, der die Eingabe des
+  Korpus umgibt.
   \item \textbf{Hinzufügen des schließenden </p> Tags}
-  \\ Hier werden zu den zuvor erzeugten <p> Tags mit Ortsangaben noch ein
-  schließendes </p> Tag an das Ende des Absatzes hinzugefügt. Somit entstehen
-  gekennzeichnete Absätze, die zusätzlich die Ortsangaben des jeweiligen
+  \\ Hier werden zu den zuvor erzeugten \texttt{<p>} Tags mit Ortsangaben noch
+  ein schließendes \texttt{</p>} Tag an das Ende des Absatzes hinzugefügt. Somit
+  entstehen gekennzeichnete Absätze, die zusätzlich die Ortsangaben des jeweiligen
   Artikels liefern
   \item \textbf{Entfernung und Hinzufügen von src Tags}
-  \\ Bedingt durch den vorigen Arbeitsschritt wurde ein schließendes </src> Tag
-  am Anfang der Zieldatei erzeugt. Da kein öffnendes <src> Tag vorangeht ist
-  dieses Tag überflüssig und wird dementsprechend aus der Datei gelöscht.
+  \\ Bedingt durch den vorigen Arbeitsschritt wurde ein schließendes
+  \texttt{</src>} Tag am Anfang der Zieldatei erzeugt. Da kein öffnendes
+  \texttt{<src>} Tag vorangeht ist dieses Tag überflüssig und wird
+  dementsprechend aus der Datei gelöscht.
   Zusätzlich wird ein am Ende der Datei fehlendes schließendes </src> Tag
   eingefügt
   \item \textbf{Tokenisierung und Tagging}
