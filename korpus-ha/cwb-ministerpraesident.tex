@@ -99,8 +99,7 @@ beiligenden Datei \textit{.info} zu finden.
   verarbeitet werden kann
 \end{enumerate}
 
-\section{Analysen des erstellten Korpus}
-
+\section{Analysen des erstellten Korpus \textit{(MPRAES)}}
 Vor der Ausführung der hier ausgeführten Befehle wurde mit dem Kommando
 \texttt{set PrintMode latex;} das Ausgabeformat auf \LaTeX umgestellt, damit die
 Ergebnisse ohne weitere Umformungen weiterverwendet werden konnten.
@@ -224,6 +223,25 @@ Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
 	auftreten.}
 	\label{tab:adj_mpraes}
 \end{table}
+
+\section{Vergleich mit dem allgemeinem Zeitungskorpus \textit{(HGC)}}
+Für die Bestimmung der häufigsten Nomina, die nicht gleich
+\textit{"`Ministerpräsident"'} sind, wurden folgende Befehle verwendet:
+\begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
+MPRAES> adj_n = @[lemma=LEMMA]@[word=NOMEN];
+MPRAES> group adj_n matchend lemma;
+\end{Verbatim}
+% [lemma="vergangen"][lemma="Woche"]; group Last match lemma; -> 10936
+% [lemma="vergangen"][lemma="Jahr"]; group Last match lemma; -> 30165
+% [lemma="öffentlich-rechtlich"][lemma="Rundfunk"]; group Last match lemma; ->
+% 346
+% [lemma="norddeutsch"][lemma="Landesbank"]; group Last match lemma; -> 8
+% [lemma="grün"][lemma="Gentechnik"]; group Last match lemma; -> 1
+% [lemma="rein"][lemma="Spekulation"]; group Last match lemma; -> 149
+% [lemma="liberaldemokratisch"][lemma="Partei"]; group Last match lemma; -> 36
+% [lemma="klug"][lemma="Entscheidung"]; group Last match lemma; -> 33
+% [lemma="offen"][lemma="Denkmal"]; group Last match lemma; -> 22
+% [lemma="früh"][lemma="Außenminister"]; group Last match lemma; -> 149
 
 \end{document}
 
