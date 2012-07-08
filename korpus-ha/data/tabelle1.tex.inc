@@ -1,5 +1,6 @@
 %\begin{tabular}{llr}
 vergangen & Woche & 14 \\
+ vergangen
  & Jahr & 8 \\
 öffentlich-rechtlich & Rundfunk & 7 \\
 norddeutsch & Landesbank & 6 \\
