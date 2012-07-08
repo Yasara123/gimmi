@@ -59,14 +59,14 @@ beiligenden Datei \textit{.info} zu finden.
   Quellangaben, also auch Metadaten, auskommentiert, indem ein Hashtag
   (\texttt{\#}) vorangestellt wurde
   \item \textbf{Entfernung von Autorenangaben}
-  \\ Zeilen mit Autorenangaben, also Zeilen, die mit "`"`Von \{GROßBUCHSTABE\}"'
+  \\ Zeilen mit Autorenangaben, also Zeilen, die mit "Von \{GROßBUCHSTABE\}"
   beginnen, wurden entfernt, da sie ebenfalls Metadaten darstellen und nicht zum
   eigentlichen Inhalt gehören
   \item \textbf{Tagging von Ortsangaben}
   \\ Im Ausgangstext wurden Ortsangaben häufig mit einem \texttt{*} eingeleitet.
   In diesem Schritt wurden wurden die Ortsangaben ausgelesen und anstelle eines
-  führenden \texttt{*} mit einem \texttt{p} Tag \texttt{<p ort="\{ORTSNAME\}">}
-  ersetzt.
+  führenden \texttt{*} mit einem \texttt{p} Tag \texttt{<p
+  ort="\{ORTSNAME\}">} ersetzt.
   Somit steht der Ortsname später als Meta Datum für den jeweiligen Absatz zur Verfügung.
   \item \textbf{Entfernung von COSMAS Match-Kennzeichnungen}
   \\ Hier wurden COSMAS Kennzeichnungen im Format
@@ -110,8 +110,8 @@ Für die Bestimmung der häufigsten Adjektiv-Nomen Paare, die nicht den
 ursprünglichen Suchbegriff \textit{"`Ministerpräsident"'} enthalten, wurden
 folgende Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
-MPRAES> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & \codebr
-        word!="Ministerpräsident.*"];
+MPRAES> adj_n = @[pos="ADJ(A|D)"]@[pos="N(E|N)" & \codebr
+        lemma!="Ministerpräsident.?"];
 MPRAES> group adj_n matchend lemma by match lemma cut 4 \codebr
         > "tabelle1.tex";
 \end{Verbatim}
@@ -120,14 +120,21 @@ Mit dem ersten Befehl werden alle Adjektiv-Nomen Paare aus dem Korpus ausgelesen
 und in der Variable \texttt{adj\_n} gespeichert. Im Folgenden soll der
 ausgeführte Befehl kurz erläutert werden:
 \begin{enumerate}
-  \item \texttt{@[pos='ADJ(A|D)']} \\
+  \item \texttt{@[pos="ADJ(A|D)"]} \\
 			Das erste Wort muss mit dem POS Tag \texttt{ADJA} oder \texttt{ADJD} getaggt
 			sein
-  \item \texttt{@[pos='N(E|N)' \& word!="Ministerpräsident.*"]]} \\
-			Das darauffolgende Wort muss mit dem POS Tag \texttt{NE} oder \texttt{NE}
-			getaggt sein und darf nicht gleich Ministerpräsident sein. Durch die Zeichen
-			\texttt{"`.*"'} am Ende von \textit{Ministerpräsident} werden auch
-			deklinierte Formen, wie zum Beispiel Ministerpräsidenten ausgeschlossen.
+  \item \texttt{@[pos="N(E|N)" \& lemma!="Ministerpräsident.?"]]} \\
+			Das darauffolgende Wort muss mit dem POS Tag \texttt{NE} oder \texttt{NN}
+			getaggt sein. Das Lemma des Nomens darf dabei nicht gleich
+			Ministerpräsident sein. Da sich bei der Erstellung des Korpus bei dem
+			Transport über verschiedene Systeme hinweg an das Ende der Lemmata mit
+			\textit{\textasciicircum M} ein DOS Zeilenumbruch eingeschlichen. Mit
+			\texttt{.?} am Ende von Ministerpräsident wird das Lemma trotz dieses DOS
+			Zeilenumbruchs gematched, aber Abwandlungen von Ministerpräsident, wie zum
+			Beispiel Ministerpräsidentenkonferenz nicht. Der unerwünschte
+			Zeilenumbruch bei den Lemmata wurde zu spät erkannt, als dass es noch
+			möglich gewesen wäre ihn zu entfernen. Die Lemma Abfragen im weiteren wurden
+			ebenfalls mit diesem Quickfix getätigt.
 \end{enumerate}
 
 Mit dem zweiten Befehl wurden die Ergebnisse des ersten Befehls nach der
@@ -161,7 +168,7 @@ Das Ergebnis ist der \reftab{tab:adjektive_nomina} zu entnehmen.
 Für die Bestimmung der häufigsten Nomina, die nicht gleich Ministerpräsident
 sind, wurden folgende Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
-MPRAES> n = @[pos='N(E|N)' & word!='Ministerpräsident.*'];
+MPRAES> n = @[pos="N(E|N)" & lemma!="Ministerpräsident.?"];
 MPRAES> group n target lemma cut 35 > "tabelle2.tex";
 \end{Verbatim}
 
@@ -188,7 +195,7 @@ Das Ergebnis ist der \reftab{tab:nomina} zu entnehmen.
 		\input{data/tabelle2.tex.inc}
 		\bottomrule
 	\end{tabularx}
-	\caption{Nomina, die häufigsten zehn Vorkommen.}
+	\caption{10 häufigste Nomina}
 	\label{tab:nomina}
 \end{table}
 
@@ -196,12 +203,12 @@ Das Ergebnis ist der \reftab{tab:nomina} zu entnehmen.
 Für die Bestimmung der häufigsten Nomina, die nicht gleich
 \textit{"`Ministerpräsident"'} sind, wurden folgende Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
-MPRAES> adj = @[pos='ADJ(A|D)']@[word='Ministerpräsident.*'];
+MPRAES> adj = @[pos="ADJ(A|D)"]@[lemma="Ministerpräsident.?"];
 MPRAES> group adj match lemma cut 2 > "tabelle3.tex";
 \end{Verbatim}
 % tabelle 3: nomina top10
 Mit dem ersten Befehl werden alle Adjektive (POS gleich \texttt{ADJA} oder
-\texttt{ADJD}) ausgelesen, die von \textit{"`Ministerpräsident"'} oder einer
+\texttt{ADJD}) ausgelesen, die von \textit{Ministerpräsident} oder einer
 Deklination des Wortes gefolgtw erden. Mit dem zweiten Befehl werden die Ergebnisse nach dem Lemma des
 Adjektivs gruppiert. Mit \texttt{cut 2} wird die Ausgabe auf Adjektive begrenzt,
 die mindestens zweimal zusammen mit Ministerpräsident auftreten. Der Wert zwei
@@ -219,8 +226,8 @@ Das Ergebnis ist der \reftab{tab:adj_mpraes} zu entnehmen.
 		\input{data/tabelle3.tex.inc}
 		\bottomrule
 	\end{tabularx}
-	\caption{Quantität der Adjektive, die in Kollokation mit dem Suchwort
-	auftreten.}
+	\caption{10 häufigste Adjektive, die die in Kollokation mit dem Suchwort
+	auftreten}
 	\label{tab:adj_mpraes}
 \end{table}
 
@@ -230,33 +237,68 @@ MPRAES Korpus}
 Die Bestimmung der häufigsten Adjektiv+Nomina Kollokationen, wurde das folgende
 Muster für die benötigten Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
-MPRAES> adj_n = @[lemma=LEMMA]@[word=NOMEN];
+MPRAES> adj_n = @[lemma="ADJEKTIV"]@[lemma="NOMEN"];
 MPRAES> group adj_n matchend lemma;
 \end{Verbatim}
 Hierbei wurden die Variablen \texttt{LEMMA} und \texttt{NOMEN} entsprechend
 \reftab{tab:adjektive_nomina} eingesetzt.
-\begin{table}[htpb]\label{t}
+\begin{table}[!hpb]\label{t}
 	\center
-	\begin{tabularx}{0.6\textwidth}{lrr}
+	\begin{tabularx}{\textwidth}{llrrrr}
+% 		\toprule
+% 		\textbf{Adjektiv+Nomina} & \textbf{HGC} & \textbf{MPRAES}\\
+% 		\midrule
+% 		vergangen Woche & 0,0053395017\% & 2\\
+% 		vergangen Jahr & 0,0147280605\% &\\
+% 		öffentlich-rechtlich Rundfunk & 0,0001689345\% &\\
+% 		noddeutsch Landesbank & 0,000003906\% &\\
+% 		grün Gentechnik & 4,882e-7\% &\\
+% 		rein Spekulation & 0,0000727492\% &\\
+% 		liberaldemokratisch Partei & 0,000017577\% &\\
+% 		klug Entscheidung & 0,0000161122\% &\\
+% 		offen Denkmal & 0,0000107415\% &\\
+% 		früh Außenminister & 0,0000727492\% &\\
+
 		\toprule
-		\textbf{Adjektiv+Nomina} & \textbf{HGC} & \textbf{MPRAES}\\
+		\multicolumn{2}{l}{Kollokation} & \multicolumn{2}{l}{abs. Häufigkeit}
+		& \multicolumn{2}{l}{rel. Häufigkeit} \\
 		\midrule
-		vergangen Woche & 0,0053395017\% & 2\\
-		vergangen Jahr & 0,0147280605\% &\\
-		öffentlich-rechtlich Rundfunk & 0,0001689345\% &\\
-		noddeutsch Landesbank & 0,000003906\% &\\
-		grün Gentechnik & 4,882e-7\% &\\
-		rein Spekulation & 0,0000727492\% &\\
-		liberaldemokratisch Partei & 0,000017577\% &\\
-		klug Entscheidung & 0,0000161122\% &\\
-		offen Denkmal & 0,0000107415\% &\\
-		früh Außenminister & 0,0000727492\% &\\
+		\textbf{Adjektiv} & \textbf{Nomen} & \textbf{HGC} & \textbf{MPRAES}
+		&	\textbf{HGC} & \textbf{MPRAES} \\
+		\midrule
+		vergangen & Woche & 10936 & 14 & 0,0053\% & 0,0444\%\\
+		vergangen & Jahr & 30165 & 8 & 0,0147\% & 0,0253\%\\
+		öffentlich-rechtlich & Rundfunk & 346 & 7 & 0,0002\% & 0,0222\%\\
+		norddeutsch & Landesbank & 8 & 6 & 0,0000\% & 0,0190\%\\
+		grün & Gentechnik & 1 & 5 & 0,0000\% & 0,0158\%\\
+		rein & Spekulation & 149 & 5 & 0,0001\% & 0,0158\%\\
+		liberaldemokratisch & Partei & 36 & 4 & 0,0000\% & 0,0127\%\\
+		klug & Entscheidung & 33 & 4 & 0,0000\% & 0,0127\%\\
+		offen & Denkmal & 22 & 4 & 0,0000\% & 0,0127\%\\
+		früh & Außenminister & 149 & 4 & 0,0001\% & 0,0127\%\\
 		\bottomrule
 	\end{tabularx}
-	\caption{Vergleich der Frequenzen für Adjektiv+Nomina Kollokationen der
+	\caption{Vergleich der Adjektiv für Adjektiv+Nomina Kollokationen der
 	Korpora \texttt{HGC} (204.813.118 Token) und \texttt{MPRAES} (28.176 Token)
 	(auf Lemma-Basis) (gerundet).}
 	\label{tab:compare_adj_n}
+\end{table}
+
+\begin{table}[htpb]\label{t}
+	\center
+	\begin{tabularx}{0.8\textwidth}{lrrrr}
+		\toprule
+		& \multicolumn{2}{l}{\textbf{abs. Häufigkeit}} &
+		\multicolumn{2}{l}{\textbf{rel. Häufigkeit}} \\
+		\midrule
+		\textbf{Suchwort} & \textbf{HGC} & \textbf{MPRAES} & \textbf{HGC}
+		&	\textbf{MPRAES} \\		
+		Ministerpräsident & 28.176 & 252 & 0,138\% & 0,7985\% \\
+		\bottomrule
+	\end{tabularx}
+	\caption{Absolute und relative Häufigkeit des Suchworts Ministerpräsident in
+	den beiden Korpora}
+	\label{tab:undefined}
 \end{table}
 % [lemma="vergangen"][lemma="Woche"]; group Last match lemma; -> 10936
 % [lemma="vergangen"][lemma="Jahr"]; group Last match lemma; -> 30165
@@ -271,4 +313,3 @@ Hierbei wurden die Variablen \texttt{LEMMA} und \texttt{NOMEN} entsprechend
 % [lemma="früh"][lemma="Außenminister"]; group Last match lemma; -> 149
 
 \end{document}
-
