@@ -37,46 +37,57 @@ Ministerpräsident}
 
 %\input{titelseite}
 
-% CQP:
-% http://bulba.sdsu.edu/cqpman.ps
-% http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/
-% http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/node27.html#SECTION00830000000000000000
-% http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.pdf
+\section{Vorverarbeitung der Datei Ministerpräsident.txt}
+An dieser Stelle sollen in einer Auflistung die Schritte beschrieben werden,
+in denen die Ausgangsdatei, Ministerpräsident.txt, über Linux Tools auf der
+Kommandozeile so umgeformt wurde, dass sie als CQP Korpus verarbeitet werden
+konnte. Eine detaillierte Erklärung zu den verwendeten Befehlen ist in der
+beiligenden Datei \textit{.info} zu finden.
+\begin{enumerate}
+  \item \textbf{Erzeugung von Unicode}
+  \\Da die Ausgangsdatei in LATIN1 enkodiert ist
+  wurde sie im ersten Schritt in UTF8 umgewandelt
+  \item \textbf{Entfernen und Kommentieren von Metadaten}
+   \\Die ersten 34 Zeilen, in denen sich nur Metadaten befinden und kein
+  tatsächlicher Inhalt befinden wurden entfernt. Die Metadaten wurden zuvor
+  manuell in die Datei \textit{.info} übernommen, damit sie später in CQP über
+  den Befehle \verb info zur Verfügung stehen. Weiter wurden die Quellangaben
+  \\ Außerdem wurden hier die Quellangaben, also auch Metadaten, auskommentiert,
+  indem ein Hashtag (\#) vorangestellt wurde
+  \item \textbf{Entfernung von Autorenangaben}
+  \\ Zeilen mit Autorenangaben, also Zeilen, die mit "`Von \{GROßBUCHSTABE\}"`
+  beginnen, wurden entfernt, da sie ebenfalls Metadaten darstellen und nicht zum
+  eigentlichen Inhalt gehören
+  \item \textbf{Tagging von Ortsangaben}
+  \\ Im Ausgangstext wurden Ortsangaben häufig mit einem * eingeleitet. In
+  diesem Schritt wurden wurden die Ortsangaben ausgelesen und anstelle eines
+  führenden * mit einem p Tag <p ort="\{ORTSNAME\}"> ersetzt. Somit steht der
+  Ortsname später als Meta Datum für den jeweiligen Absatz zur Verfügung.
+  \item \textbf{Entfernung von COSMAS Match-Kennzeichnungen}
+  \\ Hier wurden COSMAS Kennzeichnungen im Format <B>\{Kennzeichnung\}</> aus
+  der Ausgangsdatei entfernt
+  \item {Erstellung einer Liste der Quellen}
+  \\ Die zuvor auskommentierten Quellangaben werden alle ausgelesen, sortiert
+  und nummeriert. Das Ergebnis wird in einer separaten Datei gespeichert.
+  \item \textbf{SKRIPT VON DER GERDL}
+  \item \textbf{Hinzufügen des schließenden </p> Tags}
+  \\ Hier werden zu den zuvor erzeugten <p> Tags mit Ortsangaben noch ein
+  schließendes </p> Tag an das Ende des Absatzes hinzugefügt. Somit entstehen
+  gekennzeichnete Absätze, die zusätzlich die Ortsangaben des jeweiligen
+  Artikels liefern
+  \item \textbf{Entfernung und Hinzufügen von src Tags}
+  \\ Bedingt durch den vorigen Arbeitsschritt wurde ein schließendes </src> Tag
+  am Anfang der Zieldatei erzeugt. Da kein öffnendes <src> Tag vorangeht ist
+  dieses Tag überflüssig und wird dementsprechend aus der Datei gelöscht.
+  Zusätzlich wird ein am Ende der Datei fehlendes schließendes </src> Tag
+  eingefügt
+  \item \textbf{Tokenisierung und Tagging}
+  \\ Das somit erzeugte Format kann anschließend an einen Tokenisierer und einen
+  Tree Tagger übergeben werden. Diese beiden Tools erzeugen Output, der von CQP
+  verarbeitet werden kann
+\end{enumerate}
 
-% STTS:
-% http://www.ims.uni-stuttgart.de/projekte/corplex/TagSets/stts-table.html
-
-% Adjektiv+Nomen ohne McAllister (Top 10) als LaTeX:
-%	// Korpus öffnen
-%	MPRAES;
-%	// LaTeX Ausgabe Mode
-%	set PrintMode latex;
-%	// Query
-%	@[pos='ADJ(A|D)']@[pos='N(E|N)' & word!='McAllister'];
-%	// Filter, Ausgabe in Datei tabelle1.tex
-%	group Last matchend word by match lemma > "tabelle1.tex";
-
-% Häufigste Nomina ohne McAllister (Top 10) als LaTeX
-%	// Korpus öffnen
-%	MPRAES;
-%	// LaTeX Ausgabe Mode
-%	set PrintMode latex;
-%	// Query
-%	@[pos='N(E|N)' & word!='McAllister'];
-%	// Filter, Ausgabe in Datei tabelle2.tex
-%	group Last target lemma > "tabelle2.tex";
-
-% Adjektive mit Suchwort (McAllister) (Top 10) als LaTeX
-%	// Korpus öffnen
-%	MPRAES;
-%	// LaTeX Ausgabe Mode
-%	set PrintMode latex;
-%	// Query
-%	@[pos='ADJ(A|D)']@[word='McAllister'];
-%	// Filter, Ausgabe in Datei tabelle3.tex
-%	group Last match lemma > "tabelle3.tex";
-
-\section{CQP Ausgaben}
+\section{Analysen des erstellten Korpus}
 
 Vor der Ausführung der hier ausgeführten Befehle wurde mit dem Kommando
 \textit{set PrintMode latex;} das Ausgabeformat auf \LaTeX umgestellt, damit die
@@ -88,7 +99,7 @@ Für die Bestimmung der häufigsten Adjektiv-Nomen Paare, die nicht den
 ursprünglichen Suchbegriff "`Ministerpräsident"' enthalten, wurden folgende
 Befehle verwendet:
 \begin{verbatim}
-	> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & word!="Ministerpräsident.*"];
+	> adj_n = @[pos="ADJ(A|D)"]@[pos="N(E|N)" & lemma!="Ministerpräsident.?"];
 	> group adj_n matchend lemma by match lemma cut 4 > "tabelle1.tex";
 \end{verbatim}
 
@@ -96,13 +107,19 @@ Mit dem ersten Befehl werden alle Adjektiv-Nomen Paare aus dem Korpus ausgelesen
 und in der Variable adj\_n gespeichert. Im Folgenden soll der ausgeführte Befehl
 kurz erläutert werden:
 \begin{enumerate}
-  \item \textit{@[pos='ADJ(A|D)']} \\
+  \item \textit{@[pos="ADJ(A|D)"]} \\
 			Das erste Wort muss mit dem POS Tag ADJA oder ADJD getaggt sein
-  \item \textit{@[pos='N(E|N)' \& word!="Ministerpräsident.*"]]} \\
-			Das darauffolgende Wort muss mit dem POS Tag NE oder NE getaggt sein und darf
-			nicht gleich Ministerpräsident sein. Durch die Zeichen "`.*"' am Ende von
-			Ministerpräsident werden auch deklinierte Formen, wie zum Beispiel
-			Ministerpräsidenten ausgeschlossen.
+  \item \textit{@[pos='N(E|N)' \& lemma!="Ministerpräsident.?"]} \\
+			Das darauffolgende Wort muss mit dem POS Tag NE oder NE getaggt sein.
+			Das Lemma des Nomens darf dabei nicht gleich Ministerpräsident sein. Da sich
+			bei der Erstellung des Korpus bei dem Transport über verschiedene Systeme
+			hinweg an das Ende der Lemmata mit \textit{\textasciicircum M} ein DOS
+			Zeilenumbruch eingeschlichen. Mit \textit{.?} am Ende von Ministerpräsident wird das Lemma
+			trotz dieses DOS Zeilenumbruchs gematched, aber Abwandlungen von
+			Ministerpräsident, wie zum Beispiel Ministerpräsidentenkonferenz nicht.
+			Der unerwünschte Zeilenumbruch bei den Lemmata wurde zu spät erkannt, als
+			dass es noch möglich gewesen wäre ihn zu entfernen. Die Lemma Abfragen im
+			weiteren wurden ebenfalls mit diesem Quickfix getätigt.
 \end{enumerate}
 
 Mit dem zweiten Befehl wurden die Ergebnisse des ersten Befehls nach der
@@ -136,7 +153,7 @@ Das Ergebnis ist der Tabelle \ref{tab:adjektive_nomina} zu entnehmen.
 Für die Bestimmung der häufigsten Nomina, die nicht gleich Ministerpräsident
 sind, wurden folgende Befehle verwendet:
 \begin{verbatim}
-	> n = @[pos='N(E|N)' & word!='Ministerpräsident.*'];
+	> n = @[pos='N(E|N)' & lemma!='Ministerpräsident.?'];
 	> group n target lemma cut 35 > "tabelle2.tex";
 \end{verbatim}
 
