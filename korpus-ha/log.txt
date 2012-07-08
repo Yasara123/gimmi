@@ -1,3 +1,14 @@
+relevante Links:
+
+	CQP:
+		http://bulba.sdsu.edu/cqpman.ps
+		http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/
+		http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPUserManual/HTML/node27.html#SECTION00830000000000000000
+		http://www.ims.uni-stuttgart.de/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.pdf
+
+STTS:
+		http://www.ims.uni-stuttgart.de/projekte/corplex/TagSets/stts-table.html
+
 
 1:
 ----------------------------------------------------------------------------------------------------
