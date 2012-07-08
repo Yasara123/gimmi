@@ -46,10 +46,10 @@ An dieser Stelle sollen in einer Auflistung die Schritte beschrieben werden,
 in denen die Ausgangsdatei, Ministerpräsident.txt, über Linux Tools auf der
 Kommandozeile so umgeformt wurde, dass sie als CQP Korpus verarbeitet werden
 konnte. Eine detaillierte Erklärung zu den verwendeten Befehlen ist in der
-beiligenden Datei \textit{.info} zu finden.
+beiliegenden Datei \textit{.info} zu finden.
 \begin{enumerate}
   \item \textbf{Erzeugung von Unicode}
-  \\Da die Ausgangsdatei in \texttt{LATIN1} enkodiert ist
+  \\Da die Ausgangsdatei in \texttt{LATIN1} encodiert ist
   wurde sie im ersten Schritt in \texttt{UTF8} umgewandelt
   \item \textbf{Entfernen und Kommentieren von Metadaten}
    \\Die ersten 34 Zeilen, in denen sich nur Metadaten befinden und kein
@@ -75,7 +75,7 @@ beiligenden Datei \textit{.info} zu finden.
   \\ Die zuvor auskommentierten Quellangaben werden alle ausgelesen, sortiert
   und nummeriert. Das Ergebnis wird in einer separaten Datei gespeichert.
   \item \textbf{Skript: source\_encode.perl}
-  \\Dieses Skript nimmt die Ergebniss aus Schritt sechs über eine Linux-Pipe
+  \\Dieses Skript nimmt die Ergebnisse aus Schritt sechs über eine Linux-Pipe
   entgegen. Zusätzlich werden die Ergebnisse aus Schritt fünf (Korpus) per
   Kommandozeilenparameter an dieses übergeben. Das Skript nimmt schließlich eine
   Assoziation der Quellen mit der Eingabe des Korpus vor. Als Ergebnis wird ein
@@ -91,8 +91,8 @@ beiligenden Datei \textit{.info} zu finden.
   \texttt{</src>} Tag am Anfang der Zieldatei erzeugt. Da kein öffnendes
   \texttt{<src>} Tag vorangeht ist dieses Tag überflüssig und wird
   dementsprechend aus der Datei gelöscht.
-  Zusätzlich wird ein am Ende der Datei fehlendes schließendes </src> Tag
-  eingefügt
+  Zusätzlich wird ein am Ende der Datei fehlendes schließendes \texttt{</src>}
+  Tag eingefügt
   \item \textbf{Tokenisierung und Tagging}
   \\ Das somit erzeugte Format kann anschließend an einen Tokenisierer und einen
   Tree Tagger übergeben werden. Diese beiden Tools erzeugen Output, der von CQP
@@ -124,17 +124,17 @@ ausgeführte Befehl kurz erläutert werden:
 			Das erste Wort muss mit dem POS Tag \texttt{ADJA} oder \texttt{ADJD} getaggt
 			sein
   \item \texttt{@[pos="N(E|N)" \& lemma!="Ministerpräsident.?"]]} \\
-			Das darauffolgende Wort muss mit dem POS Tag \texttt{NE} oder \texttt{NN}
+			Das darauf folgende Wort muss mit dem POS Tag \texttt{NE} oder \texttt{NN}
 			getaggt sein. Das Lemma des Nomens darf dabei nicht gleich
-			Ministerpräsident sein. Da sich bei der Erstellung des Korpus bei dem
+			\textit{"`Ministerpräsident"'} sein. Da sich bei der Erstellung des Korpus bei dem
 			Transport über verschiedene Systeme hinweg an das Ende der Lemmata mit
 			\textit{\textasciicircum M} ein DOS Zeilenumbruch eingeschlichen. Mit
 			\texttt{.?} am Ende von Ministerpräsident wird das Lemma trotz dieses DOS
-			Zeilenumbruchs gematched, aber Abwandlungen von Ministerpräsident, wie zum
-			Beispiel Ministerpräsidentenkonferenz nicht. Der unerwünschte
+			Zeilenumbruchs gematched, aber Abwandlungen von \textit{"`Ministerpräsident"'}, wie zum
+			Beispiel \textit{"`Ministerpräsidentenkonferenz"'} nicht. Der unerwünschte
 			Zeilenumbruch bei den Lemmata wurde zu spät erkannt, als dass es noch
 			möglich gewesen wäre ihn zu entfernen. Die Lemma Abfragen im weiteren wurden
-			ebenfalls mit diesem Quickfix getätigt.
+			ebenfalls mit diesem \textit{Quickfix} getätigt.
 \end{enumerate}
 
 Mit dem zweiten Befehl wurden die Ergebnisse des ersten Befehls nach der
@@ -175,7 +175,7 @@ MPRAES> group n target lemma cut 35 > "tabelle2.tex";
 Mit dem ersten Befehl werden alle Nomina (POS gleich \texttt{NN} oder
 \texttt{NE}), die nicht gleich \textit{"`Ministerpräsident"'}, beziehungsweise einer
 Deklination von Ministerpräsident sind, abgefragt und in der Variable \texttt{n}
-gespeichert. Mit dem zweiten Befehl wurden die so abgefragten Nomen nach ihrem Lemma grupiert und
+gespeichert. Mit dem zweiten Befehl wurden die so abgefragten Nomen nach ihrem Lemma gruppiert und
 nach ihrer Häufigkeit sortiert. Mit \texttt{cut 35} wurde die Ausgabe auf Nomen
 beschränkt, die mindestens 35 mal auftreten. Somit wurde die Ausgabe auf die
 häufigsten zehn Nomen beschränkt, wie gefordert. Der Wert von 35 wurde wie im
@@ -208,9 +208,9 @@ MPRAES> group adj match lemma cut 2 > "tabelle3.tex";
 \end{Verbatim}
 % tabelle 3: nomina top10
 Mit dem ersten Befehl werden alle Adjektive (POS gleich \texttt{ADJA} oder
-\texttt{ADJD}) ausgelesen, die von \textit{Ministerpräsident} oder einer
-Deklination des Wortes gefolgtw erden. Mit dem zweiten Befehl werden die Ergebnisse nach dem Lemma des
-Adjektivs gruppiert. Mit \texttt{cut 2} wird die Ausgabe auf Adjektive begrenzt,
+\texttt{ADJD}) ausgelesen, die von \textit{"`Ministerpräsident"'} oder einer
+Deklination des Wortes gefolgt werden. Mit dem zweiten Befehl werden die
+Ergebnisse nach dem Lemma des Adjektivs gruppiert. Mit \texttt{cut 2} wird die Ausgabe auf Adjektive begrenzt,
 die mindestens zweimal zusammen mit Ministerpräsident auftreten. Der Wert zwei
 wurde wie in den vorigen Beispielen manuell ermittelt. Auch hier wurde die Ausgabe
 wieder in eine Datei, diesmal \texttt{tabelle3.tex}, umgeleitet. 
@@ -226,48 +226,34 @@ Das Ergebnis ist der \reftab{tab:adj_mpraes} zu entnehmen.
 		\input{data/tabelle3.tex.inc}
 		\bottomrule
 	\end{tabularx}
-	\caption{10 häufigste Adjektive, die die in Kollokation mit dem Suchwort
-	auftreten}
+	\caption{Die zehn häufigste Adjektive, die in Kollokation mit dem Suchwort
+	auftreten.}
 	\label{tab:adj_mpraes}
 \end{table}
 
-\section{Vergleich mit dem allgemeinem Zeitungskorpus \textit{(HGC)}}
+\section{Vergleich mit dem allgemeinen Zeitungskorpus \textit{(HGC)}}
 \subsection{Die häufigsten zehn Adjektiv+Nomina Kollokationen im Vergleich zum
 MPRAES Korpus}
 Die Bestimmung der häufigsten Adjektiv+Nomina Kollokationen, wurde das folgende
 Muster für die benötigten Befehle verwendet:
 \begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
-MPRAES> adj_n = @[lemma="ADJEKTIV"]@[lemma="NOMEN"];
+MPRAES> adj_n = @[lemma="$ADJEKTIV"]@[lemma="$NOMEN"];
 MPRAES> group adj_n matchend lemma;
 \end{Verbatim}
-Hierbei wurden die Variablen \texttt{LEMMA} und \texttt{NOMEN} entsprechend
-\reftab{tab:adjektive_nomina} eingesetzt.
+Hierbei wurden die Variablen \texttt{\$ADJEKTIV} und \texttt{\$NOMEN}
+entsprechend \reftab{tab:adjektive_nomina} besetzt.
 \begin{table}[!hpb]\label{t}
 	\center
 	\begin{tabularx}{\textwidth}{llrrrr}
-% 		\toprule
-% 		\textbf{Adjektiv+Nomina} & \textbf{HGC} & \textbf{MPRAES}\\
-% 		\midrule
-% 		vergangen Woche & 0,0053395017\% & 2\\
-% 		vergangen Jahr & 0,0147280605\% &\\
-% 		öffentlich-rechtlich Rundfunk & 0,0001689345\% &\\
-% 		noddeutsch Landesbank & 0,000003906\% &\\
-% 		grün Gentechnik & 4,882e-7\% &\\
-% 		rein Spekulation & 0,0000727492\% &\\
-% 		liberaldemokratisch Partei & 0,000017577\% &\\
-% 		klug Entscheidung & 0,0000161122\% &\\
-% 		offen Denkmal & 0,0000107415\% &\\
-% 		früh Außenminister & 0,0000727492\% &\\
-
 		\toprule
-		\multicolumn{2}{l}{\textbf{Kollokation}} & \multicolumn{2}{l}{\textbf{abs.
-		Häufigkeit}} & \multicolumn{2}{l}{\textbf{rel. Häufigkeit}} \\
+		\multicolumn{2}{c}{\textbf{Kollokation}} & \multicolumn{2}{c}{\textbf{abs.
+		Häufigkeit}} & \multicolumn{2}{c}{\textbf{rel. Häufigkeit}} \\
 		\midrule
 		\textbf{Adjektiv} & \textbf{Nomen} & \textbf{HGC} & \textbf{MPRAES}
 		&	\textbf{HGC} & \textbf{MPRAES} \\
 		\midrule
-		vergangen & Woche & 10936 & 14 & 0,0053\% & 0,0444\%\\
-		vergangen & Jahr & 30165 & 8 & 0,0147\% & 0,0253\%\\
+		vergangen & Woche & 10.936 & 14 & 0,0053\% & 0,0444\%\\
+		vergangen & Jahr & 30.165 & 8 & 0,0147\% & 0,0253\%\\
 		öffentlich-rechtlich & Rundfunk & 346 & 7 & 0,0002\% & 0,0222\%\\
 		norddeutsch & Landesbank & 8 & 6 & 0,0000\% & 0,0190\%\\
 		grün & Gentechnik & 1 & 5 & 0,0000\% & 0,0158\%\\
@@ -278,38 +264,28 @@ Hierbei wurden die Variablen \texttt{LEMMA} und \texttt{NOMEN} entsprechend
 		früh & Außenminister & 149 & 4 & 0,0001\% & 0,0127\%\\
 		\bottomrule
 	\end{tabularx}
-	\caption{Vergleich der Adjektiv für Adjektiv+Nomina Kollokationen der
-	Korpora \texttt{HGC} (204.813.118 Token) und \texttt{MPRAES} (28.176 Token)
-	(auf Lemma-Basis) (gerundet).}
+	\caption{Vergleich der Adjektiv für Adjektiv+Nomina Kollokationen (auf
+	Lemma-Basis) der Korpora \texttt{HGC} (204.813.118 Token) und \texttt{MPRAES} (28.176 Token)
+	 (gerundet).}
 	\label{tab:compare_adj_n}
 \end{table}
 
 \begin{table}[htpb]\label{t}
 	\center
-	\begin{tabularx}{0.8\textwidth}{lrrrr}
+	\begin{tabularx}{0.8\textwidth}{lcccc}
 		\toprule
-		& \multicolumn{2}{l}{\textbf{abs. Häufigkeit}} &
-		\multicolumn{2}{l}{\textbf{rel. Häufigkeit}} \\
+		& \multicolumn{2}{c}{\textbf{abs. Häufigkeit}} &
+		\multicolumn{2}{c}{\textbf{rel. Häufigkeit}} \\
 		\midrule
 		\textbf{Suchwort} & \textbf{HGC} & \textbf{MPRAES} & \textbf{HGC}
-		&	\textbf{MPRAES} \\		
+		&	\textbf{MPRAES} \\
+		\midrule
 		Ministerpräsident & 28.176 & 252 & 0,138\% & 0,7985\% \\
 		\bottomrule
 	\end{tabularx}
-	\caption{Absolute und relative Häufigkeit des Suchworts Ministerpräsident in
-	den beiden Korpora}
-	\label{tab:undefined}
+	\caption{Absolute und relative Häufigkeit des Suchworts \textit{"`Ministerpräsident"'} in
+	den beiden Korpora.}
+	\label{tab:corp_frequency}
 \end{table}
-% [lemma="vergangen"][lemma="Woche"]; group Last match lemma; -> 10936
-% [lemma="vergangen"][lemma="Jahr"]; group Last match lemma; -> 30165
-% [lemma="öffentlich-rechtlich"][lemma="Rundfunk"]; group Last match lemma; ->
-% 346
-% [lemma="norddeutsch"][lemma="Landesbank"]; group Last match lemma; -> 8
-% [lemma="grün"][lemma="Gentechnik"]; group Last match lemma; -> 1
-% [lemma="rein"][lemma="Spekulation"]; group Last match lemma; -> 149
-% [lemma="liberaldemokratisch"][lemma="Partei"]; group Last match lemma; -> 36
-% [lemma="klug"][lemma="Entscheidung"]; group Last match lemma; -> 33
-% [lemma="offen"][lemma="Denkmal"]; group Last match lemma; -> 22
-% [lemma="früh"][lemma="Außenminister"]; group Last match lemma; -> 149
 
 \end{document}
