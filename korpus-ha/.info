@@ -1,0 +1,232 @@
+################################################################################### 
+# © Institut für Deutsche Sprache, Mannheim
+# COSMAS II-Server, C2API-Version 4.1.14 - 22. Nov. 2011
+# ________________________________________________________________________________
+# 
+# Datum         : Montag, den 25. Juni 2012, 7:51:19
+# Korpus        : haz - Hannoversche Allgemeine, August 2007 - Dezember 2011
+# Archiv-Release: Deutsches Referenzkorpus (DeReKo-2012-I)
+# Suchanfrage   : Ministerpräsident*
+# Ergebnis      : 8.192 Treffer
+# 
+# 
+# Ergebnisübersicht
+# 
+# Korpusansicht, 5 Einträge, nach »Korpus« aufsteigend sortiert.
+# 
+# Anz Treffer (kumulativ) Anz Texte Jahrgänge Korpus
+# 
+#       1.082       1.082       829 2007-2007 HAZ07 Hannoversche Allgemeine 2007
+#       2.925       4.007     2.148 2008-2008 HAZ08 Hannoversche Allgemeine 2008
+#       2.847       6.854     2.123 2009-2009 HAZ09 Hannoversche Allgemeine 2009
+#         918       7.772       755 2010-2010 HAZ10 Hannoversche Allgemeine 2010
+#         420       8.192       383 2011-2011 HAZ11 Hannoversche Allgemeine 2011
+# 
+#       8.192       8.192     6.238 2007-2011 5 Korpora            
+# 
+# 
+# Belege (unsortiert)
+# 
+# Anz. Treffer = 8.192
+# Angezeigter Kontext: 1 Absatz links, 2 Absätze rechts.
+# Es werden nur die markierten Belege exportiert = 200.
+# ________________________________________________________________________________
+# 
+##################################################################################
+# 
+# Prozessierung der Datei Ministerpraesident.txt
+#
+# 1.  Umformatieren in utf-8
+cat Ministerpraesident.txt | iconv -f LATIN1 -t UTF8 -o Ministerpraesident-utf8.txt
+
+# 2.  Metaangaben entfernen und Quellangaben auskommentieren
+cat Ministerpraesident-utf8.txt | sed 1,34d | perl -pe 's/(^HAZ\d{2}.*$)/#$1/' > zwischen0
+#KOMMENTAR:
+# 	cat Ministerpraesident-utf8.txt
+#		Inhalt von Ministerpraesident-utf8.txt zur Verarbeitung bereit stellen
+# 	sed 1,34d
+#		Löscht die ersten 34 Zeilen der Datei. Die Metaangaben wurden zuvor 
+#		manuell in diese Datei übernommen
+#	perl -pe 's/(^HAZ\d{2}.*$)/#$1/'
+#		Wenn am Zeilenanfang HAZ + beliebige zweistellige Zahl steht wird 
+#		die Zeile auskommentiert (Quellangaben)
+
+
+#3.
+grep -v ^'Von [A-ZÄÖÜ]' zwischen0 > zwischen
+# KOMMENTAR:
+#	grep -v ^'Von [A-ZÄÖÜ]' Ministerpraesident-utf8.txt
+# 		Autorenangaben (muss man nicht vermerken, weil HAZ Ausgabe reicht)
+# 		(Zeile wird entfernt, wenn am Anfang der Zeile "Von" steht,
+# 		danach ein Leerzeichen und anschließend ein Großbuchstabe
+# 		Das Ergebnis wird in der Datei "zwischen" zwischengespeichert
+
+
+# 4. Ergebnisse anschauen: Was hat es mit dem * auf sich?
+#
+# grep '*' zwischen
+#
+# wie oft (lohnt sich Bearbeitung)?
+# grep '*' zwischen | wc -l
+#
+# Ortsangaben:
+# 5a. Abtrennung vom Text: Fall1 (nur Ort, dann Punkt): * Berlin.
+# perl -pe 's/^(\* ?[^ ]+\.)/$1\n/' < zwischen | less
+# cat zwischen  | perl -pe 's/^(\* ?[^ ]+\.)/$1\n/' | grep '*' | less
+# cat zwischen  | perl -pe 's/^(\* ?[^ ]+\.)//$1XXX\n/' | grep 'XXX'
+
+cat zwischen  | perl -pe 's/^(\* ?[^ ]+) ?\./$1XXX/' | perl -pe 's/^\* (.+)XXX/<p ort="$1">/' > zwischen2
+# KOMMENTAR:
+# 	cat zwischen
+# 		Ausgabe der Datei 'zwischen'
+#		perl -pe 's/^(\* ?[^ ]+) ?\./$1XXX/'
+#			Evaluation des regulären Ausdrucks ^(\* ?[^ ]+) ?\.
+#			Zeile beginnt mit einem Stern, gefolgt von einem oder keinem Leerzeichen,
+#			darauf folgen beliebig viele Zeichen, die kein Leerzeichen sind. Dieser Ausdruck
+#			wird in der Variable $1 gespeichert. Schließlich folgt ein optionales Leerzeichen
+#			gefolgt von einem Punkt.
+#			Der gesamte Ausdruck wird durch den in $1 gespeicherten Wert ersetzt und die
+#			Zeichenfolge 'XXXX' angehängt.
+#		perl -pe 's/^\* (.+)XXX/<p ort="$1">/'
+#			Evaluation des regulären Ausdrucks ^\* (.+)XXX/<p ort="$1">
+#			Zeile beginnend mit einem Stern, gefolgt von einer beliebigen Anzahl Zeichen,
+#			gefolgt von 'XXXX'. Der erste Teil (ohne XXXX) wird in der Variable $1 gespeichert.
+#			Der gesamte Ausdruck wird durch '<p ort="$1">' ersetzt, wobei $1 den gespeicherten
+#			Wert erhält.
+#		> zwischen2
+#			Ausgabe des Ergebnisses in die Datei 'zwischen2'
+
+#
+# 5b. Abtrennung vom text: Fall2 (Ort und Presseagentur (=pa): * Leipzig (ade/ohm/dpa).
+# perl -pe 's/^\* ([^ ]+) \(([^\)]+)\)/WWW$1XXX$2YYY\n/' < zwischen2 | grep 'XXX'   # erzeugt: WWWLeipzigXXXade/ohm/dpaYYY
+# Ort- und PA-Angagen:
+perl -pe 's/^\* ([^ ]+) \(([^\)]+)\)\./<p ort="$1" pa="$2">\n/' < zwischen2 > zwischen3
+# KOMMENTAR:
+# 	cat zwischen
+# 		Ausgabe der Datei 'zwischen'
+#		perl -pe 's/^\* ([^ ]+) \(([^\)]+)\)\./<p ort="$1" pa="$2">\n/'
+#			Evaluation des regulären Ausdrucks ^\* ([^ ]+) \(([^\)]+)\)\.
+#			Zeile beginnt mit einem Stern, gefolgt von einer beliebigen Anzahl von Zeichen, die
+#			kein Leerzeichen sind. Diese werden in der Variable $1 gespeichert. Nun folgt ein
+#			Leerzeichen, sowie ein Ausdruck, der in runde Klammern gefasst ist und in Variable $2
+#			gespeichert wird. Dieser wird gefolgt von einem Punkt.
+#			Die Variablen $1 und $2 finden ihre Anwendung in dem Ersatz '<p ort="$1" pa="$2">\n'
+#			in dem sie getrennt ausgegeben werden. Die Ausgabe wird zusätzlich um einen Zeilenumbruch
+#			ergänzt.
+#		< zwischen2
+#			Aus der Datei zwischen2 wird gelesen
+#		> zwischen3
+#			Die Ausgabe erfolgt in die Datei zwischen3
+
+# 6. Match-Kennzeichnung aus COSMAS löschen: <B>CDU-Politiker</>
+perl -pe 's/<B>([^<]+)<\/>/$1/g' < zwischen3 > zwischen4
+# KOMMENTAR:
+# 	perl -pe 's/<B>([^<]+)<\/>/$1/g'
+# 		Entfernt alle COSMAS Kennzeichnungen. 
+# 		Der Beginn der COSMAS Kennzeichnung <B> muss dabei nach einem Leerzeichen (s/) stehen
+# 		Anschließend folgt mindestens aber beliebig viele Zeichen die kein "<" sind. 
+# 		Der so gematchete Text wird durch die Klammern in einer Gruppe gespeichert. 
+# 		Anschließend folgt die Zeichenkette </>.
+# 		Dieser Text wird letztendlich nur durch die Gruppe, also den Text innerhalb des
+# 		Tags ersetzt. 
+# 		Das g am Ende des Ausdrucks bedeutet "global", das Pattern matched nicht
+#		nur beim ersten Match in der Zeile, sondern auch bei allen anderen in einer Zeile
+# 	< zwischen3
+#		Der Befehl wird auf der Basis des Textes in zwischen3 ausgeführt
+# 	> zwischen4
+#   	Das Ergebnis des Befehls wird in der Datei zwischen4 gespeichert
+
+
+# 7. Weitere Metadaten: Codierung der ausführlichen Quellenangaben
+# grep ^'#HAZ' zwischen4 | less 
+#
+#  Einfachste Methode: Durch-Nummerieren:
+grep ^'#HAZ' zwischen4 | sort -u | perl -pe 's/^#//' | nl | perl -pe 's/^ +//' > HAZ-sources.txt
+# KOMMENTAR:
+# 	grep ^'#HAZ' zwischen4
+#		Alle Zeilen in zwischen4, die mit HAZ beginnen werden gematched und ausgegeben
+#		(Das sind die Zeilen mit den Quellangaben)
+#	sort -u
+#		Die mit grep ausgegeben Zeilen werden sortiert
+#		Mit dem -u Parameter (unique) werden mehrfach vorkommende Zeilen zu einer gruppiert
+#		und nur einmal angegeben
+#	perl -pe 's/^#//'
+#		Entfernt die # Zeichen am Zeilenanfang
+#	nl
+#		Fügt Zeilennummern hinzu
+#	perl -pe 's/^ +//'
+#		Leerzeichen am Zeilenanfang werden durch nichts ersetzt, also entfernt
+#	> HAZ-sources.txt
+#		Ausgabe der Pipe wird in die Datei HAZ-sources.txt geschrieben
+
+
+# Suchen und ersetzen (mit perl): kleines skript:
+#perl source-encode.perl < HAZ-sources.txt
+cat HAZ-sources.txt | perl source-encode.perl -i zwischen4 > zwischen5
+# KOMMENTAR:
+# 	cat HAZ-sources.txt
+#			Ausgabe der Datei 'HAZ-sources.txt'
+#		perl source-encode.perl -i zwischen4
+#			Ausführen der Datei source-encode.perl mit der Eingabedateil zwischen4 als Parameter.
+#			Die Eingabe der Datei 'HAZ-sources.txt' erfolgt zusätzlich über die Pipe.
+#			Perl-Script:
+#				Zeilenweises Einlesen der Pipe und Trennen dieser am Tabulatorzeichen, sowie speichern
+#				in einem Array. Zeilenweises Einlesen der Eingabedatei, Ersetzen des '#' am Zeilenanfang,
+#				sowie Assoziation der Zeilennummer mit einer Quellenangaben aus dem gespeicherten Array.
+#		> zwischen5
+#			Ausgabe des Perl-Scriptes in die Datei zwischen5
+
+
+# 8. Ende von <p> einfügen (endet immer vor dem end-tag der src (aeussere Struktur: src, innere (optional): p)
+perl -pe 's/\n/XXX/' zwischen5 | perl -pe 's/<p([^<]+)<\/src/<p$1<\/p><\/src/g' | perl -pe 's/XXX/\n/g' > zwischen6
+# KOMMENTAR
+#	perl -pe 's/\n/XXX/' zwischen5
+#		Zeilenumbrüche in zwischen5 durch XXX ersetzen
+#	perl -pe 's/<p([^<]+)<\/src/<p$1<\/p><\/src/g'
+#		Matched alles zwischen "<p"	und "</src" (siehe 5b) und speichert den Teil dazwischen durch die 
+#		Klammerung ab.
+#		Alles was mit dem Audruck gematched wurde wird mit "<p{INHALT}</p></src" ersetzt, wobei {INHALT} 
+#		der Inhalt zwischen "<p" und "<src" ist
+#	perl -pe 's/XXX/\n/g'
+#		Ersetzt die zuvor hinzugefügten XXX wieder durch Zeilenumbrüche
+
+
+# 9. Erstes </src> weg, letztes </src> einfügen Kommentare raus (mit editor)#
+cat zwischen6 | sed 1d | sed '/^#/d' > zwischen7
+echo "</src>" >> zwischen7
+# KOMMENTAR
+#	cat zwischen6
+#		Inhalt von zwischen6 für die Bearbeitung zur Verfügung stellen
+#	sed 1d
+#		Erste Zeile bzw. erstes </src> entfernen
+#	sed '/^#/d'
+#		Kommtenare, bzw Zeilen, die mit Hash beginnen, entfernen
+#	zwischen7
+#		Ergebnis in Datei zwischen7 speichern
+#	echo "</src>" >> zwischen7
+#		</src> an die Datei zwischen7 anhängen, also das letzte </src> einfügen
+
+
+# 10. Enkodierung inkl. Vorbereitung (nur mit sudo-Rechten, sonst eigene Verzeichnisse verwenden)
+#	-> Frau Faaß
+#
+# 10a.tokenisieren + taggen (nicht die Kommentarzeilen)
+grep -v ^'#' zwischen7 | /usr/local/share/tokenizer/tokenize-german-utf8 | /usr/local/share/tree-tagger/tree-tagger-german-utf8-no-unknown > Ministerpraesident.tagged
+
+###sudo mkdir /resources/corpora/test
+###chgrp cwb /resources/corpora/test
+###sudo chgrp cwb /resources/corpora/test
+###sudo chown faassg /resources/corpora/test
+###sudo chmod g+rx /resources/corpora/test/
+#
+#
+# 10b. Enkodieren als cqp Korpus (nur mit Schreibrecht auf das registry-Verzeichnis)
+###cwb-encode -t /user-access/Vst4310/test.tagged -R /resources/registry/test -d /resources/corpora/test  -xsB -P pos -P lemma -S s:0 -S src:0+code -S p:0+ort+pa
+#
+###cwb-makeall TEST
+#
+# 10 c. Manuelles Anpassen der registry-Datei: Einfügen von utf-8 und langem Korpusnamen
+#
+# 10 d. Kopieren dieser Datei als .info in das Korpus-Verzeichnis:
+###cp prozessierung.sh /resources/corpora/test/.info
+# --- FINIS ---
