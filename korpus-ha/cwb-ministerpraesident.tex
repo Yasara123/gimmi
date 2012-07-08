@@ -6,9 +6,10 @@
   	prefixLecturer=Dozenten:,
   	author=multiple,
   	%draft,
-]{unihildesheim}
+]{unihildesheim} %19345ad1221aff38b3e458f5c3ae3338f2262ca0
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
+\usepackage{fancyvrb}
 \graphicspath{{../img/}}
 
 % META
@@ -27,6 +28,9 @@ Ministerpräsident}
 \Author{J. Bertram, S. Kastner}{Jens Bertram {\small(214508)}\\Sebastian Kastner
 {\small(202322)}}
 % /META
+
+% shorthands
+\newcommand{\codebr}{\textbf{\rotatebox[origin=c]{180}{$\Rsh$}}}
 
 \begin{document}
 
@@ -90,47 +94,44 @@ beiligenden Datei \textit{.info} zu finden.
 \section{Analysen des erstellten Korpus}
 
 Vor der Ausführung der hier ausgeführten Befehle wurde mit dem Kommando
-\textit{set PrintMode latex;} das Ausgabeformat auf \LaTeX umgestellt, damit die
+\texttt{set PrintMode latex;} das Ausgabeformat auf \LaTeX umgestellt, damit die
 Ergebnisse ohne weitere Umformungen weiterverwendet werden konnten.
 
 
 \subsection{Häufigste Adjektiv-Nomen Paare}
 Für die Bestimmung der häufigsten Adjektiv-Nomen Paare, die nicht den
-ursprünglichen Suchbegriff "`Ministerpräsident"' enthalten, wurden folgende
-Befehle verwendet:
-\begin{verbatim}
-	> adj_n = @[pos="ADJ(A|D)"]@[pos="N(E|N)" & lemma!="Ministerpräsident.?"];
-	> group adj_n matchend lemma by match lemma cut 4 > "tabelle1.tex";
-\end{verbatim}
+ursprünglichen Suchbegriff \textit{"`Ministerpräsident"'} enthalten, wurden
+folgende Befehle verwendet:
+\begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
+MPRAES> adj_n = @[pos='ADJ(A|D)']@[pos='N(E|N)' & \codebr
+        word!="Ministerpräsident.*"];
+MPRAES> group adj_n matchend lemma by match lemma cut 4 \codebr
+        > "tabelle1.tex";
+\end{Verbatim}
 
 Mit dem ersten Befehl werden alle Adjektiv-Nomen Paare aus dem Korpus ausgelesen
-und in der Variable adj\_n gespeichert. Im Folgenden soll der ausgeführte Befehl
-kurz erläutert werden:
+und in der Variable \texttt{adj\_n} gespeichert. Im Folgenden soll der
+ausgeführte Befehl kurz erläutert werden:
 \begin{enumerate}
-  \item \textit{@[pos="ADJ(A|D)"]} \\
-			Das erste Wort muss mit dem POS Tag ADJA oder ADJD getaggt sein
-  \item \textit{@[pos='N(E|N)' \& lemma!="Ministerpräsident.?"]} \\
-			Das darauffolgende Wort muss mit dem POS Tag NE oder NE getaggt sein.
-			Das Lemma des Nomens darf dabei nicht gleich Ministerpräsident sein. Da sich
-			bei der Erstellung des Korpus bei dem Transport über verschiedene Systeme
-			hinweg an das Ende der Lemmata mit \textit{\textasciicircum M} ein DOS
-			Zeilenumbruch eingeschlichen. Mit \textit{.?} am Ende von Ministerpräsident wird das Lemma
-			trotz dieses DOS Zeilenumbruchs gematched, aber Abwandlungen von
-			Ministerpräsident, wie zum Beispiel Ministerpräsidentenkonferenz nicht.
-			Der unerwünschte Zeilenumbruch bei den Lemmata wurde zu spät erkannt, als
-			dass es noch möglich gewesen wäre ihn zu entfernen. Die Lemma Abfragen im
-			weiteren wurden ebenfalls mit diesem Quickfix getätigt.
+  \item \texttt{@[pos='ADJ(A|D)']} \\
+			Das erste Wort muss mit dem POS Tag \textsf{ADJA} oder \textsf{ADJD} getaggt
+			sein
+  \item \texttt{@[pos='N(E|N)' \& word!="Ministerpräsident.*"]]} \\
+			Das darauffolgende Wort muss mit dem POS Tag \texttt{NE} oder \texttt{NE}
+			getaggt sein und darf nicht gleich Ministerpräsident sein. Durch die Zeichen
+			\texttt{"`.*"'} am Ende von \textit{Ministerpräsident} werden auch
+			deklinierte Formen, wie zum Beispiel Ministerpräsidenten ausgeschlossen.
 \end{enumerate}
 
 Mit dem zweiten Befehl wurden die Ergebnisse des ersten Befehls nach der
 Lemmakombination des ersten (also des Adjektivs) und des zweiten gematchten
 Wortes (also das Nomen) gruppiert und nach der Häufigkeit der jeweiligen
-Kombination absteigend angeordnet. Da nur die Ausgabe der 10 häufigsten
+Kombination absteigend angeordnet. Da nur die Ausgabe der zehn häufigsten
 Kombinationen gefordert war, wurde die Anzahl der ausgegeben Kombinationen
-mit \textit{cut} beschränkt. Durch \textit{cut 4} wurde die Ausgabe auf Kombinationen
-beschränkt, die mindestens 4 mal auftreten. Der Wert 4 wurde zuvor manuell
-bestimmt, indem der obige Befehl ohne den \textit{cut} Befehl verwendet wurde. Die
-Ausgabe wurde in die Datei tabelle1.tex umgeleitet.
+mit \texttt{cut} beschränkt. Durch \texttt{cut 4} wurde die Ausgabe auf
+Kombinationen beschränkt, die mindestens vier mal auftreten. Der Wert vier wurde zuvor manuell
+bestimmt, indem der obige Befehl ohne den \texttt{cut} Befehl verwendet wurde.
+Die Ausgabe wurde in die Datei \texttt{tabelle1.tex} umgeleitet.
 
 Das Ergebnis ist der Tabelle \ref{tab:adjektive_nomina} zu entnehmen.
 
@@ -152,20 +153,21 @@ Das Ergebnis ist der Tabelle \ref{tab:adjektive_nomina} zu entnehmen.
 \subsection{Häufigste Nomina}
 Für die Bestimmung der häufigsten Nomina, die nicht gleich Ministerpräsident
 sind, wurden folgende Befehle verwendet:
-\begin{verbatim}
-	> n = @[pos='N(E|N)' & lemma!='Ministerpräsident.?'];
-	> group n target lemma cut 35 > "tabelle2.tex";
-\end{verbatim}
+\begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
+MPRAES> n = @[pos='N(E|N)' & word!='Ministerpräsident.*'];
+MPRAES> group n target lemma cut 35 > "tabelle2.tex";
+\end{Verbatim}
 
-Mit dem ersten Befehl werden alle Nomina (POS gleich NN oder NE), die nicht
-gleich Ministerpräsident, beziehungsweise einer Deklination von
-Ministerpräsident, sind abgefragt und in der Variable n gespeichert. Mit dem
-zweiten Befehl wurden die so abgefragten Nomen nach ihrem Lemma grupiert und
-nach ihrer Häufigkeit sortiert. Mit \textit{cut 35} wurde die Ausgabe auf Nomen
+Mit dem ersten Befehl werden alle Nomina (POS gleich \texttt{NN} oder
+\texttt{NE}), die nicht gleich \textit{"`Ministerpräsident"'}, beziehungsweise einer
+Deklination von Ministerpräsident sind, abgefragt und in der Variable \texttt{n}
+gespeichert. Mit dem zweiten Befehl wurden die so abgefragten Nomen nach ihrem Lemma grupiert und
+nach ihrer Häufigkeit sortiert. Mit \texttt{cut 35} wurde die Ausgabe auf Nomen
 beschränkt, die mindestens 35 mal auftreten. Somit wurde die Ausgabe auf die
-häufigsten 10 Nomen beschränkt, wie gefordert. Der Wert von 35 wurde wie im
+häufigsten zehn Nomen beschränkt, wie gefordert. Der Wert von 35 wurde wie im
 vorigen Beispiel manuell durch einen unbeschränkten Aufruf des selben
-Befehls ermittelt. Die Ausgabe wurde in die Datei tabelle2.tex umgeleitet. 
+Befehls ermittelt. Die Ausgabe wurde in die Datei \texttt{tabelle2.tex}
+umgeleitet.
 
 Das Ergebnis ist der Tabelle \ref{tab:nomina} zu entnehmen.
 % tabelle 2: nomina top10
@@ -184,20 +186,20 @@ Das Ergebnis ist der Tabelle \ref{tab:nomina} zu entnehmen.
 \end{table}
 
 \subsection{Adjektiv in Kollokation mit "`Ministerpräsident"'}
-Für die Bestimmung der häufigsten Nomina, die nicht gleich Ministerpräsident
-sind, wurden folgende Befehle verwendet:
-\begin{verbatim}
-	> adj = @[pos='ADJ(A|D)']@[word='Ministerpräsident.*'];
-	> group adj match lemma cut 2 > "tabelle3.tex";
-\end{verbatim}
+Für die Bestimmung der häufigsten Nomina, die nicht gleich
+\textit{"`Ministerpräsident"'} sind, wurden folgende Befehle verwendet:
+\begin{Verbatim}[frame=single,label=CQP,commandchars=\\\{\}]
+MPRAES> adj = @[pos='ADJ(A|D)']@[word='Ministerpräsident.*'];
+MPRAES> group adj match lemma cut 2 > "tabelle3.tex";
+\end{Verbatim}
 % tabelle 3: nomina top10
-Mit dem ersten Befehl werden alle Adjektive (POS gleich ADJA oder ADJD)
-ausgelesen, die von "`Ministerpräsident"' oder einer Deklination des Wortes
-gefolgtw erden. Mit dem zweiten Befehl werden die Ergebnisse nach dem Lemma des
-Adjektivs gruppiert. Mit \textit{cut 2} wird die Ausgabe auf Adjektive begrenzt, die
-mindestens zweimal zusammen mit Ministerpräsident auftreten. Der Wert 2 wurde
-wie in den vorigen Beispielen manuell ermittelt. Auch hier wurde die Ausgabe
-wieder in eine Datei, diesmal tabelle3.tex, umgeleitet. 
+Mit dem ersten Befehl werden alle Adjektive (POS gleich \texttt{ADJA} oder
+\texttt{ADJD}) ausgelesen, die von \textit{"`Ministerpräsident"'} oder einer
+Deklination des Wortes gefolgtw erden. Mit dem zweiten Befehl werden die Ergebnisse nach dem Lemma des
+Adjektivs gruppiert. Mit \texttt{cut 2} wird die Ausgabe auf Adjektive begrenzt,
+die mindestens zweimal zusammen mit Ministerpräsident auftreten. Der Wert zwei
+wurde wie in den vorigen Beispielen manuell ermittelt. Auch hier wurde die Ausgabe
+wieder in eine Datei, diesmal \texttt{tabelle3.tex}, umgeleitet. 
 
 Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
 \begin{table}[htpb]\label{t}
@@ -214,14 +216,6 @@ Das Ergebnis ist der Tabelle \ref{tab:adj_mpraes} zu entnehmen.
 	auftreten.}
 	\label{tab:adj_mpraes}
 \end{table}
-
-\subsection{Subtitle}
-
-Plain text.
-
-\subsection{Another subtitle}
-
-More plain text.
 
 \end{document}
 
